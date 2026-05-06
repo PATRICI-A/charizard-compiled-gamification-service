@@ -5,7 +5,7 @@ services:
     build: .
     container_name: gamification-service
     ports:
-      - "8084:8084"
+      - "8086:8086"
     environment:
       MONGODB_URI: mongodb://mongodb:27017/gamification_db
       JWT_SECRET: ${JWT_SECRET:-charizard-compiled-secret-key-2025-very-long-key-for-hs256}
