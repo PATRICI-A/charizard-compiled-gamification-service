@@ -54,7 +54,7 @@ public class UserGamification {
         return Collections.unmodifiableList(progress);
     }
 
-    // Factory: new user
+
     public static UserGamification newUser(String userId) {
         return UserGamification.builder()
                 .userId(userId)

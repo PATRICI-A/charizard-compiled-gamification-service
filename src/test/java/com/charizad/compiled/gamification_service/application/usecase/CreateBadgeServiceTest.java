@@ -1,4 +1,4 @@
-package com.charizad.compiled.gamification_service.application.service;
+package com.charizad.compiled.gamification_service.application.usecase;
 
 import com.charizad.compiled.gamification_service.application.dto.request.CreateBadgeRequest;
 import com.charizad.compiled.gamification_service.application.dto.response.BadgeResponse;
