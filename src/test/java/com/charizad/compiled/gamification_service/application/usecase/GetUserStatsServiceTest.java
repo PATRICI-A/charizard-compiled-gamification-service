@@ -1,4 +1,4 @@
-package com.charizad.compiled.gamification_service.application.service;
+package com.charizad.compiled.gamification_service.application.usecase;
 
 import com.charizad.compiled.gamification_service.application.dto.response.UserStatsResponse;
 import com.charizad.compiled.gamification_service.application.mapper.UserGamificationMapper;

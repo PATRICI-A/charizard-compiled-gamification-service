@@ -1,4 +1,4 @@
-package com.charizad.compiled.gamification_service.application.service;
+package com.charizad.compiled.gamification_service.application.usecase;
 
 import com.charizad.compiled.gamification_service.application.dto.request.AwardBadgeRequest;
 import com.charizad.compiled.gamification_service.application.dto.response.EarnedBadgeResponse;
@@ -33,7 +33,7 @@ public class AwardBadgeService implements AwardBadgeUseCase {
         UserGamification user = userGamificationRepository.findByUserId(request.getUserId())
                 .orElseGet(() -> UserGamification.newUser(request.getUserId()));
 
-        // Si ya tiene la insignia, se ignora silenciosamente (E1)
+        // Si ya tiene la insignia, se ignora silenciosamente
         if (user.hasBadge(badge.getId())) {
             EarnedBadge existing = user.getEarnedBadges().stream()
                     .filter(b -> b.getBadgeId().equals(badge.getId()))
@@ -52,7 +52,6 @@ public class AwardBadgeService implements AwardBadgeUseCase {
         user.awardBadge(earned);
         userGamificationRepository.save(user);
 
-        // Notificar al servicio de notificaciones (M05) de forma asíncrona
         notificationEventPort.notifyBadgeEarned(request.getUserId(), badge);
 
         return userGamificationMapper.toEarnedBadgeResponse(earned);
