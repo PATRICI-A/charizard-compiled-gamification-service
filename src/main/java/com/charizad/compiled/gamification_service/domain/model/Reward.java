@@ -22,6 +22,7 @@ public class Reward {
     private final String description;
     private final RewardType type;
 
+    /** Minimum accumulated XP required to unlock this reward. */
     private final int xpThreshold;
 
     private final String iconUrl;
