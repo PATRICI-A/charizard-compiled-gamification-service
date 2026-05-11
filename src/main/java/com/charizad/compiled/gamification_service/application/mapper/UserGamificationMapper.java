@@ -18,6 +18,7 @@ public class UserGamificationMapper {
                 .weeklyXp(user.getWeeklyXp())
                 .rankingOptIn(user.isRankingOptIn())
                 .totalBadgesEarned(user.getEarnedBadges().size())
+                .totalRewardsUnlocked(user.getEarnedRewards().size())
                 .build();
     }
 

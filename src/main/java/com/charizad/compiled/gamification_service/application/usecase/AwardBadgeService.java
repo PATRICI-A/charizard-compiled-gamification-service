@@ -7,6 +7,7 @@ import com.charizad.compiled.gamification_service.domain.exceptions.BadgeNotFoun
 import com.charizad.compiled.gamification_service.domain.model.Badge;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
 import com.charizad.compiled.gamification_service.domain.ports.in.AwardBadgeUseCase;
+import com.charizad.compiled.gamification_service.domain.ports.in.CheckXpRewardsUseCase;
 import com.charizad.compiled.gamification_service.domain.ports.out.BadgeRepositoryPort;
 import com.charizad.compiled.gamification_service.domain.ports.out.NotificationEventPort;
 import com.charizad.compiled.gamification_service.domain.ports.out.UserGamificationRepositoryPort;
@@ -24,6 +25,7 @@ public class AwardBadgeService implements AwardBadgeUseCase {
     private final UserGamificationRepositoryPort userGamificationRepository;
     private final NotificationEventPort notificationEventPort;
     private final UserGamificationMapper userGamificationMapper;
+    private final CheckXpRewardsUseCase checkXpRewardsUseCase;
 
     @Override
     public EarnedBadgeResponse execute(AwardBadgeRequest request) {
@@ -51,6 +53,9 @@ public class AwardBadgeService implements AwardBadgeUseCase {
 
         user.awardBadge(earned);
         userGamificationRepository.save(user);
+
+        // Check whether the newly gained XP crosses any reward threshold
+        checkXpRewardsUseCase.checkAndUnlock(user);
 
         notificationEventPort.notifyBadgeEarned(request.getUserId(), badge);
 

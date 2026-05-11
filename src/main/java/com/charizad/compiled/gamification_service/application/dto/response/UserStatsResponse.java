@@ -15,4 +15,5 @@ public class UserStatsResponse {
     private int weeklyXp;
     private boolean rankingOptIn;
     private int totalBadgesEarned;
+    private int totalRewardsUnlocked;
 }

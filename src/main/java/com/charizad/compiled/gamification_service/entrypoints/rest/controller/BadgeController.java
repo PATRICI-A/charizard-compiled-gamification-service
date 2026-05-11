@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/badges")
 @RequiredArgsConstructor
-@Tag(name = "Badges", description = "Gestión del catálogo de insignias (monas)")
+@Tag(name = "Badges", description = "Management of the badge catalog")
 @SecurityRequirement(name = "bearerAuth")
 public class BadgeController {
 
@@ -30,28 +30,28 @@ public class BadgeController {
     private final AwardBadgeUseCase awardBadgeUseCase;
 
     @PostMapping
-    @Operation(summary = "Crear insignia", description = "Registra una nueva insignia en el catálogo. Solo accesible por ADMIN.")
+    @Operation(summary = "Create badge", description = "Registers a new badge in the catalog. Only accessible by ADMIN.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Insignia creada exitosamente",
+            @ApiResponse(responseCode = "201", description = "Badge created successfully",
                     content = @Content(schema = @Schema(implementation = BadgeResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Acceso denegado — se requiere rol ADMIN", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Token JWT ausente o inválido", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied — ADMIN role required", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<BadgeResponse> createBadge(@Valid @RequestBody CreateBadgeRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(createBadgeUseCase.execute(request));
     }
 
     @PostMapping("/award")
-    @Operation(summary = "Otorgar insignia a un usuario",
-            description = "Asigna una insignia existente a un usuario. Si el usuario ya la posee, se retorna la insignia sin error. Solo accesible por ADMIN.")
+    @Operation(summary = "Award badge to a user",
+            description = "Assigns an existing badge to a user. If the user already has it, the badge is returned without error. Only accessible by ADMIN.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Insignia otorgada (o ya poseída)",
+            @ApiResponse(responseCode = "200", description = "Badge awarded (or already owned)",
                     content = @Content(schema = @Schema(implementation = EarnedBadgeResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Acceso denegado — se requiere rol ADMIN", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Insignia o usuario no encontrado", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Token JWT ausente o inválido", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied — ADMIN role required", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Badge or user not found", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<EarnedBadgeResponse> awardBadge(@Valid @RequestBody AwardBadgeRequest request) {
         return ResponseEntity.ok(awardBadgeUseCase.execute(request));

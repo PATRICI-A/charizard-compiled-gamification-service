@@ -3,6 +3,7 @@ package com.charizad.compiled.gamification_service.domain.model;
 import com.charizad.compiled.gamification_service.domain.exceptions.BadgeAlreadyEarnedException;
 import com.charizad.compiled.gamification_service.domain.valueobjects.BadgeProgress;
 import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge;
+import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedReward;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,9 +25,14 @@ public class UserGamification {
     private boolean rankingOptIn;
     private final List<EarnedBadge> earnedBadges;
     private final List<BadgeProgress> progress;
+    private final List<EarnedReward> earnedRewards;
 
     public boolean hasBadge(String badgeId) {
         return earnedBadges.stream().anyMatch(b -> b.getBadgeId().equals(badgeId));
+    }
+
+    public boolean hasReward(String rewardId) {
+        return earnedRewards.stream().anyMatch(r -> r.getRewardId().equals(rewardId));
     }
 
     public void awardBadge(EarnedBadge earned) {
@@ -36,6 +42,10 @@ public class UserGamification {
         earnedBadges.add(earned);
         totalXp += earned.getXpAwarded();
         weeklyXp += earned.getXpAwarded();
+    }
+
+    public void unlockReward(EarnedReward earned) {
+        earnedRewards.add(earned);
     }
 
     public void resetWeeklyXp() {
@@ -54,6 +64,9 @@ public class UserGamification {
         return Collections.unmodifiableList(progress);
     }
 
+    public List<EarnedReward> getEarnedRewards() {
+        return Collections.unmodifiableList(earnedRewards);
+    }
 
     public static UserGamification newUser(String userId) {
         return UserGamification.builder()
@@ -63,6 +76,7 @@ public class UserGamification {
                 .rankingOptIn(false)
                 .earnedBadges(new ArrayList<>())
                 .progress(new ArrayList<>())
+                .earnedRewards(new ArrayList<>())
                 .build();
     }
 }
