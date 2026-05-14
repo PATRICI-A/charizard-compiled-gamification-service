@@ -48,7 +48,7 @@ jobs:
 
         run: |
           mvn clean verify sonar:sonar -B \
-            -Dsonar.projectKey=gamification-service \
+            -Dsonar.projectKey=charizard-compiled-gamification-service \
             -Dsonar.organization=${SONAR_ORGANIZATION} \
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.token=${SONAR_TOKEN} \
