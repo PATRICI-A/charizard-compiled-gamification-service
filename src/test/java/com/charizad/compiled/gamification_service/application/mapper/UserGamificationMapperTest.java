@@ -38,6 +38,7 @@ class UserGamificationMapperTest {
                 .rankingOptIn(true)
                 .earnedBadges(badges)
                 .progress(new ArrayList<>())
+                .earnedRewards(new ArrayList<>())
                 .build();
 
         UserStatsResponse result = mapper.toStatsResponse(user);
@@ -59,6 +60,7 @@ class UserGamificationMapperTest {
                 .rankingOptIn(false)
                 .earnedBadges(new ArrayList<>())
                 .progress(new ArrayList<>())
+                .earnedRewards(new ArrayList<>())
                 .build();
 
         UserStatsResponse result = mapper.toStatsResponse(user);
