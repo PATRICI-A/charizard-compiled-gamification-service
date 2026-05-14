@@ -94,7 +94,7 @@ public class UserGamificationController {
         return ResponseEntity.ok(Map.of(
                 "userId", userId,
                 "rankingOptIn", optIn,
-                "message", optIn ? "You are now participating in the weekly ranking." : "You have left the weekly ranking."
+                "message", optIn ? "Ahora participas en el ranking semanal." : "Has salido del ranking semanal."
         ));
     }
 

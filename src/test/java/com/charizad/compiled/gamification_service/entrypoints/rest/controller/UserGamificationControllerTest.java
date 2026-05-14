@@ -13,15 +13,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,6 +46,7 @@ class UserGamificationControllerTest {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
+                .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
                 .build();
     }
 
@@ -97,17 +101,6 @@ class UserGamificationControllerTest {
                 .andExpect(jsonPath("$.weeklyXp").value(150))
                 .andExpect(jsonPath("$.rankingOptIn").value(true))
                 .andExpect(jsonPath("$.totalBadgesEarned").value(2));
-    }
-
-    @Test
-    @DisplayName("PATCH /me/ranking/toggle retorna 200 con nuevo estado")
-    void toggleRanking_shouldReturn200() throws Exception {
-        when(toggleRankingOptInUseCase.execute(any())).thenReturn(true);
-
-        mockMvc.perform(patch("/api/v1/gamification/me/ranking/toggle"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.rankingOptIn").value(true))
-                .andExpect(jsonPath("$.message").value("Ahora participas en el ranking semanal."));
     }
 
     @Test

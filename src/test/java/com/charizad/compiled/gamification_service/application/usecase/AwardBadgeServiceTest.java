@@ -7,6 +7,7 @@ import com.charizad.compiled.gamification_service.domain.exceptions.BadgeNotFoun
 import com.charizad.compiled.gamification_service.domain.model.Badge;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
 import com.charizad.compiled.gamification_service.domain.model.enums.BadgeCategory;
+import com.charizad.compiled.gamification_service.domain.ports.in.CheckXpRewardsUseCase;
 import com.charizad.compiled.gamification_service.domain.ports.out.BadgeRepositoryPort;
 import com.charizad.compiled.gamification_service.domain.ports.out.NotificationEventPort;
 import com.charizad.compiled.gamification_service.domain.ports.out.UserGamificationRepositoryPort;
@@ -35,6 +36,7 @@ class AwardBadgeServiceTest {
     @Mock private UserGamificationRepositoryPort userGamificationRepository;
     @Mock private NotificationEventPort notificationEventPort;
     @Mock private UserGamificationMapper userGamificationMapper;
+    @Mock private CheckXpRewardsUseCase checkXpRewardsUseCase;
 
     @InjectMocks
     private AwardBadgeService service;
