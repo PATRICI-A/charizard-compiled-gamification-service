@@ -16,7 +16,7 @@ jobs:
       - name: Download JAR from CI
         uses: actions/download-artifact@v4
         with:
-          name: app-jar
+          name: gamification-service-jar
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
