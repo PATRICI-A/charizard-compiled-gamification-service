@@ -2,46 +2,48 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, test-pipeline]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 jobs:
-  build:
+  build-and-test:
+    name: Build & Test
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout codigo
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Configurar JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
 
-      - name: Build with Maven
-        run: mvn -B verify jacoco:report
+      - name: Compilar y ejecutar tests
+        run: mvn clean verify
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET_TEST }}
 
-      - name: Upload JAR artifact
+      - name: Subir JAR como artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-jar
+          name: gamification-service-jar
           path: target/*.jar
-          retention-days: 7
+          retention-days: 14
 
-      - name: Upload JaCoCo report
+      - name: Subir reporte JaCoCo
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/site/jacoco
-          retention-days: 7
+          path: target/site/jacoco/
+          retention-days: 14
 
-      - name: Upload Surefire report
+      - name: Subir resultados Surefire
         uses: actions/upload-artifact@v4
         with:
-          name: surefire-report
-          path: target/surefire-reports
-          retention-days: 7
+          name: surefire-reports
+          path: target/surefire-reports/
+          retention-days: 14
