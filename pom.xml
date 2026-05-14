@@ -94,14 +94,6 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- MongoDB embebido para tests -->
-		<dependency>
-			<groupId>de.flapdoodle.embed</groupId>
-			<artifactId>de.flapdoodle.embed.mongo.spring4x</artifactId>
-			<version>4.24.0</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -169,7 +161,38 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>check</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>INSTRUCTION</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.80</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+							<excludes>
+								<exclude>com/charizad/compiled/gamification_service/GamificationServiceApplication.class</exclude>
+								<exclude>com/charizad/compiled/gamification_service/infrastructure/config/OpenApiConfig.class</exclude>
+							</excludes>
+						</configuration>
+					</execution>
 				</executions>
+				<configuration>
+					<excludes>
+						<exclude>com/charizad/compiled/gamification_service/GamificationServiceApplication.class</exclude>
+						<exclude>com/charizad/compiled/gamification_service/infrastructure/config/OpenApiConfig.class</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 
 			<!-- SonarCloud analysis -->
