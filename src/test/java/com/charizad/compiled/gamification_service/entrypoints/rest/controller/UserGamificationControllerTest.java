@@ -13,6 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -43,7 +46,10 @@ class UserGamificationControllerTest {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
+                .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
                 .build();
+
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -102,7 +108,9 @@ class UserGamificationControllerTest {
     @Test
     @DisplayName("PATCH /me/ranking/toggle retorna 200 con nuevo estado")
     void toggleRanking_shouldReturn200() throws Exception {
-        when(toggleRankingOptInUseCase.execute(any())).thenReturn(true);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user-001", null));
+        when(toggleRankingOptInUseCase.execute("user-001")).thenReturn(true);
 
         mockMvc.perform(patch("/api/v1/gamification/me/ranking/toggle"))
                 .andExpect(status().isOk())
