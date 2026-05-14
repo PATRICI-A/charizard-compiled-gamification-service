@@ -3,6 +3,7 @@ package com.charizad.compiled.gamification_service.entrypoints.advice;
 import com.charizad.compiled.gamification_service.domain.exceptions.AccessDeniedException;
 import com.charizad.compiled.gamification_service.domain.exceptions.BadgeAlreadyEarnedException;
 import com.charizad.compiled.gamification_service.domain.exceptions.BadgeNotFoundException;
+import com.charizad.compiled.gamification_service.domain.exceptions.RewardNotFoundException;
 import com.charizad.compiled.gamification_service.domain.exceptions.UserGamificationNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadgeAlreadyEarnedException.class)
     public ResponseEntity<Map<String, Object>> handleBadgeAlreadyEarned(BadgeAlreadyEarnedException ex) {
         return buildError(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(RewardNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleRewardNotFound(RewardNotFoundException ex) {
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(AccessDeniedException.class)

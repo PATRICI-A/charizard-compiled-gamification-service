@@ -29,4 +29,5 @@ public class UserGamificationDocument {
 
     private List<EarnedBadgeSubdocument> earnedBadges;
     private List<BadgeProgressSubdocument> progress;
+    private List<EarnedRewardSubdocument> earnedRewards;
 }
