@@ -6,11 +6,11 @@ import com.charizad.compiled.gamification_service.infrastructure.adapters.persis
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.mapper.UserGamificationDocumentMapper;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.repository.UserGamificationMongoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -20,8 +20,8 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
     private final UserGamificationDocumentMapper mapper;
 
     @Override
-    public UserGamification save(UserGamification user) {
-        UserGamificationDocument doc = mapper.toDocument(user);
+    public UserGamification save(UserGamification userGamification) {
+        UserGamificationDocument doc = mapper.toDocument(userGamification);
         UserGamificationDocument saved = mongoRepository.save(doc);
         return mapper.toDomain(saved);
     }
@@ -33,25 +33,24 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
 
     @Override
     public List<UserGamification> findAllOptedInOrderByWeeklyXpDesc(int limit) {
-        return mongoRepository
-                .findByRankingOptInTrueOrderByWeeklyXpDesc(PageRequest.of(0, limit))
-                .stream()
+        return mongoRepository.findByRankingOptInTrueOrderByWeeklyXpDesc().stream()
+                .limit(limit)
                 .map(mapper::toDomain)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<UserGamification> findAllOptedIn() {
-        return mongoRepository.findByRankingOptInTrue().stream()
+        return mongoRepository.findByRankingOptInTrueOrderByWeeklyXpDesc().stream()
                 .map(mapper::toDomain)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public void saveAll(List<UserGamification> users) {
         List<UserGamificationDocument> docs = users.stream()
                 .map(mapper::toDocument)
-                .toList();
+                .collect(Collectors.toList());
         mongoRepository.saveAll(docs);
     }
 }

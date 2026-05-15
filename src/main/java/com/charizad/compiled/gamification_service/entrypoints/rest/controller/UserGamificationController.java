@@ -91,8 +91,8 @@ public class UserGamificationController {
     public ResponseEntity<Map<String, Object>> toggleRanking(
             @AuthenticationPrincipal String userId) {
         boolean optIn = toggleRankingOptInUseCase.execute(userId);
-        return ResponseEntity.ok(Map.of(
-                "userId", userId,
+        return ResponseEntity.ok(java.util.Map.of(
+                "userId", userId != null ? userId : "unknown",
                 "rankingOptIn", optIn,
                 "message", optIn ? "You are now participating in the weekly ranking." : "You have left the weekly ranking."
         ));

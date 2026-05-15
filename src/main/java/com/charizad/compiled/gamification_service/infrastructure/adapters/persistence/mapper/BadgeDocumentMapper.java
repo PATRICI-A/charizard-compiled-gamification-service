@@ -7,29 +7,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class BadgeDocumentMapper {
 
-    public Badge toDomain(BadgeDocument doc) {
-        return Badge.builder()
-                .id(doc.getId())
-                .name(doc.getName())
-                .description(doc.getDescription())
-                .category(doc.getCategory())
-                .xpReward(doc.getXpReward())
-                .iconUrl(doc.getIconUrl())
-                .createdAt(doc.getCreatedAt())
-                .active(doc.isActive())
+    public BadgeDocument toDocument(Badge domain) {
+        if (domain == null) return null;
+        return BadgeDocument.builder()
+                .id(domain.getId())
+                .name(domain.getName())
+                .description(domain.getDescription())
+                .category(domain.getCategory())
+                .xpReward(domain.getXpReward())
+                .iconUrl(domain.getIconUrl())
+                .createdAt(domain.getCreatedAt())
+                .active(domain.isActive())
                 .build();
     }
 
-    public BadgeDocument toDocument(Badge badge) {
-        return BadgeDocument.builder()
-                .id(badge.getId())
-                .name(badge.getName())
-                .description(badge.getDescription())
-                .category(badge.getCategory())
-                .xpReward(badge.getXpReward())
-                .iconUrl(badge.getIconUrl())
-                .createdAt(badge.getCreatedAt())
-                .active(badge.isActive())
+    public Badge toDomain(BadgeDocument entity) {
+        if (entity == null) return null;
+        return Badge.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .category(entity.getCategory())
+                .xpReward(entity.getXpReward())
+                .iconUrl(entity.getIconUrl())
+                .createdAt(entity.getCreatedAt())
+                .active(entity.isActive())
                 .build();
     }
 }

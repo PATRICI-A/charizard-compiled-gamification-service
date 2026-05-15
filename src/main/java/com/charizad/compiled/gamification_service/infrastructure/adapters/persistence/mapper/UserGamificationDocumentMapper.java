@@ -3,10 +3,8 @@ package com.charizad.compiled.gamification_service.infrastructure.adapters.persi
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
 import com.charizad.compiled.gamification_service.domain.valueobjects.BadgeProgress;
 import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge;
-import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedReward;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.BadgeProgressSubdocument;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.EarnedBadgeSubdocument;
-import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.EarnedRewardSubdocument;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.UserGamificationDocument;
 import org.springframework.stereotype.Component;
 
@@ -37,17 +35,6 @@ public class UserGamificationDocumentMapper {
                                 .build())
                         .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
 
-        List<EarnedReward> rewards = doc.getEarnedRewards() == null ? new ArrayList<>() :
-                doc.getEarnedRewards().stream()
-                        .map(r -> EarnedReward.builder()
-                                .rewardId(r.getRewardId())
-                                .rewardName(r.getRewardName())
-                                .rewardType(r.getRewardType())
-                                .unlockedAt(r.getUnlockedAt())
-                                .xpAtUnlock(r.getXpAtUnlock())
-                                .build())
-                        .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
-
         return UserGamification.builder()
                 .id(doc.getId())
                 .userId(doc.getUserId())
@@ -56,7 +43,6 @@ public class UserGamificationDocumentMapper {
                 .rankingOptIn(doc.isRankingOptIn())
                 .earnedBadges(earned)
                 .progress(progress)
-                .earnedRewards(rewards)
                 .build();
     }
 
@@ -79,16 +65,6 @@ public class UserGamificationDocumentMapper {
                         .build())
                 .toList();
 
-        List<EarnedRewardSubdocument> rewards = user.getEarnedRewards().stream()
-                .map(r -> EarnedRewardSubdocument.builder()
-                        .rewardId(r.getRewardId())
-                        .rewardName(r.getRewardName())
-                        .rewardType(r.getRewardType())
-                        .unlockedAt(r.getUnlockedAt())
-                        .xpAtUnlock(r.getXpAtUnlock())
-                        .build())
-                .toList();
-
         return UserGamificationDocument.builder()
                 .id(user.getId())
                 .userId(user.getUserId())
@@ -97,7 +73,6 @@ public class UserGamificationDocumentMapper {
                 .rankingOptIn(user.isRankingOptIn())
                 .earnedBadges(earned)
                 .progress(progress)
-                .earnedRewards(rewards)
                 .build();
     }
 }
