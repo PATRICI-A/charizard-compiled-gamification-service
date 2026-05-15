@@ -19,10 +19,6 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
-services:
-  notification:
-    url: ${NOTIFICATION_SERVICE_URL:https://patricia-gamification-service-cfdyfqckhehrbmfb.canadacentral-01.azurewebsites.net}
-
 scheduling:
   weekly-reset:
     cron: "0 0 0 * * MON"   # Lunes a medianoche
