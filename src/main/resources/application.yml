@@ -21,7 +21,7 @@ springdoc:
 
 services:
   notification:
-    url: ${NOTIFICATION_SERVICE_URL:app-patricia-notification-b4d2hcd0fqd7bkcm.canadacentral-01.azurewebsites.net}
+    url: ${NOTIFICATION_SERVICE_URL:https://patricia-gamification-service-cfdyfqckhehrbmfb.canadacentral-01.azurewebsites.net}
 
 scheduling:
   weekly-reset:
