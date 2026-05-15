@@ -44,7 +44,7 @@ jobs:
           app-settings-json: |
             [
                 {
-                    "name": "MONGODB_URI",
+                    "name": "SPRING_MONGODB_URI",
                     "value": "${{ secrets.MONGODB_URI }}",
                     "slotSetting": false
                 },
