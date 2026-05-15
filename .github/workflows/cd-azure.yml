@@ -38,6 +38,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure Web App
-        run: |
-          JAR_FILE=$(ls target/*.jar | head -1)
-          az webapp deploy --resource-group rg-patricia-prod --name ${{ secrets.AZURE_APP_SERVICE_NAME }} --type jar --src-path "$JAR_FILE"
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
+          package: target/*.jar
