@@ -6,7 +6,7 @@ spring:
     name: gamification-service
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb+srv://shaddaygonzalez5_db_user:UhQV85Jf9l2dYkpS@cluster0.grwrgmg.mongodb.net/gamification_db?appName=Cluster0}
+      uri: ${MONGODB_URI}
       auto-index-creation: true
 
   security:
