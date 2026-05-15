@@ -1,0 +1,4 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://shaddaygonzalez5_db_user:UhQV85Jf9l2dYkpS@cluster0.grwrgmg.mongodb.net/gamification_db?appName=Cluster0
