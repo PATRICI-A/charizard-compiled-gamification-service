@@ -28,7 +28,9 @@ public class SecurityConfig {
                     "/api-docs",
                     "/v3/api-docs/**",
                     "/v3/api-docs",
-                    "/webjars/**"
+                    "/webjars/**",
+                    "/actuator/health",
+                    "/actuator/health/**"
                 ).permitAll()
                 // Solo ADMIN puede crear insignias
                 .requestMatchers(HttpMethod.POST, "/api/v1/badges").hasRole("ADMIN")
