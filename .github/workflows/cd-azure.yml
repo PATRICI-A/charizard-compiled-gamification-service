@@ -38,14 +38,22 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Configure App Settings
-        run: |
-          RG=$(az webapp show --name ${{ secrets.AZURE_APP_SERVICE_NAME }} --query "resourceGroup" -o tsv)
-          az webapp config appsettings set \
-            --name ${{ secrets.AZURE_APP_SERVICE_NAME }} \
-            --resource-group "$RG" \
-            --settings \
-              SPRING_DATA_MONGODB_URI="${{ secrets.MONGODB_URI }}" \
-              SPRING_PROFILES_ACTIVE="prod"
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
+          app-settings-json: |
+            [
+                {
+                    "name": "SPRING_MONGODB_URI",
+                    "value": "${{ secrets.MONGODB_URI }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "SPRING_PROFILES_ACTIVE",
+                    "value": "prod",
+                    "slotSetting": false
+                }
+            ]
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3

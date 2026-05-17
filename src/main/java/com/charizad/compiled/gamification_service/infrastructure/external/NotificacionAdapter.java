@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @Slf4j
-@Component
+// @Component
 @RequiredArgsConstructor
 public class NotificacionAdapter implements NotificationEventPort {
 

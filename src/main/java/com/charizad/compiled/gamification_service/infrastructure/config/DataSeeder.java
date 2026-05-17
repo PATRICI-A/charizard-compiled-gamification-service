@@ -25,7 +25,7 @@ public class DataSeeder {
     private final UserGamificationMongoRepository userRepository;
 
     @Bean
-    @Profile("!test")
+    @Profile("!prod & !test")
     public CommandLineRunner seedData() {
         return args -> {
             if (badgeRepository.count() > 0) {
