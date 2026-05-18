@@ -17,15 +17,19 @@ public class WeeklyXpResetScheduler {
     private final UserGamificationRepositoryPort userGamificationRepository;
 
     /**
-     * Reinicia el XP semanal de todos los usuarios participantes del ranking.
+     * Reinicia el XP semanal y las monas semanales de todos los usuarios.
      * Se ejecuta todos los lunes a medianoche (00:00).
+     * El reset de monas semanales (weeklyMonas) alimenta el ranking RF13.3.
      */
     @Scheduled(cron = "${scheduling.weekly-reset.cron}")
     public void resetWeeklyXp() {
-        log.info("Iniciando reinicio semanal de XP...");
+        log.info("Iniciando reinicio semanal de XP y monas...");
 
         List<UserGamification> allUsers = userGamificationRepository.findAllOptedIn();
-        allUsers.forEach(UserGamification::resetWeeklyXp);
+        allUsers.forEach(user -> {
+            user.resetWeeklyXp();
+            user.resetWeeklyMonas();
+        });
         userGamificationRepository.saveAll(allUsers);
 
         log.info("Reinicio semanal completado para {} usuarios.", allUsers.size());

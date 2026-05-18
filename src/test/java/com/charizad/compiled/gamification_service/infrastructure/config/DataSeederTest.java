@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.CommandLineRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,23 +47,10 @@ class DataSeederTest {
     }
 
     @Test
-    @DisplayName("seed datos cuando la base está vacía")
+    @DisplayName("seed datos cuando la base está vacía inserta las 13 monas oficiales")
     void seedData_shouldInsertData_whenDatabaseEmpty() throws Exception {
         when(badgeRepository.count()).thenReturn(0L);
-        when(badgeRepository.save(any(BadgeDocument.class)))
-                .thenAnswer(inv -> {
-                    BadgeDocument doc = inv.getArgument(0);
-                    return BadgeDocument.builder()
-                            .id("seeded-" + doc.getName().toLowerCase().replace(' ', '-'))
-                            .name(doc.getName())
-                            .description(doc.getDescription())
-                            .category(doc.getCategory())
-                            .xpReward(doc.getXpReward())
-                            .iconUrl(doc.getIconUrl())
-                            .createdAt(doc.getCreatedAt())
-                            .active(doc.isActive())
-                            .build();
-                });
+        when(badgeRepository.saveAll(anyList())).thenAnswer(inv -> inv.getArgument(0));
 
         DataSeeder dataSeeder = new DataSeeder(badgeRepository, userRepository);
         CommandLineRunner runner = dataSeeder.seedData();
@@ -69,7 +58,10 @@ class DataSeederTest {
         runner.run();
 
         verify(badgeRepository).count();
-        verify(badgeRepository, times(4)).save(any(BadgeDocument.class));
-        verify(userRepository, times(3)).save(any());
+        verify(badgeRepository).saveAll(argThat(list -> {
+            java.util.List<?> l = (java.util.List<?>) list;
+            return l.size() == 13;
+        }));
+        verifyNoInteractions(userRepository);
     }
 }

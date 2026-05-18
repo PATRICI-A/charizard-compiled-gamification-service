@@ -48,7 +48,7 @@ class BadgeControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/badges retorna 201 con la insignia creada")
+    @DisplayName("POST /api/v1/gamificacion/badges retorna 201 con la insignia creada")
     void createBadge_shouldReturn201() throws Exception {
         CreateBadgeRequest request = CreateBadgeRequest.builder()
                 .name("El Legendario")
@@ -67,7 +67,7 @@ class BadgeControllerTest {
 
         when(createBadgeUseCase.execute(any())).thenReturn(response);
 
-        mockMvc.perform(post("/api/v1/badges")
+        mockMvc.perform(post("/api/v1/gamificacion/badges")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -77,7 +77,7 @@ class BadgeControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/badges retorna 400 si faltan campos obligatorios")
+    @DisplayName("POST /api/v1/gamificacion/badges retorna 400 si faltan campos obligatorios")
     void createBadge_shouldReturn400_whenMissingFields() throws Exception {
         String invalidBody = """
                 {
@@ -86,14 +86,14 @@ class BadgeControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/v1/badges")
+        mockMvc.perform(post("/api/v1/gamificacion/badges")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidBody))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("POST /api/v1/badges/award retorna 200 al otorgar insignia")
+    @DisplayName("POST /api/v1/gamificacion/badges/award retorna 200 al otorgar insignia")
     void awardBadge_shouldReturn200() throws Exception {
         AwardBadgeRequest request = AwardBadgeRequest.builder()
                 .userId("user-001")
@@ -108,7 +108,7 @@ class BadgeControllerTest {
 
         when(awardBadgeUseCase.execute(any())).thenReturn(response);
 
-        mockMvc.perform(post("/api/v1/badges/award")
+        mockMvc.perform(post("/api/v1/gamificacion/badges/award")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -117,7 +117,7 @@ class BadgeControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/badges/award retorna 404 si la insignia no existe")
+    @DisplayName("POST /api/v1/gamificacion/badges/award retorna 404 si la insignia no existe")
     void awardBadge_shouldReturn404_whenBadgeNotFound() throws Exception {
         AwardBadgeRequest request = AwardBadgeRequest.builder()
                 .userId("user-001")
@@ -127,7 +127,7 @@ class BadgeControllerTest {
         when(awardBadgeUseCase.execute(any()))
                 .thenThrow(new BadgeNotFoundException("badge-999"));
 
-        mockMvc.perform(post("/api/v1/badges/award")
+        mockMvc.perform(post("/api/v1/gamificacion/badges/award")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())

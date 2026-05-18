@@ -30,6 +30,7 @@ class WeeklyXpResetSchedulerTest {
                 .userId("user-001")
                 .totalXp(500)
                 .weeklyXp(200)
+                .weeklyMonas(3)
                 .rankingOptIn(true)
                 .earnedBadges(new ArrayList<>())
                 .progress(new ArrayList<>())
@@ -39,6 +40,7 @@ class WeeklyXpResetSchedulerTest {
                 .userId("user-002")
                 .totalXp(300)
                 .weeklyXp(100)
+                .weeklyMonas(1)
                 .rankingOptIn(true)
                 .earnedBadges(new ArrayList<>())
                 .progress(new ArrayList<>())
@@ -50,6 +52,8 @@ class WeeklyXpResetSchedulerTest {
 
         assertThat(user1.getWeeklyXp()).isZero();
         assertThat(user2.getWeeklyXp()).isZero();
+        assertThat(user1.getWeeklyMonas()).isZero();
+        assertThat(user2.getWeeklyMonas()).isZero();
         assertThat(user1.getTotalXp()).isEqualTo(500);
         assertThat(user2.getTotalXp()).isEqualTo(300);
 

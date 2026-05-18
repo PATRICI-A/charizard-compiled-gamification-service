@@ -13,6 +13,11 @@ public class UserStatsResponse {
     private String userId;
     private int totalXp;
     private int weeklyXp;
+    private int weeklyMonas;
+    private int totalMonas;
+    private int nivel;
+    private String levelName;
     private boolean rankingOptIn;
     private int totalBadgesEarned;
+    private int totalRewardsUnlocked;
 }

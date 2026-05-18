@@ -41,6 +41,15 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
     }
 
     @Override
+    public List<UserGamification> findAllOptedInOrderByWeeklyMonasDesc(int limit) {
+        return mongoRepository
+                .findByRankingOptInTrueOrderByWeeklyMonasDesc(PageRequest.of(0, limit))
+                .stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<UserGamification> findAllOptedIn() {
         return mongoRepository.findByRankingOptInTrue().stream()
                 .map(mapper::toDomain)
@@ -53,5 +62,15 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
                 .map(mapper::toDocument)
                 .toList();
         mongoRepository.saveAll(docs);
+    }
+
+    @Override
+    public long countAllOptedIn() {
+        return mongoRepository.countByRankingOptInTrue();
+    }
+
+    @Override
+    public long countOptedInWithMoreMonasThan(int weeklyMonas) {
+        return mongoRepository.countByRankingOptInTrueAndWeeklyMonasGreaterThan(weeklyMonas);
     }
 }

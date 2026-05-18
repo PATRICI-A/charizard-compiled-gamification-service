@@ -26,12 +26,13 @@ class ToggleRankingOptInServiceTest {
     private ToggleRankingOptInService service;
 
     @Test
-    @DisplayName("Activa el ranking si el usuario no participaba")
-    void execute_shouldEnableRanking_whenOptInWasFalse() {
+    @DisplayName("Activa el ranking cuando participar=true")
+    void execute_shouldEnableRanking_whenPariciparIsTrue() {
         UserGamification user = UserGamification.builder()
                 .userId("user-001")
                 .totalXp(0)
                 .weeklyXp(0)
+                .weeklyMonas(0)
                 .rankingOptIn(false)
                 .earnedBadges(new ArrayList<>())
                 .progress(new ArrayList<>())
@@ -40,18 +41,19 @@ class ToggleRankingOptInServiceTest {
         when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.of(user));
         when(userGamificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        boolean result = service.execute("user-001");
+        boolean result = service.execute("user-001", true);
 
         assertThat(result).isTrue();
     }
 
     @Test
-    @DisplayName("Desactiva el ranking si el usuario ya participaba")
-    void execute_shouldDisableRanking_whenOptInWasTrue() {
+    @DisplayName("Desactiva el ranking cuando participar=false")
+    void execute_shouldDisableRanking_whenPariciparIsFalse() {
         UserGamification user = UserGamification.builder()
                 .userId("user-001")
                 .totalXp(0)
                 .weeklyXp(0)
+                .weeklyMonas(0)
                 .rankingOptIn(true)
                 .earnedBadges(new ArrayList<>())
                 .progress(new ArrayList<>())
@@ -60,7 +62,7 @@ class ToggleRankingOptInServiceTest {
         when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.of(user));
         when(userGamificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        boolean result = service.execute("user-001");
+        boolean result = service.execute("user-001", false);
 
         assertThat(result).isFalse();
     }
@@ -71,7 +73,7 @@ class ToggleRankingOptInServiceTest {
         when(userGamificationRepository.findByUserId("user-new")).thenReturn(Optional.empty());
         when(userGamificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        boolean result = service.execute("user-new");
+        boolean result = service.execute("user-new", true);
 
         assertThat(result).isTrue();
 

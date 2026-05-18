@@ -20,15 +20,15 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Gamification Service API")
                         .description("""
-                                **Módulo M04 — Gamificación**
+                                **Module M04 — Gamification**
 
-                                Gestión de insignias (monas), XP y ranking semanal.
+                                Badge management, XP and weekly ranking.
 
-                                **Autenticación:** Bearer JWT emitido por M01 (snorlax-energy-auth-service).
+                                **Authentication:** Bearer JWT issued by M01 (snorlax-energy-auth-service).
 
                                 **Roles:**
-                                - `ADMIN` — puede crear y otorgar insignias
-                                - `USER` — puede consultar sus insignias, progreso, estadísticas y el ranking
+                                - `ADMIN` — can create and award badges
+                                - `USER` — can query their badges, progress, stats and ranking
                                 """)
                         .version("1.0.0")
                         .contact(new Contact()
@@ -41,6 +41,6 @@ public class OpenApiConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
-                                .description("Ingresa el token JWT sin el prefijo 'Bearer '")));
+                                .description("Enter the JWT token without the 'Bearer ' prefix")));
     }
 }

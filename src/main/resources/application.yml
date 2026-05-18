@@ -4,14 +4,46 @@ server:
 spring:
   application:
     name: gamification-service
-  data:
-    mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/gamification_db}
-      auto-index-creation: true
+  mongodb:
+    uri: "${SPRING_MONGODB_URI:mongodb+srv://shaddaygonzalez5_db_user:UhQV85Jf9l2dYkpS@cluster0.grwrgmg.mongodb.net/gamification_db?appName=Cluster0}"
 
   security:
     jwt:
-      secret: ${JWT_SECRET:charizard-compiled-secret-key-2025-very-long-key-for-hs256}
+      secret: ${JWT_SECRET:P4tric1A-Auth-S3rv1c3-S3cr3t-K3y-2026!!}
+
+  # RabbitMQ — broker CloudAMQP (Azure)
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5671}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: ${RABBITMQ_VHOST:/}
+    ssl:
+      enabled: ${RABBITMQ_SSL:false}
+
+# RabbitMQ — exchanges, queues y routing keys
+rabbitmq:
+  # Outbound: gamification publica aquí cuando se gana una mona
+  exchange:
+    gamification: ${RABBITMQ_EXCHANGE_GAMIFICATION:gamification.events}
+  routing-key:
+    badge-earned: ${RABBITMQ_RK_BADGE_EARNED:badge.earned}
+
+  # Inbound: exchanges de otros microservicios que gamification escucha
+  exchange:
+    social: ${RABBITMQ_EXCHANGE_SOCIAL:social.events}
+    hangout: ${RABBITMQ_EXCHANGE_HANGOUT:hangout.events}
+    geolocation: ${RABBITMQ_EXCHANGE_GEOLOCATION:geolocation.events}
+    institutional: ${RABBITMQ_EXCHANGE_INSTITUTIONAL:institutional.events}
+
+  # Queues propias de gamification (una por tipo de evento)
+  queue:
+    connection-created: ${RABBITMQ_QUEUE_CONNECTION:gamification.connection.queue}
+    parche-created: ${RABBITMQ_QUEUE_PARCHE:gamification.parche.queue}
+    member-joined: ${RABBITMQ_QUEUE_MEMBER:gamification.member.queue}
+    message-sent: ${RABBITMQ_QUEUE_MESSAGE:gamification.message.queue}
+    zone-visited: ${RABBITMQ_QUEUE_ZONE:gamification.zone.queue}
+    event-attended: ${RABBITMQ_QUEUE_INSTITUTIONAL:gamification.institutional.queue}
 
 springdoc:
   api-docs:
@@ -19,10 +51,20 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
-services:
-  notification:
-    url: ${NOTIFICATION_SERVICE_URL:http://localhost:8085}
-
 scheduling:
   weekly-reset:
     cron: "0 0 0 * * MON"   # Lunes a medianoche
+
+# URLs de servicios externos (OpenFeign)
+services:
+  profile:
+    url: ${PROFILE_SERVICE_URL:}   # Vacío = fallback activo (devuelve userId como displayName)
+
+# Actuator
+management:
+  endpoint:
+    health:
+      show-details: always
+  health:
+    rabbit:
+      enabled: ${RABBITMQ_HEALTH_ENABLED:true}

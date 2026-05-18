@@ -6,6 +6,7 @@ import com.charizad.compiled.gamification_service.application.dto.response.UserS
 import com.charizad.compiled.gamification_service.domain.exceptions.UserGamificationNotFoundException;
 import com.charizad.compiled.gamification_service.domain.ports.in.*;
 import com.charizad.compiled.gamification_service.entrypoints.advice.GlobalExceptionHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -36,10 +39,14 @@ class UserGamificationControllerTest {
     @Mock GetUserStatsUseCase getUserStatsUseCase;
     @Mock ToggleRankingOptInUseCase toggleRankingOptInUseCase;
     @Mock GetRankingUseCase getRankingUseCase;
+    @Mock GetUserRewardsUseCase getUserRewardsUseCase;
+    @Mock GetUserLevelUseCase getUserLevelUseCase;
+    @Mock GetRankingPositionUseCase getRankingPositionUseCase;
 
     @InjectMocks UserGamificationController controller;
 
     MockMvc mockMvc;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
@@ -66,7 +73,7 @@ class UserGamificationControllerTest {
 
         when(getUserBadgesUseCase.execute(any())).thenReturn(badges);
 
-        mockMvc.perform(get("/api/v1/gamification/me/badges"))
+        mockMvc.perform(get("/api/v1/gamificacion/me/badges"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].badgeId").value("badge-001"))
                 .andExpect(jsonPath("$[0].xpAwarded").value(100));
@@ -78,7 +85,7 @@ class UserGamificationControllerTest {
         when(getUserBadgesUseCase.execute(any()))
                 .thenThrow(new UserGamificationNotFoundException("user-999"));
 
-        mockMvc.perform(get("/api/v1/gamification/me/badges"))
+        mockMvc.perform(get("/api/v1/gamificacion/me/badges"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(
                         "Perfil de gamificación no encontrado para el usuario: user-999"));
@@ -97,7 +104,7 @@ class UserGamificationControllerTest {
 
         when(getUserStatsUseCase.execute(any())).thenReturn(stats);
 
-        mockMvc.perform(get("/api/v1/gamification/me/stats"))
+        mockMvc.perform(get("/api/v1/gamificacion/me/stats"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalXp").value(350))
                 .andExpect(jsonPath("$.weeklyXp").value(150))
@@ -106,13 +113,15 @@ class UserGamificationControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /me/ranking/toggle retorna 200 con nuevo estado")
-    void toggleRanking_shouldReturn200() throws Exception {
+    @DisplayName("PATCH /me/ranking/optin retorna 200 con nuevo estado")
+    void setRankingOptIn_shouldReturn200() throws Exception {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken("user-001", null));
-        when(toggleRankingOptInUseCase.execute("user-001")).thenReturn(true);
+        when(toggleRankingOptInUseCase.execute("user-001", true)).thenReturn(true);
 
-        mockMvc.perform(patch("/api/v1/gamification/me/ranking/toggle"))
+        mockMvc.perform(patch("/api/v1/gamificacion/me/ranking/optin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("participar", true))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rankingOptIn").value(true))
                 .andExpect(jsonPath("$.message").value("Ahora participas en el ranking semanal."));
@@ -128,7 +137,7 @@ class UserGamificationControllerTest {
 
         when(getRankingUseCase.execute(anyInt())).thenReturn(ranking);
 
-        mockMvc.perform(get("/api/v1/gamification/ranking?limit=10"))
+        mockMvc.perform(get("/api/v1/gamificacion/ranking?limit=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].position").value(1))
                 .andExpect(jsonPath("$[0].userId").value("user-A"))
@@ -141,7 +150,7 @@ class UserGamificationControllerTest {
     void getRanking_shouldUseDefaultLimit() throws Exception {
         when(getRankingUseCase.execute(10)).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/v1/gamification/ranking"))
+        mockMvc.perform(get("/api/v1/gamificacion/ranking"))
                 .andExpect(status().isOk());
     }
 }

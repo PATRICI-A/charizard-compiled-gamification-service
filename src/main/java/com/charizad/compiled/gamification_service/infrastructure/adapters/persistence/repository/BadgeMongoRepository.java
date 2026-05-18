@@ -8,4 +8,5 @@ import java.util.List;
 public interface BadgeMongoRepository extends MongoRepository<BadgeDocument, String> {
     List<BadgeDocument> findByActiveTrue();
     boolean existsByName(String name);
+    java.util.Optional<BadgeDocument> findByName(String name);
 }

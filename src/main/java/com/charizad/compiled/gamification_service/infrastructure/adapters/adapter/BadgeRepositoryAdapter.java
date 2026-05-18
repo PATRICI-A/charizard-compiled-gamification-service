@@ -41,6 +41,11 @@ public class BadgeRepositoryAdapter implements BadgeRepositoryPort {
     }
 
     @Override
+    public Optional<Badge> findByName(String name) {
+        return mongoRepository.findByName(name).map(mapper::toDomain);
+    }
+
+    @Override
     public boolean existsByName(String name) {
         return mongoRepository.existsByName(name);
     }
