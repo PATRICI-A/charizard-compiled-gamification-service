@@ -1,4 +1,4 @@
-name: CD – Azure Container Apps Deploy
+name: CD – Deploy to QA
 
 on:
   push:
@@ -9,7 +9,6 @@ env:
   JAVA_VERSION: '21'
   REGISTRY: ghcr.io
   IMAGE_NAME: patrici-a/charizard-compiled-gamification-service
-  CONTAINER_APP_NAME: patricia-gamificati-service-prod
   RESOURCE_GROUP: rg-patricia-prod
 
 jobs:
@@ -49,10 +48,10 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prod-latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:qa-latest
 
-  deploy:
-    name: "Deploy to Azure Container Apps"
+  deploy-qa:
+    name: "Deploy to QA"
     runs-on: ubuntu-latest
     needs: build-and-push
 
@@ -63,9 +62,22 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Container Apps
+      - name: Deploy to QA Container App
         run: |
           az containerapp update \
-            --name ${{ env.CONTAINER_APP_NAME }} \
+            --name patricia-gamificati-service-qa \
             --resource-group ${{ env.RESOURCE_GROUP }} \
-            --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prod-latest
+            --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:qa-latest
+
+      - name: Health check QA
+        run: |
+          sleep 30
+          STATUS=$(az containerapp show \
+            --name patricia-gamificati-service-qa \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --query "properties.runningStatus" -o tsv)
+          echo "QA status: $STATUS"
+          if [ "$STATUS" != "Running" ]; then
+            echo "QA health check failed"
+            exit 1
+          fi
