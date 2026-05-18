@@ -7,9 +7,9 @@ services:
     ports:
       - "8086:8080"
     environment:
-      SPRING_DATA_MONGODB_URI: ${MONGODB_URI:mongodb+srv://shaddaygonzalez5_db_user:UhQV85Jf9l2dYkpS@cluster0.grwrgmg.mongodb.net/gamification_db?appName=Cluster0}
-      JWT_SECRET: ${JWT_SECRET:P4tric1A-Auth-S3rv1c3-S3cr3t-K3y-2026!!}
-      NOTIFICATION_SERVICE_URL: ${NOTIFICATION_SERVICE_URL:https://patricia-gamification-service-cfdyfqckhehrbmfb.canadacentral-01.azurewebsites.net}
+      SPRING_DATA_MONGODB_URI: ${MONGODB_URI:-mongodb+srv://shaddaygonzalez5_db_user:UhQV85Jf9l2dYkpS@cluster0.grwrgmg.mongodb.net/gamification_db?appName=Cluster0}
+      JWT_SECRET: ${JWT_SECRET:-P4tric1A-Auth-S3rv1c3-S3cr3t-K3y-2026!!}
+      NOTIFICATION_SERVICE_URL: ${NOTIFICATION_SERVICE_URL:-https://patricia-gamification-service-cfdyfqckhehrbmfb.canadacentral-01.azurewebsites.net}
     depends_on:
       mongodb:
         condition: service_healthy
