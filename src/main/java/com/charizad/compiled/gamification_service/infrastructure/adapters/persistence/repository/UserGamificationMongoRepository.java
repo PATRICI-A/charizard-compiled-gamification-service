@@ -12,4 +12,7 @@ public interface UserGamificationMongoRepository extends MongoRepository<UserGam
     Optional<UserGamificationDocument> findByUserId(String userId);
     List<UserGamificationDocument> findByRankingOptInTrue();
     List<UserGamificationDocument> findByRankingOptInTrueOrderByWeeklyXpDesc(PageRequest pageRequest);
+    List<UserGamificationDocument> findByRankingOptInTrueOrderByWeeklyMonasDesc(PageRequest pageRequest);
+    long countByRankingOptInTrue();
+    long countByRankingOptInTrueAndWeeklyMonasGreaterThan(int weeklyMonas);
 }

@@ -13,11 +13,11 @@ public class ToggleRankingOptInService implements ToggleRankingOptInUseCase {
     private final UserGamificationRepositoryPort userGamificationRepository;
 
     @Override
-    public boolean execute(String userId) {
+    public boolean execute(String userId, boolean participar) {
         UserGamification user = userGamificationRepository.findByUserId(userId)
                 .orElseGet(() -> UserGamification.newUser(userId));
 
-        user.toggleRankingOptIn();
+        user.setRankingOptIn(participar);
         userGamificationRepository.save(user);
         return user.isRankingOptIn();
     }

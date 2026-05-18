@@ -9,15 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStatsResponse {
+public class RankingPositionResponse {
     private String userId;
-    private int totalXp;
-    private int weeklyXp;
-    private int weeklyMonas;
-    private int totalMonas;
-    private int nivel;
+    private int posicion;
+    private long totalParticipantes;
+    private int monasThisWeek;
     private String levelName;
-    private boolean rankingOptIn;
-    private int totalBadgesEarned;
-    private int totalRewardsUnlocked;
 }

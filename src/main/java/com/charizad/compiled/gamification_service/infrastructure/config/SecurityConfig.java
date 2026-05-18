@@ -33,9 +33,9 @@ public class SecurityConfig {
                     "/actuator/health/**"
                 ).permitAll()
                 // Solo ADMIN puede crear insignias
-                .requestMatchers(HttpMethod.POST, "/api/v1/badges").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/gamificacion/badges").hasRole("ADMIN")
                 // Solo ADMIN puede otorgar insignias manualmente
-                .requestMatchers(HttpMethod.POST, "/api/v1/badges/award").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/gamificacion/badges/award").hasRole("ADMIN")
                 // El resto requiere autenticación
                 .anyRequest().authenticated()
             )

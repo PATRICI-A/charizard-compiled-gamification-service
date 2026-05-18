@@ -20,9 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/badges")
+@RequestMapping("/api/v1/gamificacion/badges")
 @RequiredArgsConstructor
-@Tag(name = "Badges", description = "Management of the badge catalog")
+@Tag(name = "Badges (Monas)", description = "Management of the collectible badge (mona) catalog — RF13.1")
 @SecurityRequirement(name = "bearerAuth")
 public class BadgeController {
 

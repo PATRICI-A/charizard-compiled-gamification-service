@@ -2,8 +2,6 @@ package com.charizad.compiled.gamification_service.infrastructure.config;
 
 import com.charizad.compiled.gamification_service.domain.model.enums.BadgeCategory;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.BadgeDocument;
-import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.EarnedBadgeSubdocument;
-import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.UserGamificationDocument;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.repository.BadgeMongoRepository;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.repository.UserGamificationMongoRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +14,12 @@ import org.springframework.context.annotation.Profile;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Siembra el catálogo oficial de las 13 monas (RF13.1) al arrancar en entorno dev.
+ * En producción las monas deben cargarse mediante un script de migración separado.
+ *
+ * Solo se ejecuta si la colección 'badges' está vacía y el perfil NO es 'prod' ni 'test'.
+ */
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
@@ -29,119 +33,98 @@ public class DataSeeder {
     public CommandLineRunner seedData() {
         return args -> {
             if (badgeRepository.count() > 0) {
-                log.info("Base de datos ya tiene datos, omitiendo seeder.");
+                log.info("Catálogo de monas ya existe, omitiendo seeder.");
                 return;
             }
 
-            log.info("Insertando datos de prueba...");
-
-            // ── Insignias ────────────────────────────────────────────────────
-            BadgeDocument badge1 = badgeRepository.save(BadgeDocument.builder()
-                    .name("Primer Parche")
-                    .description("Asististe a tu primer parche")
-                    .category(BadgeCategory.COMMON)
-                    .xpReward(50)
-                    .iconUrl("https://cdn.example.com/badges/primer-parche.png")
-                    .createdAt(LocalDateTime.now())
-                    .active(true)
-                    .build());
-
-            BadgeDocument badge2 = badgeRepository.save(BadgeDocument.builder()
-                    .name("Organizador Nato")
-                    .description("Creaste 5 parches exitosos")
-                    .category(BadgeCategory.UNCOMMON)
-                    .xpReward(150)
-                    .iconUrl("https://cdn.example.com/badges/organizador.png")
-                    .createdAt(LocalDateTime.now())
-                    .active(true)
-                    .build());
-
-            BadgeDocument badge3 = badgeRepository.save(BadgeDocument.builder()
-                    .name("El Parche Épico")
-                    .description("Asististe a un parche con más de 20 personas")
-                    .category(BadgeCategory.EPIC)
-                    .xpReward(300)
-                    .iconUrl("https://cdn.example.com/badges/epico.png")
-                    .createdAt(LocalDateTime.now())
-                    .active(true)
-                    .build());
-
-            BadgeDocument badge4 = badgeRepository.save(BadgeDocument.builder()
-                    .name("Leyenda del Campus")
-                    .description("Acumulaste más de 1000 XP")
-                    .category(BadgeCategory.LEGENDARY)
-                    .xpReward(500)
-                    .iconUrl("https://cdn.example.com/badges/leyenda.png")
-                    .createdAt(LocalDateTime.now())
-                    .active(true)
-                    .build());
-
-            log.info("Insignias creadas: {}, {}, {}, {}",
-                    badge1.getId(), badge2.getId(), badge3.getId(), badge4.getId());
-
-            // ── Usuarios de prueba ───────────────────────────────────────────
-            userRepository.save(UserGamificationDocument.builder()
-                    .userId("user-test-001")
-                    .totalXp(200)
-                    .weeklyXp(200)
-                    .rankingOptIn(true)
-                    .earnedBadges(List.of(
-                            EarnedBadgeSubdocument.builder()
-                                    .badgeId(badge1.getId())
-                                    .badgeName(badge1.getName())
-                                    .earnedAt(LocalDateTime.now().minusDays(10))
-                                    .xpAwarded(badge1.getXpReward())
-                                    .build(),
-                            EarnedBadgeSubdocument.builder()
-                                    .badgeId(badge2.getId())
-                                    .badgeName(badge2.getName())
-                                    .earnedAt(LocalDateTime.now().minusDays(3))
-                                    .xpAwarded(badge2.getXpReward())
-                                    .build()
-                    ))
-                    .progress(List.of())
-                    .build());
-
-            userRepository.save(UserGamificationDocument.builder()
-                    .userId("user-test-002")
-                    .totalXp(300)
-                    .weeklyXp(300)
-                    .rankingOptIn(true)
-                    .earnedBadges(List.of(
-                            EarnedBadgeSubdocument.builder()
-                                    .badgeId(badge1.getId())
-                                    .badgeName(badge1.getName())
-                                    .earnedAt(LocalDateTime.now().minusDays(7))
-                                    .xpAwarded(badge1.getXpReward())
-                                    .build(),
-                            EarnedBadgeSubdocument.builder()
-                                    .badgeId(badge3.getId())
-                                    .badgeName(badge3.getName())
-                                    .earnedAt(LocalDateTime.now().minusDays(1))
-                                    .xpAwarded(badge3.getXpReward())
-                                    .build()
-                    ))
-                    .progress(List.of())
-                    .build());
-
-            userRepository.save(UserGamificationDocument.builder()
-                    .userId("user-test-003")
-                    .totalXp(50)
-                    .weeklyXp(50)
-                    .rankingOptIn(false)
-                    .earnedBadges(List.of(
-                            EarnedBadgeSubdocument.builder()
-                                    .badgeId(badge1.getId())
-                                    .badgeName(badge1.getName())
-                                    .earnedAt(LocalDateTime.now().minusDays(2))
-                                    .xpAwarded(badge1.getXpReward())
-                                    .build()
-                    ))
-                    .progress(List.of())
-                    .build());
-
-            log.info("Usuarios de prueba creados: user-test-001, user-test-002, user-test-003");
-            log.info("Seeder completado exitosamente.");
+            log.info("Sembrando catálogo oficial de 13 monas (RF13.1)...");
+            seedOfficialMonas();
+            log.info("Catálogo de monas sembrado exitosamente.");
         };
+    }
+
+    private void seedOfficialMonas() {
+        List<BadgeDocument> monas = List.of(
+                badge("Primera Conexión",
+                        "Realizaste tu primera conexión con otro usuario en la plataforma.",
+                        BadgeCategory.COMMON, 10,
+                        "https://cdn.example.com/monas/primera-conexion.png"),
+
+                badge("Conector",
+                        "Acumulaste 5 conexiones activas.",
+                        BadgeCategory.UNCOMMON, 25,
+                        "https://cdn.example.com/monas/conector.png"),
+
+                badge("Embajador Social",
+                        "Acumulaste 10 conexiones activas.",
+                        BadgeCategory.RARE, 50,
+                        "https://cdn.example.com/monas/embajador-social.png"),
+
+                badge("Primer Parche",
+                        "Te uniste o creaste tu primer parche.",
+                        BadgeCategory.COMMON, 10,
+                        "https://cdn.example.com/monas/primer-parche.png"),
+
+                badge("Anfitrión",
+                        "Creaste 2 parches como capitán.",
+                        BadgeCategory.UNCOMMON, 25,
+                        "https://cdn.example.com/monas/anfitrion.png"),
+
+                badge("Planificador",
+                        "Creaste un parche con más de 3 días de anticipación.",
+                        BadgeCategory.COMMON, 15,
+                        "https://cdn.example.com/monas/planificador.png"),
+
+                badge("Explorador I",
+                        "Visitaste 3 zonas distintas del campus.",
+                        BadgeCategory.COMMON, 15,
+                        "https://cdn.example.com/monas/explorador-i.png"),
+
+                badge("Explorador II",
+                        "Visitaste 5 zonas distintas del campus.",
+                        BadgeCategory.UNCOMMON, 30,
+                        "https://cdn.example.com/monas/explorador-ii.png"),
+
+                badge("Asistente",
+                        "Asististe a un evento universitario institucional guardado.",
+                        BadgeCategory.RARE, 50,
+                        "https://cdn.example.com/monas/asistente.png"),
+
+                badge("Primer Mensaje",
+                        "Enviaste el primer mensaje en un parche recién creado.",
+                        BadgeCategory.COMMON, 10,
+                        "https://cdn.example.com/monas/primer-mensaje.png"),
+
+                badge("Imán Social",
+                        "Un nuevo usuario se unió a un parche que tú creaste.",
+                        BadgeCategory.COMMON, 15,
+                        "https://cdn.example.com/monas/iman-social.png"),
+
+                badge("Meteoro Social",
+                        "Pasaste de 0 a 10 conexiones en menos de 30 días desde tu registro.",
+                        BadgeCategory.EPIC, 100,
+                        "https://cdn.example.com/monas/meteoro-social.png"),
+
+                badge("Coleccionista",
+                        "Desbloqueaste las 12 monas anteriores. ¡Eres una Leyenda del Parche!",
+                        BadgeCategory.LEGENDARY, 200,
+                        "https://cdn.example.com/monas/coleccionista.png")
+        );
+
+        badgeRepository.saveAll(monas);
+        log.info("13 monas insertadas en el catálogo.");
+    }
+
+    private BadgeDocument badge(String name, String description,
+                                BadgeCategory category, int xpReward, String iconUrl) {
+        return BadgeDocument.builder()
+                .name(name)
+                .description(description)
+                .category(category)
+                .xpReward(xpReward)
+                .iconUrl(iconUrl)
+                .createdAt(LocalDateTime.now())
+                .active(true)
+                .build();
     }
 }
