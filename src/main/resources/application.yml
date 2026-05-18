@@ -23,18 +23,14 @@ spring:
 
 # RabbitMQ — exchanges, queues y routing keys
 rabbitmq:
-  # Outbound: gamification publica aquí cuando se gana una mona
   exchange:
     gamification: ${RABBITMQ_EXCHANGE_GAMIFICATION:gamification.events}
-  routing-key:
-    badge-earned: ${RABBITMQ_RK_BADGE_EARNED:badge.earned}
-
-  # Inbound: exchanges de otros microservicios que gamification escucha
-  exchange:
     social: ${RABBITMQ_EXCHANGE_SOCIAL:social.events}
     hangout: ${RABBITMQ_EXCHANGE_HANGOUT:hangout.events}
     geolocation: ${RABBITMQ_EXCHANGE_GEOLOCATION:geolocation.events}
     institutional: ${RABBITMQ_EXCHANGE_INSTITUTIONAL:institutional.events}
+  routing-key:
+    badge-earned: ${RABBITMQ_RK_BADGE_EARNED:badge.earned}
 
   # Queues propias de gamification (una por tipo de evento)
   queue:
