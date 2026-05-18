@@ -30,4 +30,4 @@ jobs:
           az containerapp update \
             --name patricia-gamificati-service-prod \
             --resource-group ${{ env.RESOURCE_GROUP }} \
-            --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prod-latest
+            --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:qa-latest
