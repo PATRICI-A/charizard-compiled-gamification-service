@@ -4,8 +4,9 @@ server:
 spring:
   application:
     name: gamification-service
-  mongodb:
-    uri: "${SPRING_DATA_MONGODB_URI:mongodb+srv://shaddaygonzalez5_db_user:UhQV85Jf9l2dYkpS@cluster0.grwrgmg.mongodb.net/gamification_db?appName=Cluster0}"
+  data:
+    mongodb:
+      uri: "${SPRING_DATA_MONGODB_URI:mongodb+srv://shaddaygonzalez5_db_user:UhQV85Jf9l2dYkpS@cluster0.grwrgmg.mongodb.net/gamification_db?appName=Cluster0}"
 
   security:
     jwt:
@@ -63,4 +64,4 @@ management:
       show-details: always
   health:
     rabbit:
-      enabled: ${RABBITMQ_HEALTH_ENABLED:true}
+      enabled: ${RABBITMQ_HEALTH_ENABLED:false}

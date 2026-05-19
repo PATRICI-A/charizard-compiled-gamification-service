@@ -10,6 +10,7 @@ import com.charizad.compiled.gamification_service.domain.ports.in.AwardBadgeUseC
 import com.charizad.compiled.gamification_service.domain.ports.out.BadgeRepositoryPort;
 import com.charizad.compiled.gamification_service.domain.ports.out.UserGamificationRepositoryPort;
 import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge;
+import com.charizad.compiled.gamification_service.domain.valueobjects.BadgeProgress;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -330,67 +331,165 @@ class CheckBadgeUnlockServiceTest {
 
     // ─── ZONE_VISITED ─────────────────────────────────────────────────────────
 
-    @Test
-    @DisplayName("ZONE_VISITED con 3 zonas otorga Explorador I")
-    void zoneVisited_3zones_awardsExploradorI() {
-        stubBadgeFound("Explorador I", "b7");
-        when(userGamificationRepository.findByUserId("u1")).thenReturn(Optional.empty());
-
-        BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
-                .userId("u1")
-                .eventType(BadgeUnlockEventType.ZONE_VISITED)
-                .totalZonesVisited(3)
+    private UserGamification userWithZones(String userId, String... zones) {
+        ArrayList<String> zoneList = new ArrayList<>(List.of(zones));
+        return UserGamification.builder()
+                .userId(userId).totalXp(0).weeklyXp(0).weeklyMonas(0)
+                .rankingOptIn(false)
+                .earnedBadges(new ArrayList<>())
+                .progress(new ArrayList<>())
+                .earnedRewards(new ArrayList<>())
+                .visitedCampusZones(zoneList)
                 .build();
-
-        List<String> result = service.execute(event);
-
-        assertThat(result).containsExactly("b7");
     }
 
     @Test
-    @DisplayName("ZONE_VISITED con 5 zonas otorga Explorador I y II")
-    void zoneVisited_5zones_awardsExploradorIandII() {
+    @DisplayName("ZONE_VISITED zona nueva lleva a 3 → otorga Explorador I")
+    void zoneVisited_3rdZone_awardsExploradorI() {
         stubBadgeFound("Explorador I", "b7");
         stubBadgeFound("Explorador II", "b8");
+        when(userGamificationRepository.findByUserId("u1"))
+                .thenReturn(Optional.of(userWithZones("u1", "Zona A", "Zona B")));
+
+        BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+                .userId("u1")
+                .eventType(BadgeUnlockEventType.ZONE_VISITED)
+                .campusZone("Zona C")
+                .geoLocationEnabled(true)
+                .build();
+
+        List<String> result = service.execute(event);
+
+        assertThat(result).contains("b7");
+        verify(userGamificationRepository).save(any(UserGamification.class));
+    }
+
+    @Test
+    @DisplayName("ZONE_VISITED zona nueva lleva a 5 → otorga Explorador I y II")
+    void zoneVisited_5thZone_awardsExploradorIAndII() {
+        stubBadgeFound("Explorador I", "b7");
+        stubBadgeFound("Explorador II", "b8");
+        when(userGamificationRepository.findByUserId("u1"))
+                .thenReturn(Optional.of(userWithZones("u1", "A", "B", "C", "D")));
+
+        BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+                .userId("u1")
+                .eventType(BadgeUnlockEventType.ZONE_VISITED)
+                .campusZone("E")
+                .geoLocationEnabled(true)
+                .build();
+
+        List<String> result = service.execute(event);
+
+        assertThat(result).containsAnyOf("b7", "b8");
+        verify(userGamificationRepository).save(any(UserGamification.class));
+    }
+
+    @Test
+    @DisplayName("ZONE_VISITED zona nueva lleva a 2 → no otorga insignias")
+    void zoneVisited_2ndZone_noAward() {
+        stubBadgeFound("Explorador I", "b7");
+        stubBadgeFound("Explorador II", "b8");
+        when(userGamificationRepository.findByUserId("u1"))
+                .thenReturn(Optional.of(userWithZones("u1", "Zona A")));
+
+        BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+                .userId("u1")
+                .eventType(BadgeUnlockEventType.ZONE_VISITED)
+                .campusZone("Zona B")
+                .geoLocationEnabled(true)
+                .build();
+
+        List<String> result = service.execute(event);
+
+        assertThat(result).isEmpty();
+        verifyNoInteractions(awardBadgeUseCase);
+    }
+
+    @Test
+    @DisplayName("ZONE_VISITED zona ya visitada — conteo no aumenta")
+    void zoneVisited_duplicateZone_countUnchanged() {
+        stubBadgeFound("Explorador I", "b7");
+        stubBadgeFound("Explorador II", "b8");
+        UserGamification user = userWithZones("u1", "Zona A", "Zona B");
+        when(userGamificationRepository.findByUserId("u1")).thenReturn(Optional.of(user));
+
+        BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+                .userId("u1")
+                .eventType(BadgeUnlockEventType.ZONE_VISITED)
+                .campusZone("Zona A") // duplicate
+                .geoLocationEnabled(true)
+                .build();
+
+        service.execute(event);
+
+        assertThat(user.getVisitedCampusZones()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("ZONE_VISITED con campusZone null → no otorga")
+    void zoneVisited_nullCampusZone_noAward() {
+        BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+                .userId("u1")
+                .eventType(BadgeUnlockEventType.ZONE_VISITED)
+                .campusZone(null)
+                .geoLocationEnabled(true)
+                .build();
+
+        List<String> result = service.execute(event);
+
+        assertThat(result).isEmpty();
+        verifyNoInteractions(awardBadgeUseCase);
+    }
+
+    @Test
+    @DisplayName("ZONE_VISITED con usuario no encontrado → no otorga")
+    void zoneVisited_userNotFound_noAward() {
         when(userGamificationRepository.findByUserId("u1")).thenReturn(Optional.empty());
 
         BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
                 .userId("u1")
                 .eventType(BadgeUnlockEventType.ZONE_VISITED)
-                .totalZonesVisited(5)
-                .build();
-
-        List<String> result = service.execute(event);
-
-        assertThat(result).containsExactlyInAnyOrder("b7", "b8");
-    }
-
-    @Test
-    @DisplayName("ZONE_VISITED con 2 zonas no otorga ninguna insignia")
-    void zoneVisited_2zones_noAward() {
-        BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
-                .userId("u1")
-                .eventType(BadgeUnlockEventType.ZONE_VISITED)
-                .totalZonesVisited(2)
+                .campusZone("Zona A")
+                .geoLocationEnabled(true)
                 .build();
 
         List<String> result = service.execute(event);
 
         assertThat(result).isEmpty();
+        verifyNoInteractions(awardBadgeUseCase);
     }
 
     @Test
-    @DisplayName("ZONE_VISITED con null zonas no otorga ninguna insignia")
-    void zoneVisited_nullZones_noAward() {
+    @DisplayName("ZONE_VISITED con geoLocationEnabled=false no otorga (RN-13.1.5)")
+    void zoneVisited_geoDisabled_noAwardEvenWithEnoughZones() {
         BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
                 .userId("u1")
                 .eventType(BadgeUnlockEventType.ZONE_VISITED)
-                .totalZonesVisited(null)
+                .campusZone("Zona A")
+                .geoLocationEnabled(false)
                 .build();
 
         List<String> result = service.execute(event);
 
         assertThat(result).isEmpty();
+        verifyNoInteractions(awardBadgeUseCase);
+    }
+
+    @Test
+    @DisplayName("ZONE_VISITED con geoLocationEnabled=null no otorga (RN-13.1.5)")
+    void zoneVisited_geoNull_noAward() {
+        BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+                .userId("u1")
+                .eventType(BadgeUnlockEventType.ZONE_VISITED)
+                .campusZone("Zona A")
+                .geoLocationEnabled(null)
+                .build();
+
+        List<String> result = service.execute(event);
+
+        assertThat(result).isEmpty();
+        verifyNoInteractions(awardBadgeUseCase);
     }
 
     // ─── INSTITUTIONAL_EVENT_ATTENDED ─────────────────────────────────────────

@@ -27,6 +27,7 @@ public class UserGamification {
     private final List<EarnedBadge> earnedBadges;
     private final List<BadgeProgress> progress;
     private final List<EarnedReward> earnedRewards;
+    private final List<String> visitedCampusZones;
 
     public boolean hasBadge(String badgeId) {
         return earnedBadges.stream().anyMatch(b -> b.getBadgeId().equals(badgeId));
@@ -78,6 +79,27 @@ public class UserGamification {
         return Collections.unmodifiableList(earnedRewards);
     }
 
+    public List<String> getVisitedCampusZones() {
+        return visitedCampusZones == null ? List.of() : Collections.unmodifiableList(visitedCampusZones);
+    }
+
+    /** Adds zone if not already visited. Returns true if it was a new zone. */
+    public boolean visitZone(String campusZone) {
+        if (visitedCampusZones == null || visitedCampusZones.contains(campusZone)) return false;
+        visitedCampusZones.add(campusZone);
+        return true;
+    }
+
+    /** Upserts the BadgeProgress entry for the given badgeId. */
+    public void updateProgress(String badgeId, int currentValue, int requiredValue) {
+        progress.removeIf(p -> p.getBadgeId().equals(badgeId));
+        progress.add(BadgeProgress.builder()
+                .badgeId(badgeId).currentValue(currentValue)
+                .requiredValue(requiredValue)
+                .completed(currentValue >= requiredValue)
+                .build());
+    }
+
     public int getTotalMonas() {
         return earnedBadges.size();
     }
@@ -92,6 +114,7 @@ public class UserGamification {
                 .earnedBadges(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .earnedRewards(new ArrayList<>())
+                .visitedCampusZones(new ArrayList<>())
                 .build();
     }
 }

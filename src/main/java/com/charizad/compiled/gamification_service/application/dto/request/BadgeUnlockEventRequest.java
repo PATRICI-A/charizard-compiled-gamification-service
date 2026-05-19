@@ -54,9 +54,18 @@ public class BadgeUnlockEventRequest {
     private LocalDateTime parcheScheduledAt;
 
     /**
-     * Número total de zonas distintas del campus visitadas (para Explorador I #7 y II #8).
+     * Zona del campus visitada (ej: "Bloque de Ingeniería").
+     * Recibida del geo service vía geo.exchange / geo.location.updated.
+     * Gamification trackea zonas distintas internamente para Explorador I (#7) y II (#8).
      */
-    private Integer totalZonesVisited;
+    private String campusZone;
+
+    /**
+     * true si el usuario tiene la geolocalización habilitada (RN-13.1.5).
+     * Siempre true cuando el evento proviene del geo service (el evento solo se publica
+     * si el usuario compartió ubicación exitosamente).
+     */
+    private Boolean geoLocationEnabled;
 
     /**
      * ID del capitán del parche al que se unió el usuario.
