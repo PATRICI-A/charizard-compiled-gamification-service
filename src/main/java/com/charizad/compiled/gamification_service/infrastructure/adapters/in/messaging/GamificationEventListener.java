@@ -110,22 +110,24 @@ public class GamificationEventListener {
     }
 
     /**
-     * Published by geolocation service when a user visits a new campus zone.
-     * Expected payload: { userId, totalZonesVisited }
-     * Evaluates: Explorador I (3 zones), Explorador II (5 zones).
+     * Published by geo service on geo.exchange / geo.location.updated when a user updates location.
+     * Expected payload: { userId, latitude, longitude, campusZone, updatedAt }
+     * Evaluates: Explorador I (3 distinct zones), Explorador II (5 distinct zones).
+     * geoLocationEnabled hardcoded true — geo service only publishes after successful location validation.
      */
     @RabbitListener(queues = "${rabbitmq.queue.zone-visited:gamification.zone.queue}")
     public void onZoneVisited(Map<String, Object> payload) {
-        log.info("[RabbitMQ] zone.visited received for userId={}", payload.get("userId"));
+        log.info("[RabbitMQ] geo.location.updated received for userId={}", payload.get("userId"));
         try {
             BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
                     .userId((String) payload.get("userId"))
                     .eventType(BadgeUnlockEventType.ZONE_VISITED)
-                    .totalZonesVisited(toInt(payload.get("totalZonesVisited")))
+                    .campusZone((String) payload.get("campusZone"))
+                    .geoLocationEnabled(true)
                     .build();
             checkBadgeUnlockUseCase.execute(event);
         } catch (Exception e) {
-            log.error("[RabbitMQ] Error processing zone.visited: {}", e.getMessage(), e);
+            log.error("[RabbitMQ] Error processing geo.location.updated: {}", e.getMessage(), e);
         }
     }
 

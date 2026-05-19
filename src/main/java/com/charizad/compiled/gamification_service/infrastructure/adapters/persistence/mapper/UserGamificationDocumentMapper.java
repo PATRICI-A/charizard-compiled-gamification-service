@@ -48,6 +48,10 @@ public class UserGamificationDocumentMapper {
                                 .build())
                         .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
 
+        List<String> zones = doc.getVisitedCampusZones() == null
+                ? new ArrayList<>()
+                : new ArrayList<>(doc.getVisitedCampusZones());
+
         return UserGamification.builder()
                 .id(doc.getId())
                 .userId(doc.getUserId())
@@ -58,6 +62,7 @@ public class UserGamificationDocumentMapper {
                 .earnedBadges(earned)
                 .progress(progress)
                 .earnedRewards(rewards)
+                .visitedCampusZones(zones)
                 .build();
     }
 
@@ -100,6 +105,7 @@ public class UserGamificationDocumentMapper {
                 .earnedBadges(earned)
                 .progress(progress)
                 .earnedRewards(rewards)
+                .visitedCampusZones(new ArrayList<>(user.getVisitedCampusZones()))
                 .build();
     }
 }
