@@ -134,15 +134,39 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
     // ── ZONE_VISITED ──────────────────────────────────────────────────────────
 
     private List<String> handleZoneVisited(BadgeUnlockEventRequest event) {
-        List<String> awarded = new ArrayList<>();
-        int zones = event.getTotalZonesVisited() != null ? event.getTotalZonesVisited() : 0;
+        // RN-13.1.5: geo must be enabled; geo service sets this true on every published event
+        if (!Boolean.TRUE.equals(event.getGeoLocationEnabled())) {
+            log.debug("[CheckBadgeUnlock] ZONE_VISITED ignorado — geoLocationEnabled=false para userId={}", event.getUserId());
+            return List.of();
+        }
 
-        if (zones >= 3) {
-            tryAward(event.getUserId(), BADGE_EXPLORADOR_I, awarded);
+        String campusZone = event.getCampusZone();
+        if (campusZone == null || campusZone.isBlank()) {
+            log.debug("[CheckBadgeUnlock] ZONE_VISITED ignorado — campusZone vacío para userId={}", event.getUserId());
+            return List.of();
         }
-        if (zones >= 5) {
-            tryAward(event.getUserId(), BADGE_EXPLORADOR_II, awarded);
+
+        String userId = event.getUserId();
+        UserGamification user = userGamificationRepository.findByUserId(userId).orElse(null);
+        if (user == null) {
+            log.debug("[CheckBadgeUnlock] ZONE_VISITED ignorado — usuario {} no encontrado en gamificación", userId);
+            return List.of();
         }
+
+        user.visitZone(campusZone);
+        int totalZones = user.getVisitedCampusZones().size();
+
+        // Update progress display for Explorador I and II (RN-13.1.3)
+        badgeRepository.findByName(BADGE_EXPLORADOR_I)
+                .ifPresent(b -> user.updateProgress(b.getId(), totalZones, 3));
+        badgeRepository.findByName(BADGE_EXPLORADOR_II)
+                .ifPresent(b -> user.updateProgress(b.getId(), totalZones, 5));
+
+        userGamificationRepository.save(user);
+
+        List<String> awarded = new ArrayList<>();
+        if (totalZones >= 3) tryAward(userId, BADGE_EXPLORADOR_I, awarded);
+        if (totalZones >= 5) tryAward(userId, BADGE_EXPLORADOR_II, awarded);
         return awarded;
     }
 

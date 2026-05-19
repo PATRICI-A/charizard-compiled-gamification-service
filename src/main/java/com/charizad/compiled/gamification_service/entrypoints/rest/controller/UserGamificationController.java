@@ -1,9 +1,11 @@
 package com.charizad.compiled.gamification_service.entrypoints.rest.controller;
 
+import com.charizad.compiled.gamification_service.application.dto.request.RedeemEventCodeRequest;
 import com.charizad.compiled.gamification_service.application.dto.request.SetRankingOptInRequest;
 import com.charizad.compiled.gamification_service.application.dto.response.BadgeProgressResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.EarnedBadgeResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.EarnedRewardResponse;
+import com.charizad.compiled.gamification_service.application.dto.response.MonaResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.UserLevelResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.RankingEntryResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.RankingPositionResponse;
@@ -15,6 +17,9 @@ import com.charizad.compiled.gamification_service.domain.ports.in.GetUserBadgesU
 import com.charizad.compiled.gamification_service.domain.ports.in.GetUserProgressUseCase;
 import com.charizad.compiled.gamification_service.domain.ports.in.GetUserRewardsUseCase;
 import com.charizad.compiled.gamification_service.domain.ports.in.GetUserStatsUseCase;
+import com.charizad.compiled.gamification_service.domain.ports.in.GetMonaByIdUseCase;
+import com.charizad.compiled.gamification_service.domain.ports.in.GetMonasUseCase;
+import com.charizad.compiled.gamification_service.domain.ports.in.RedeemEventCodeUseCase;
 import com.charizad.compiled.gamification_service.domain.ports.in.ToggleRankingOptInUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,6 +54,52 @@ public class UserGamificationController {
     private final GetUserRewardsUseCase getUserRewardsUseCase;
     private final GetUserLevelUseCase getUserLevelUseCase;
     private final GetRankingPositionUseCase getRankingPositionUseCase;
+    private final RedeemEventCodeUseCase redeemEventCodeUseCase;
+    private final GetMonasUseCase getMonasUseCase;
+    private final GetMonaByIdUseCase getMonaByIdUseCase;
+
+    @PostMapping("/monas/evento")
+    @Operation(summary = "Canjear código de evento",
+            description = "El estudiante ingresa el código alfanumérico de un evento universitario para desbloquear la mona 'Asistente' (RF13.1 — Flujo B).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Mona 'Asistente' desbloqueada",
+                    content = @Content(schema = @Schema(implementation = EarnedBadgeResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Código no válido o ya utilizado", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Token JWT inválido o ausente", content = @Content)
+    })
+    public ResponseEntity<EarnedBadgeResponse> redeemEventCode(
+            @Parameter(hidden = true) @AuthenticationPrincipal String userId,
+            @Valid @RequestBody RedeemEventCodeRequest request) {
+        return ResponseEntity.ok(redeemEventCodeUseCase.execute(userId, request.getEventCode()));
+    }
+
+    @GetMapping("/monas")
+    @Operation(summary = "Listado de monas",
+            description = "Retorna todas las monas del catálogo con estado, progreso y fecha de obtención del estudiante autenticado (RF13.1 — Flujo C).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Listado de monas",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = MonaResponse.class)))),
+            @ApiResponse(responseCode = "401", description = "Token JWT inválido o ausente", content = @Content)
+    })
+    public ResponseEntity<List<MonaResponse>> getMonas(
+            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
+        return ResponseEntity.ok(getMonasUseCase.execute(userId));
+    }
+
+    @GetMapping("/monas/{monaId}")
+    @Operation(summary = "Detalle de mona",
+            description = "Retorna el detalle de una mona específica y el progreso del estudiante hacia ella (RF13.1 — Flujo C).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Detalle de la mona",
+                    content = @Content(schema = @Schema(implementation = MonaResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Token JWT inválido o ausente", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Mona no encontrada", content = @Content)
+    })
+    public ResponseEntity<MonaResponse> getMonaById(
+            @Parameter(hidden = true) @AuthenticationPrincipal String userId,
+            @PathVariable String monaId) {
+        return ResponseEntity.ok(getMonaByIdUseCase.execute(userId, monaId));
+    }
 
     @GetMapping("/me/badges")
     @Operation(summary = "My unlocked badges", description = "Returns all badges that the authenticated user has earned.")

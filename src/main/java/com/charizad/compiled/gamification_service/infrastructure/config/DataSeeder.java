@@ -32,14 +32,17 @@ public class DataSeeder {
     @Profile("!prod & !test")
     public CommandLineRunner seedData() {
         return args -> {
-            if (badgeRepository.count() > 0) {
-                log.info("Catálogo de monas ya existe, omitiendo seeder.");
-                return;
+            try {
+                if (badgeRepository.count() > 0) {
+                    log.info("Catálogo de monas ya existe, omitiendo seeder.");
+                    return;
+                }
+                log.info("Sembrando catálogo oficial de 13 monas (RF13.1)...");
+                seedOfficialMonas();
+                log.info("Catálogo de monas sembrado exitosamente.");
+            } catch (Exception e) {
+                log.warn("DataSeeder omitido — no se pudo conectar a MongoDB: {}", e.getMessage());
             }
-
-            log.info("Sembrando catálogo oficial de 13 monas (RF13.1)...");
-            seedOfficialMonas();
-            log.info("Catálogo de monas sembrado exitosamente.");
         };
     }
 
