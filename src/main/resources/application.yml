@@ -4,9 +4,8 @@ server:
 spring:
   application:
     name: gamification-service
-  data:
-    mongodb:
-      uri: "${SPRING_DATA_MONGODB_URI:mongodb+srv://shaddaygonzalez5_db_user:UhQV85Jf9l2dYkpS@cluster0.grwrgmg.mongodb.net/gamification_db?appName=Cluster0}"
+  mongodb:
+      uri: "${SPRING_MONGODB_URI:mongodb+srv://gamification_admin:A7kL9mXb@cluster0.xri2g8t.mongodb.net/gamificationdb?retryWrites=true&w=majority}"
 
   security:
     jwt:
