@@ -5,15 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RankingEntryResponse {
-    private int position;
+public class RankingOptInResponse {
     private String studentId;
-    private String displayName;
-    private String levelName;
-    private int monasThisPeriod;
-    private int totalMonas;
+    private boolean rankingOptIn;
+    private LocalDateTime updatedAt;
 }

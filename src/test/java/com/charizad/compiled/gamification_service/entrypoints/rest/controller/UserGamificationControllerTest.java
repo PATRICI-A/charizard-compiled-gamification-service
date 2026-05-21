@@ -2,8 +2,10 @@ package com.charizad.compiled.gamification_service.entrypoints.rest.controller;
 
 import com.charizad.compiled.gamification_service.application.dto.response.EarnedBadgeResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.RankingEntryResponse;
+import com.charizad.compiled.gamification_service.application.dto.response.RankingOptInResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.UserStatsResponse;
 import com.charizad.compiled.gamification_service.domain.exceptions.UserGamificationNotFoundException;
+import com.charizad.compiled.gamification_service.domain.model.enums.RankingType;
 import com.charizad.compiled.gamification_service.domain.ports.in.*;
 import com.charizad.compiled.gamification_service.entrypoints.advice.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,9 +27,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import com.charizad.compiled.gamification_service.domain.model.enums.RankingType;
-
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -61,7 +62,7 @@ class UserGamificationControllerTest {
     }
 
     @Test
-    @DisplayName("GET /me/badges retorna 200 con lista de insignias")
+    @DisplayName("GET /me/badges returns 200 with badge list")
     void getMyBadges_shouldReturn200() throws Exception {
         List<EarnedBadgeResponse> badges = List.of(
                 EarnedBadgeResponse.builder()
@@ -81,7 +82,7 @@ class UserGamificationControllerTest {
     }
 
     @Test
-    @DisplayName("GET /me/badges retorna 404 si no existe el perfil")
+    @DisplayName("GET /me/badges returns 404 when profile not found")
     void getMyBadges_shouldReturn404_whenProfileNotFound() throws Exception {
         when(getUserBadgesUseCase.execute(any()))
                 .thenThrow(new UserGamificationNotFoundException("user-999"));
@@ -93,7 +94,7 @@ class UserGamificationControllerTest {
     }
 
     @Test
-    @DisplayName("GET /me/stats retorna 200 con estadísticas del usuario")
+    @DisplayName("GET /me/stats returns 200 with user statistics")
     void getMyStats_shouldReturn200() throws Exception {
         UserStatsResponse stats = UserStatsResponse.builder()
                 .userId("user-001")
@@ -114,40 +115,48 @@ class UserGamificationControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /me/ranking/optin retorna 200 con nuevo estado")
+    @DisplayName("PATCH /me/ranking/optin returns 200 with studentId, rankingOptIn and updatedAt")
     void setRankingOptIn_shouldReturn200() throws Exception {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken("user-001", null));
-        when(toggleRankingOptInUseCase.execute("user-001", true)).thenReturn(true);
+
+        RankingOptInResponse response = RankingOptInResponse.builder()
+                .studentId("user-001")
+                .rankingOptIn(true)
+                .updatedAt(LocalDateTime.of(2026, 5, 21, 10, 0))
+                .build();
+
+        when(toggleRankingOptInUseCase.execute(eq("user-001"), eq(true))).thenReturn(response);
 
         mockMvc.perform(patch("/api/v1/gamificacion/me/ranking/optin")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(Map.of("participar", true))))
+                        .content(objectMapper.writeValueAsString(Map.of("participe", true))))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.studentId").value("user-001"))
                 .andExpect(jsonPath("$.rankingOptIn").value(true))
-                .andExpect(jsonPath("$.message").value("Ahora participas en el ranking semanal."));
+                .andExpect(jsonPath("$.updatedAt").exists());
     }
 
     @Test
-    @DisplayName("GET /ranking returns 200 with weekly ranking")
+    @DisplayName("GET /ranking returns 200 with weekly ranking using tipo=semanal")
     void getRanking_shouldReturn200() throws Exception {
         List<RankingEntryResponse> ranking = List.of(
-                RankingEntryResponse.builder().position(1).userId("user-A").monasThisPeriod(5).totalBadgesEarned(3).build(),
-                RankingEntryResponse.builder().position(2).userId("user-B").monasThisPeriod(3).totalBadgesEarned(2).build()
+                RankingEntryResponse.builder().position(1).studentId("user-A").monasThisPeriod(5).build(),
+                RankingEntryResponse.builder().position(2).studentId("user-B").monasThisPeriod(3).build()
         );
 
         when(getRankingUseCase.execute(any(RankingType.class))).thenReturn(ranking);
 
-        mockMvc.perform(get("/api/v1/gamificacion/ranking?type=WEEKLY"))
+        mockMvc.perform(get("/api/v1/gamificacion/ranking?tipo=semanal"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].position").value(1))
-                .andExpect(jsonPath("$[0].userId").value("user-A"))
+                .andExpect(jsonPath("$[0].studentId").value("user-A"))
                 .andExpect(jsonPath("$[0].monasThisPeriod").value(5))
                 .andExpect(jsonPath("$[1].position").value(2));
     }
 
     @Test
-    @DisplayName("GET /ranking defaults to WEEKLY when no type param")
+    @DisplayName("GET /ranking defaults to WEEKLY when no tipo param")
     void getRanking_shouldDefaultToWeekly() throws Exception {
         when(getRankingUseCase.execute(RankingType.WEEKLY)).thenReturn(List.of());
 

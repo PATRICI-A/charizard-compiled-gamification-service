@@ -44,9 +44,8 @@ class GetRankingServiceTest {
 
         assertThat(ranking).hasSize(3);
         assertThat(ranking.get(0).getPosition()).isEqualTo(1);
-        assertThat(ranking.get(0).getUserId()).isEqualTo("user-A");
+        assertThat(ranking.get(0).getStudentId()).isEqualTo("user-A");
         assertThat(ranking.get(0).getMonasThisPeriod()).isEqualTo(5);
-        assertThat(ranking.get(0).getType()).isEqualTo("WEEKLY");
         assertThat(ranking.get(1).getPosition()).isEqualTo(2);
         assertThat(ranking.get(2).getPosition()).isEqualTo(3);
     }
@@ -75,15 +74,12 @@ class GetRankingServiceTest {
         List<RankingEntryResponse> ranking = service.execute(RankingType.MONTHLY);
 
         assertThat(ranking.get(0).getMonasThisPeriod()).isEqualTo(10);
-        assertThat(ranking.get(0).getType()).isEqualTo("MONTHLY");
     }
 
     @Test
     @DisplayName("Returns semester ranking using semestralMonas")
     void execute_semester_shouldUseSemestralMonas() {
-        List<UserGamification> users = List.of(
-                buildUser("user-A", 1, 0, 25)
-        );
+        List<UserGamification> users = List.of(buildUser("user-A", 1, 0, 25));
 
         when(userGamificationRepository.findAllOptedInRankedFor(RankingType.SEMESTER)).thenReturn(users);
         when(userProfileClient.getDisplayName(anyString())).thenReturn(Optional.empty());
@@ -91,7 +87,6 @@ class GetRankingServiceTest {
         List<RankingEntryResponse> ranking = service.execute(RankingType.SEMESTER);
 
         assertThat(ranking.get(0).getMonasThisPeriod()).isEqualTo(25);
-        assertThat(ranking.get(0).getType()).isEqualTo("SEMESTER");
     }
 
     @Test
@@ -109,8 +104,7 @@ class GetRankingServiceTest {
     private UserGamification buildUser(String userId, int weeklyMonas, int monthlyMonas, int semestralMonas) {
         return UserGamification.builder()
                 .userId(userId)
-                .totalXp(0)
-                .weeklyXp(0)
+                .totalXp(0).weeklyXp(0)
                 .weeklyMonas(weeklyMonas)
                 .monthlyMonas(monthlyMonas)
                 .semestralMonas(semestralMonas)

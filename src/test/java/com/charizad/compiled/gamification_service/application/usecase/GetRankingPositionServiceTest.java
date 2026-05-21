@@ -36,7 +36,9 @@ class GetRankingPositionServiceTest {
 
         assertThat(response.getPosition()).isNull();
         assertThat(response.isRankingOptIn()).isFalse();
-        assertThat(response.getUserId()).isEqualTo("u1");
+        assertThat(response.getRankingType()).isEqualTo(RankingType.WEEKLY);
+        assertThat(response.getPeriodStart()).isNotNull();
+        assertThat(response.getPeriodEnd()).isNotNull();
         verify(userGamificationRepository, never()).findAllOptedInRankedFor(any());
     }
 
@@ -67,10 +69,9 @@ class GetRankingPositionServiceTest {
         RankingPositionResponse response = service.execute("u1", RankingType.WEEKLY);
 
         assertThat(response.getPosition()).isEqualTo(2);
-        assertThat(response.getTotalParticipants()).isEqualTo(3);
         assertThat(response.getMonasThisPeriod()).isEqualTo(8);
         assertThat(response.isRankingOptIn()).isTrue();
-        assertThat(response.getUserId()).isEqualTo("u1");
+        assertThat(response.getRankingType()).isEqualTo(RankingType.WEEKLY);
     }
 
     @Test
@@ -91,8 +92,7 @@ class GetRankingPositionServiceTest {
     @Test
     @DisplayName("Monthly ranking uses monthlyMonas for the period")
     void execute_monthlyType_usesMonthlyMonas() {
-        UserGamification u1 = buildUser("u1", true, 3, 5);
-        u1 = UserGamification.builder()
+        UserGamification u1 = UserGamification.builder()
                 .id("ug-1").userId("u1")
                 .weeklyMonas(3).monthlyMonas(20).semestralMonas(5)
                 .rankingOptIn(true)
@@ -107,6 +107,7 @@ class GetRankingPositionServiceTest {
 
         assertThat(response.getMonasThisPeriod()).isEqualTo(20);
         assertThat(response.getPosition()).isEqualTo(1);
+        assertThat(response.getRankingType()).isEqualTo(RankingType.MONTHLY);
     }
 
     private UserGamification buildUser(String userId, boolean optIn, int weeklyMonas, int badgeCount) {

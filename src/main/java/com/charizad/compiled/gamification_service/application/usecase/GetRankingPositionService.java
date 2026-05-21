@@ -1,7 +1,6 @@
 package com.charizad.compiled.gamification_service.application.usecase;
 
 import com.charizad.compiled.gamification_service.application.dto.response.RankingPositionResponse;
-import com.charizad.compiled.gamification_service.domain.model.NivelCalculator;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
 import com.charizad.compiled.gamification_service.domain.model.enums.RankingType;
 import com.charizad.compiled.gamification_service.domain.ports.in.GetRankingPositionUseCase;
@@ -9,6 +8,8 @@ import com.charizad.compiled.gamification_service.domain.ports.out.UserGamificat
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -19,13 +20,19 @@ public class GetRankingPositionService implements GetRankingPositionUseCase {
 
     @Override
     public RankingPositionResponse execute(String userId, RankingType type) {
+        LocalDate periodStart = getPeriodStart(type);
+        LocalDate periodEnd   = getPeriodEnd(type);
+
         UserGamification user = userGamificationRepository.findByUserId(userId).orElse(null);
 
         if (user == null || !user.isRankingOptIn()) {
             return RankingPositionResponse.builder()
-                    .userId(userId)
                     .position(null)
+                    .monasThisPeriod(0)
                     .rankingOptIn(false)
+                    .periodStart(periodStart)
+                    .periodEnd(periodEnd)
+                    .rankingType(type)
                     .build();
         }
 
@@ -44,16 +51,43 @@ public class GetRankingPositionService implements GetRankingPositionUseCase {
             case SEMESTER -> user.getSemestralMonas();
             default -> user.getWeeklyMonas();
         };
-        int totalMonas = user.getTotalMonas();
-        int nivel = NivelCalculator.getNivel(totalMonas);
 
         return RankingPositionResponse.builder()
-                .userId(userId)
                 .position(position)
-                .totalParticipants(ranked.size())
                 .monasThisPeriod(periodMonas)
-                .levelName(NivelCalculator.getNivelName(nivel))
                 .rankingOptIn(true)
+                .periodStart(periodStart)
+                .periodEnd(periodEnd)
+                .rankingType(type)
                 .build();
+    }
+
+    private LocalDate getPeriodStart(RankingType type) {
+        LocalDate today = LocalDate.now();
+        return switch (type) {
+            case WEEKLY -> today.with(DayOfWeek.MONDAY);
+            case MONTHLY -> today.withDayOfMonth(1);
+            case SEMESTER -> {
+                int month = today.getMonthValue();
+                // Semester 1: Feb–Jul  |  Semester 2: Aug–Jan
+                if (month >= 2 && month <= 7) yield LocalDate.of(today.getYear(), 2, 1);
+                else if (month >= 8)          yield LocalDate.of(today.getYear(), 8, 1);
+                else                          yield LocalDate.of(today.getYear() - 1, 8, 1);
+            }
+        };
+    }
+
+    private LocalDate getPeriodEnd(RankingType type) {
+        LocalDate today = LocalDate.now();
+        return switch (type) {
+            case WEEKLY -> today.with(DayOfWeek.SUNDAY);
+            case MONTHLY -> today.withDayOfMonth(today.lengthOfMonth());
+            case SEMESTER -> {
+                int month = today.getMonthValue();
+                if (month >= 2 && month <= 7) yield LocalDate.of(today.getYear(), 7, 31);
+                else if (month >= 8)          yield LocalDate.of(today.getYear() + 1, 1, 31);
+                else                          yield LocalDate.of(today.getYear(), 1, 31);
+            }
+        };
     }
 }

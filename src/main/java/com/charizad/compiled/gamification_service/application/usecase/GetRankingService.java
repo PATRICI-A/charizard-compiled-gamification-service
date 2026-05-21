@@ -34,18 +34,21 @@ public class GetRankingService implements GetRankingUseCase {
             };
             int totalMonas = user.getTotalMonas();
             int nivel = NivelCalculator.getNivel(totalMonas);
-            String displayName = userProfileClient.getDisplayName(user.getUserId())
-                    .orElse(user.getUserId());
+            String displayName;
+            try {
+                displayName = userProfileClient.getDisplayName(user.getUserId())
+                        .orElse(user.getUserId());
+            } catch (Exception e) {
+                displayName = user.getUserId();
+            }
 
             ranking.add(RankingEntryResponse.builder()
                     .position(i + 1)
-                    .userId(user.getUserId())
+                    .studentId(user.getUserId())
                     .displayName(displayName)
+                    .levelName(NivelCalculator.getNivelName(nivel))
                     .monasThisPeriod(periodMonas)
                     .totalMonas(totalMonas)
-                    .levelName(NivelCalculator.getNivelName(nivel))
-                    .type(type.name())
-                    .totalBadgesEarned(user.getEarnedBadges().size())
                     .build());
         }
         return ranking;
