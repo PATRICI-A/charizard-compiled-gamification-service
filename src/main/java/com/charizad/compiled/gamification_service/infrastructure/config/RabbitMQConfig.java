@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Map;
+
 @Configuration
 public class RabbitMQConfig {
 
@@ -58,12 +60,31 @@ public class RabbitMQConfig {
     @Bean public TopicExchange institutionalExchange() { return new TopicExchange(institutionalExchange, true, false); }
 
     // ── Queues ────────────────────────────────────────────────────────────────
-    @Bean public Queue connectionCreatedQueue() { return new Queue(connectionCreatedQueue, true); }
-    @Bean public Queue parcheCreatedQueue()     { return new Queue(parcheCreatedQueue,     true); }
-    @Bean public Queue memberJoinedQueue()      { return new Queue(memberJoinedQueue,      true); }
-    @Bean public Queue messageSentQueue()       { return new Queue(messageSentQueue,       true); }
-    @Bean public Queue zoneVisitedQueue()       { return new Queue(zoneVisitedQueue,       true); }
-    @Bean public Queue eventAttendedQueue()     { return new Queue(eventAttendedQueue,     true); }
+    @Bean public Queue connectionCreatedQueue() {
+        return new Queue(connectionCreatedQueue, true, false, false, dlxArgs("gamification.connection.queue.dlq"));
+    }
+    @Bean public Queue parcheCreatedQueue() {
+        return new Queue(parcheCreatedQueue, true, false, false, dlxArgs("gamification.parche.queue.dlq"));
+    }
+    @Bean public Queue memberJoinedQueue() {
+        return new Queue(memberJoinedQueue, true, false, false, dlxArgs("gamification.member.queue.dlq"));
+    }
+    @Bean public Queue messageSentQueue() {
+        return new Queue(messageSentQueue, true, false, false, dlxArgs("gamification.message.queue.dlq"));
+    }
+    @Bean public Queue zoneVisitedQueue() {
+        return new Queue(zoneVisitedQueue, true, false, false, dlxArgs("gamification.zone.queue.dlq"));
+    }
+    @Bean public Queue eventAttendedQueue() {
+        return new Queue(eventAttendedQueue, true, false, false, dlxArgs("gamification.institutional.queue.dlq"));
+    }
+
+    private Map<String, Object> dlxArgs(String dlqRoutingKey) {
+        return Map.of(
+            "x-dead-letter-exchange", "notification.dlx",
+            "x-dead-letter-routing-key", dlqRoutingKey
+        );
+    }
 
     // ── Bindings ──────────────────────────────────────────────────────────────
     @Bean public Binding bindConnectionCreated() {
