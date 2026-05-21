@@ -27,7 +27,8 @@ rabbitmq:
     geolocation: ${RABBITMQ_EXCHANGE_GEOLOCATION:geolocation.events}
     institutional: ${RABBITMQ_EXCHANGE_INSTITUTIONAL:institutional.events}
   routing-key:
-    badge-earned: ${RABBITMQ_RK_BADGE_EARNED:badge.earned}
+    badge-earned: badge.earned
+    achievement-unlocked: achievement.unlocked
 
   # Queues propias de gamification (una por tipo de evento)
   queue:
