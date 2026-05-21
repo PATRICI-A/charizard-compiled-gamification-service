@@ -443,9 +443,11 @@ class CheckBadgeUnlockServiceTest {
     }
 
     @Test
-    @DisplayName("ZONE_VISITED con usuario no encontrado → no otorga")
+    @DisplayName("ZONE_VISITED con usuario no encontrado → crea perfil y procesa")
     void zoneVisited_userNotFound_noAward() {
         when(userGamificationRepository.findByUserId("u1")).thenReturn(Optional.empty());
+        when(userGamificationRepository.save(any(UserGamification.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
                 .userId("u1")
@@ -458,6 +460,7 @@ class CheckBadgeUnlockServiceTest {
 
         assertThat(result).isEmpty();
         verifyNoInteractions(awardBadgeUseCase);
+        verify(userGamificationRepository, times(2)).save(any(UserGamification.class));
     }
 
     @Test
