@@ -1,31 +1,26 @@
 package com.charizad.compiled.gamification_service.infrastructure.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 @Slf4j
 @Component
-public class JwtAuthFilter extends OncePerRequestFilter {
-
-    @Value("${spring.security.jwt.secret}")
-    private String jwtSecret;
+public class KongAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -40,18 +35,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             String token = authHeader.substring(7);
-            SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-            Claims claims = Jwts.parser()
-                    .verifyWith(key)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+            String[] parts = token.split("\\.");
 
-            String userId = claims.getSubject();
-            String role = claims.get("role", String.class);
+            if (parts.length != 3) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            byte[] decoded = Base64.getUrlDecoder().decode(parts[1]);
+            String json = new String(decoded, StandardCharsets.UTF_8);
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode claims = mapper.readTree(json);
+
+            String userId = claims.has("sub") ? claims.get("sub").asText() : null;
+            String role = claims.has("role") ? claims.get("role").asText() : "USER";
+
+            if (userId == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             List<SimpleGrantedAuthority> authorities = List.of(
-                    new SimpleGrantedAuthority("ROLE_" + (role != null ? role.toUpperCase() : "USER"))
+                    new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
             );
 
             UsernamePasswordAuthenticationToken authentication =

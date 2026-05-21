@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, KongAuthFilter kongAuthFilter) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -32,14 +32,13 @@ public class SecurityConfig {
                     "/actuator/health",
                     "/actuator/health/**"
                 ).permitAll()
-                // Solo ADMIN puede crear insignias
                 .requestMatchers(HttpMethod.POST, "/api/v1/gamificacion/badges").hasRole("ADMIN")
-                // Solo ADMIN puede otorgar insignias manualmente
                 .requestMatchers(HttpMethod.POST, "/api/v1/gamificacion/badges/award").hasRole("ADMIN")
-                // El resto requiere autenticación
+                .requestMatchers(HttpMethod.POST, "/api/v1/gamificacion/admin/event-codes").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/rewards").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(kongAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
