@@ -11,8 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RankingPositionResponse {
     private String userId;
-    private int posicion;
-    private long totalParticipantes;
-    private int monasThisWeek;
+    /** Null when the user has no active opt-in (RN-13.3.1). */
+    private Integer position;
+    private long totalParticipants;
+    private int monasThisPeriod;
     private String levelName;
+    private boolean rankingOptIn;
 }

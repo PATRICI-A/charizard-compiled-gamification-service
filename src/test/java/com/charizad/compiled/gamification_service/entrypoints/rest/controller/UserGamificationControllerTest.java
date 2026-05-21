@@ -25,8 +25,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import com.charizad.compiled.gamification_service.domain.model.enums.RankingType;
+
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -128,27 +129,27 @@ class UserGamificationControllerTest {
     }
 
     @Test
-    @DisplayName("GET /ranking retorna 200 con el ranking semanal")
+    @DisplayName("GET /ranking returns 200 with weekly ranking")
     void getRanking_shouldReturn200() throws Exception {
         List<RankingEntryResponse> ranking = List.of(
-                RankingEntryResponse.builder().position(1).userId("user-A").weeklyXp(500).totalBadgesEarned(3).build(),
-                RankingEntryResponse.builder().position(2).userId("user-B").weeklyXp(300).totalBadgesEarned(2).build()
+                RankingEntryResponse.builder().position(1).userId("user-A").monasThisPeriod(5).totalBadgesEarned(3).build(),
+                RankingEntryResponse.builder().position(2).userId("user-B").monasThisPeriod(3).totalBadgesEarned(2).build()
         );
 
-        when(getRankingUseCase.execute(anyInt())).thenReturn(ranking);
+        when(getRankingUseCase.execute(any(RankingType.class))).thenReturn(ranking);
 
-        mockMvc.perform(get("/api/v1/gamificacion/ranking?limit=10"))
+        mockMvc.perform(get("/api/v1/gamificacion/ranking?type=WEEKLY"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].position").value(1))
                 .andExpect(jsonPath("$[0].userId").value("user-A"))
-                .andExpect(jsonPath("$[0].weeklyXp").value(500))
+                .andExpect(jsonPath("$[0].monasThisPeriod").value(5))
                 .andExpect(jsonPath("$[1].position").value(2));
     }
 
     @Test
-    @DisplayName("GET /ranking usa limit=10 por defecto")
-    void getRanking_shouldUseDefaultLimit() throws Exception {
-        when(getRankingUseCase.execute(10)).thenReturn(List.of());
+    @DisplayName("GET /ranking defaults to WEEKLY when no type param")
+    void getRanking_shouldDefaultToWeekly() throws Exception {
+        when(getRankingUseCase.execute(RankingType.WEEKLY)).thenReturn(List.of());
 
         mockMvc.perform(get("/api/v1/gamificacion/ranking"))
                 .andExpect(status().isOk());

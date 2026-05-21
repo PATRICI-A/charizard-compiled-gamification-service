@@ -1,6 +1,7 @@
 package com.charizad.compiled.gamification_service.infrastructure.adapters.adapter;
 
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
+import com.charizad.compiled.gamification_service.domain.model.enums.RankingType;
 import com.charizad.compiled.gamification_service.domain.ports.out.UserGamificationRepositoryPort;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.UserGamificationDocument;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.mapper.UserGamificationDocumentMapper;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,12 +44,28 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
     }
 
     @Override
-    public List<UserGamification> findAllOptedInOrderByWeeklyMonasDesc(int limit) {
-        return mongoRepository
-                .findByRankingOptInTrueOrderByWeeklyMonasDesc(PageRequest.of(0, limit))
-                .stream()
+    public List<UserGamification> findAllOptedInRankedFor(RankingType type) {
+        List<UserGamification> all = mongoRepository.findByRankingOptInTrue().stream()
                 .map(mapper::toDomain)
-                .toList();
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
+
+        Comparator<UserGamification> comparator = switch (type) {
+            case MONTHLY -> (a, b) -> {
+                int cmp = Integer.compare(b.getMonthlyMonas(), a.getMonthlyMonas());
+                return cmp != 0 ? cmp : Integer.compare(b.getTotalMonas(), a.getTotalMonas());
+            };
+            case SEMESTER -> (a, b) -> {
+                int cmp = Integer.compare(b.getSemestralMonas(), a.getSemestralMonas());
+                return cmp != 0 ? cmp : Integer.compare(b.getTotalMonas(), a.getTotalMonas());
+            };
+            default -> (a, b) -> {
+                int cmp = Integer.compare(b.getWeeklyMonas(), a.getWeeklyMonas());
+                return cmp != 0 ? cmp : Integer.compare(b.getTotalMonas(), a.getTotalMonas());
+            };
+        };
+
+        all.sort(comparator);
+        return all;
     }
 
     @Override
@@ -67,10 +86,5 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
     @Override
     public long countAllOptedIn() {
         return mongoRepository.countByRankingOptInTrue();
-    }
-
-    @Override
-    public long countOptedInWithMoreMonasThan(int weeklyMonas) {
-        return mongoRepository.countByRankingOptInTrueAndWeeklyMonasGreaterThan(weeklyMonas);
     }
 }

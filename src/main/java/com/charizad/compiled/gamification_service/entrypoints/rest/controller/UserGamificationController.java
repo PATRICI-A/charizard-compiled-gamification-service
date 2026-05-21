@@ -10,6 +10,7 @@ import com.charizad.compiled.gamification_service.application.dto.response.UserL
 import com.charizad.compiled.gamification_service.application.dto.response.RankingEntryResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.RankingPositionResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.UserStatsResponse;
+import com.charizad.compiled.gamification_service.domain.model.enums.RankingType;
 import com.charizad.compiled.gamification_service.domain.ports.in.GetRankingPositionUseCase;
 import com.charizad.compiled.gamification_service.domain.ports.in.GetUserLevelUseCase;
 import com.charizad.compiled.gamification_service.domain.ports.in.GetRankingUseCase;
@@ -174,31 +175,34 @@ public class UserGamificationController {
     }
 
     @GetMapping("/ranking")
-    @Operation(summary = "Weekly ranking",
-            description = "Returns the top N users sorted by weekly monas (monasThisWeek) descending (RF13.3).")
+    @Operation(summary = "Ranking leaderboard",
+            description = "Returns all opted-in users sorted by period monas descending. " +
+                          "Supports WEEKLY (default), MONTHLY and SEMESTER ranking types (RF13.3 / RN-13.3.2).")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Weekly ranking",
+            @ApiResponse(responseCode = "200", description = "Ranking leaderboard",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = RankingEntryResponse.class)))),
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<List<RankingEntryResponse>> getRanking(
-            @Parameter(description = "Maximum number of positions to return", example = "10")
-            @RequestParam(defaultValue = "10") int limit) {
-        return ResponseEntity.ok(getRankingUseCase.execute(limit));
+            @Parameter(description = "Ranking period type: WEEKLY, MONTHLY or SEMESTER", example = "WEEKLY")
+            @RequestParam(defaultValue = "WEEKLY") RankingType type) {
+        return ResponseEntity.ok(getRankingUseCase.execute(type));
     }
 
-    @GetMapping("/ranking/mi-posicion")
+    @GetMapping("/ranking/my-position")
     @Operation(summary = "My ranking position",
-            description = "Returns the authenticated user's current position in the weekly ranking. " +
-                          "Returns posicion=0 if the user is not participating.")
+            description = "Returns the authenticated user's current position in the chosen ranking. " +
+                          "Returns position=null and rankingOptIn=false when the user is not opted in (RF13.3).")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User's position in the ranking",
                     content = @Content(schema = @Schema(implementation = RankingPositionResponse.class))),
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
-    public ResponseEntity<RankingPositionResponse> getMiPosicion(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getRankingPositionUseCase.execute(userId));
+    public ResponseEntity<RankingPositionResponse> getMyPosition(
+            @Parameter(hidden = true) @AuthenticationPrincipal String userId,
+            @Parameter(description = "Ranking period type: WEEKLY, MONTHLY or SEMESTER", example = "WEEKLY")
+            @RequestParam(defaultValue = "WEEKLY") RankingType type) {
+        return ResponseEntity.ok(getRankingPositionUseCase.execute(userId, type));
     }
 
     @GetMapping("/me/nivel")

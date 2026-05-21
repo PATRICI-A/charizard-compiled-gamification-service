@@ -13,11 +13,9 @@ public class RankingEntryResponse {
     private int position;
     private String userId;
     private String displayName;
-    private int monasThisWeek;
+    private int monasThisPeriod;
     private int totalMonas;
     private String levelName;
-    /** @deprecated kept for backward compatibility; use monasThisWeek */
-    @Deprecated
-    private int weeklyXp;
+    private String type;
     private int totalBadgesEarned;
 }

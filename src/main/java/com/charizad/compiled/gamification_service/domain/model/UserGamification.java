@@ -23,6 +23,8 @@ public class UserGamification {
     private int totalXp;
     private int weeklyXp;
     private int weeklyMonas;
+    private int monthlyMonas;
+    private int semestralMonas;
     private boolean rankingOptIn;
     private final List<EarnedBadge> earnedBadges;
     private final List<BadgeProgress> progress;
@@ -45,6 +47,8 @@ public class UserGamification {
         totalXp += earned.getXpAwarded();
         weeklyXp += earned.getXpAwarded();
         weeklyMonas++;
+        monthlyMonas++;
+        semestralMonas++;
     }
 
     public void unlockReward(EarnedReward earned) {
@@ -57,6 +61,14 @@ public class UserGamification {
 
     public void resetWeeklyMonas() {
         weeklyMonas = 0;
+    }
+
+    public void resetMonthlyMonas() {
+        monthlyMonas = 0;
+    }
+
+    public void resetSemestralMonas() {
+        semestralMonas = 0;
     }
 
     public void toggleRankingOptIn() {
@@ -110,6 +122,8 @@ public class UserGamification {
                 .totalXp(0)
                 .weeklyXp(0)
                 .weeklyMonas(0)
+                .monthlyMonas(0)
+                .semestralMonas(0)
                 .rankingOptIn(false)
                 .earnedBadges(new ArrayList<>())
                 .progress(new ArrayList<>())
