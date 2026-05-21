@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SetRankingOptInRequest {
 
-    @NotNull(message = "El campo 'participar' es obligatorio")
-    private Boolean participar;
+    @NotNull(message = "Field 'participe' is required")
+    private Boolean participe;
 }

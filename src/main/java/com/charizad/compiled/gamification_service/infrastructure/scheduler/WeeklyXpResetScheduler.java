@@ -16,22 +16,36 @@ public class WeeklyXpResetScheduler {
 
     private final UserGamificationRepositoryPort userGamificationRepository;
 
-    /**
-     * Reinicia el XP semanal y las monas semanales de todos los usuarios.
-     * Se ejecuta todos los lunes a medianoche (00:00).
-     * El reset de monas semanales (weeklyMonas) alimenta el ranking RF13.3.
-     */
+    /** Resets weekly XP and weekly monas for all opted-in users. Runs every Monday at 00:00 (RN-13.3.3). */
     @Scheduled(cron = "${scheduling.weekly-reset.cron}")
     public void resetWeeklyXp() {
-        log.info("Iniciando reinicio semanal de XP y monas...");
-
-        List<UserGamification> allUsers = userGamificationRepository.findAllOptedIn();
-        allUsers.forEach(user -> {
+        log.info("Starting weekly XP and monas reset...");
+        List<UserGamification> users = userGamificationRepository.findAllOptedIn();
+        users.forEach(user -> {
             user.resetWeeklyXp();
             user.resetWeeklyMonas();
         });
-        userGamificationRepository.saveAll(allUsers);
+        userGamificationRepository.saveAll(users);
+        log.info("Weekly reset completed for {} users.", users.size());
+    }
 
-        log.info("Reinicio semanal completado para {} usuarios.", allUsers.size());
+    /** Resets monthly monas for all opted-in users. Runs on the first day of each month at 00:00 (RN-13.3.3). */
+    @Scheduled(cron = "${scheduling.monthly-reset.cron}")
+    public void resetMonthlyMonas() {
+        log.info("Starting monthly monas reset...");
+        List<UserGamification> users = userGamificationRepository.findAllOptedIn();
+        users.forEach(UserGamification::resetMonthlyMonas);
+        userGamificationRepository.saveAll(users);
+        log.info("Monthly reset completed for {} users.", users.size());
+    }
+
+    /** Resets semester monas for all opted-in users. Runs at the start of each academic semester (RN-13.3.3). */
+    @Scheduled(cron = "${scheduling.semestral-reset.cron}")
+    public void resetSemestralMonas() {
+        log.info("Starting semester monas reset...");
+        List<UserGamification> users = userGamificationRepository.findAllOptedIn();
+        users.forEach(UserGamification::resetSemestralMonas);
+        userGamificationRepository.saveAll(users);
+        log.info("Semester reset completed for {} users.", users.size());
     }
 }

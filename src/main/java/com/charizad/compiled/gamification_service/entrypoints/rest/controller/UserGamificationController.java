@@ -6,10 +6,12 @@ import com.charizad.compiled.gamification_service.application.dto.response.Badge
 import com.charizad.compiled.gamification_service.application.dto.response.EarnedBadgeResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.EarnedRewardResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.MonaResponse;
+import com.charizad.compiled.gamification_service.application.dto.response.RankingOptInResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.UserLevelResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.RankingEntryResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.RankingPositionResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.UserStatsResponse;
+import com.charizad.compiled.gamification_service.domain.model.enums.RankingType;
 import com.charizad.compiled.gamification_service.domain.ports.in.GetRankingPositionUseCase;
 import com.charizad.compiled.gamification_service.domain.ports.in.GetUserLevelUseCase;
 import com.charizad.compiled.gamification_service.domain.ports.in.GetRankingUseCase;
@@ -37,12 +39,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/gamificacion")
 @RequiredArgsConstructor
-@Tag(name = "Gamification", description = "Monas, niveles, estadísticas y ranking semanal — RF13.1/13.2/13.3")
+@Tag(name = "Gamification", description = "Monas, levels, stats and ranking — RF13.1/13.2/13.3")
 @SecurityRequirement(name = "bearerAuth")
 public class UserGamificationController {
 
@@ -59,13 +60,13 @@ public class UserGamificationController {
     private final GetMonaByIdUseCase getMonaByIdUseCase;
 
     @PostMapping("/monas/evento")
-    @Operation(summary = "Canjear código de evento",
-            description = "El estudiante ingresa el código alfanumérico de un evento universitario para desbloquear la mona 'Asistente' (RF13.1 — Flujo B).")
+    @Operation(summary = "Redeem event code",
+            description = "Student enters an event alphanumeric code to unlock the 'Asistente' mona (RF13.1 — Flow B).")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Mona 'Asistente' desbloqueada",
+            @ApiResponse(responseCode = "200", description = "Mona 'Asistente' unlocked",
                     content = @Content(schema = @Schema(implementation = EarnedBadgeResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Código no válido o ya utilizado", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Token JWT inválido o ausente", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid or already used code", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<EarnedBadgeResponse> redeemEventCode(
             @Parameter(hidden = true) @AuthenticationPrincipal String userId,
@@ -74,12 +75,12 @@ public class UserGamificationController {
     }
 
     @GetMapping("/monas")
-    @Operation(summary = "Listado de monas",
-            description = "Retorna todas las monas del catálogo con estado, progreso y fecha de obtención del estudiante autenticado (RF13.1 — Flujo C).")
+    @Operation(summary = "Mona catalogue",
+            description = "Returns all monas with status, progress and unlock date for the authenticated student (RF13.1 — Flow C).")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Listado de monas",
+            @ApiResponse(responseCode = "200", description = "Mona list",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = MonaResponse.class)))),
-            @ApiResponse(responseCode = "401", description = "Token JWT inválido o ausente", content = @Content)
+            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<List<MonaResponse>> getMonas(
             @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
@@ -87,13 +88,13 @@ public class UserGamificationController {
     }
 
     @GetMapping("/monas/{monaId}")
-    @Operation(summary = "Detalle de mona",
-            description = "Retorna el detalle de una mona específica y el progreso del estudiante hacia ella (RF13.1 — Flujo C).")
+    @Operation(summary = "Mona detail",
+            description = "Returns the detail of a specific mona and the student's progress toward it (RF13.1 — Flow C).")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Detalle de la mona",
+            @ApiResponse(responseCode = "200", description = "Mona detail",
                     content = @Content(schema = @Schema(implementation = MonaResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Token JWT inválido o ausente", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Mona no encontrada", content = @Content)
+            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Mona not found", content = @Content)
     })
     public ResponseEntity<MonaResponse> getMonaById(
             @Parameter(hidden = true) @AuthenticationPrincipal String userId,
@@ -141,23 +142,19 @@ public class UserGamificationController {
     }
 
     @PatchMapping("/me/ranking/optin")
-    @Operation(summary = "Set weekly ranking participation",
-            description = "Explicitly sets the user's participation in the weekly ranking (RF13.3). " +
-                          "Send {\"participar\": true} to join, {\"participar\": false} to leave.")
+    @Operation(summary = "Set ranking participation",
+            description = "Explicitly sets the user's opt-in status for the ranking (RF13.3 PTR13.3). " +
+                          "Send {\"participe\": true} to join, {\"participe\": false} to leave.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Status updated successfully", content = @Content),
+            @ApiResponse(responseCode = "200", description = "Status updated successfully",
+                    content = @Content(schema = @Schema(implementation = RankingOptInResponse.class))),
             @ApiResponse(responseCode = "400", description = "Missing or invalid body", content = @Content),
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
-    public ResponseEntity<Map<String, Object>> setRankingOptIn(
+    public ResponseEntity<RankingOptInResponse> setRankingOptIn(
             @AuthenticationPrincipal String userId,
             @Valid @RequestBody SetRankingOptInRequest request) {
-        boolean optIn = toggleRankingOptInUseCase.execute(userId, request.getParticipar());
-        return ResponseEntity.ok(Map.of(
-                "userId", userId,
-                "rankingOptIn", optIn,
-                "message", optIn ? "Ahora participas en el ranking semanal." : "Has salido del ranking semanal."
-        ));
+        return ResponseEntity.ok(toggleRankingOptInUseCase.execute(userId, request.getParticipe()));
     }
 
     @GetMapping("/me/rewards")
@@ -174,36 +171,39 @@ public class UserGamificationController {
     }
 
     @GetMapping("/ranking")
-    @Operation(summary = "Weekly ranking",
-            description = "Returns the top N users sorted by weekly monas (monasThisWeek) descending (RF13.3).")
+    @Operation(summary = "Ranking leaderboard",
+            description = "Returns all opted-in users sorted by period monas descending (RF13.3 / RN-13.3.2). " +
+                          "Accepts tipo=WEEKLY (default), tipo=mensual or tipo=semestral.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Weekly ranking",
+            @ApiResponse(responseCode = "200", description = "Ranking leaderboard",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = RankingEntryResponse.class)))),
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<List<RankingEntryResponse>> getRanking(
-            @Parameter(description = "Maximum number of positions to return", example = "10")
-            @RequestParam(defaultValue = "10") int limit) {
-        return ResponseEntity.ok(getRankingUseCase.execute(limit));
+            @Parameter(description = "Ranking period: WEEKLY, MONTHLY or SEMESTER", example = "WEEKLY")
+            @RequestParam(defaultValue = "WEEKLY") String tipo) {
+        return ResponseEntity.ok(getRankingUseCase.execute(parseType(tipo)));
     }
 
     @GetMapping("/ranking/mi-posicion")
     @Operation(summary = "My ranking position",
-            description = "Returns the authenticated user's current position in the weekly ranking. " +
-                          "Returns posicion=0 if the user is not participating.")
+            description = "Returns the authenticated user's position in the chosen ranking period. " +
+                          "Returns position=null and rankingOptIn=false when not opted in (RF13.3).")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User's position in the ranking",
                     content = @Content(schema = @Schema(implementation = RankingPositionResponse.class))),
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
-    public ResponseEntity<RankingPositionResponse> getMiPosicion(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getRankingPositionUseCase.execute(userId));
+    public ResponseEntity<RankingPositionResponse> getMyPosition(
+            @Parameter(hidden = true) @AuthenticationPrincipal String userId,
+            @Parameter(description = "Ranking period: WEEKLY, MONTHLY or SEMESTER", example = "WEEKLY")
+            @RequestParam(defaultValue = "WEEKLY") String tipo) {
+        return ResponseEntity.ok(getRankingPositionUseCase.execute(userId, parseType(tipo)));
     }
 
     @GetMapping("/me/nivel")
     @Operation(summary = "My current level",
-            description = "Returns the authenticated user's level based on total monas collected ")
+            description = "Returns the authenticated user's level based on total monas collected.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User level information",
                     content = @Content(schema = @Schema(implementation = UserLevelResponse.class))),
@@ -213,5 +213,13 @@ public class UserGamificationController {
     public ResponseEntity<UserLevelResponse> getMiNivel(
             @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
         return ResponseEntity.ok(getUserLevelUseCase.execute(userId));
+    }
+
+    private RankingType parseType(String tipo) {
+        return switch (tipo.toLowerCase()) {
+            case "mensual"    -> RankingType.MONTHLY;
+            case "semestral"  -> RankingType.SEMESTER;
+            default           -> RankingType.WEEKLY;
+        };
     }
 }

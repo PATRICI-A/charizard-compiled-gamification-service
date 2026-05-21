@@ -46,7 +46,11 @@ springdoc:
 
 scheduling:
   weekly-reset:
-    cron: "0 0 0 * * MON"   # Lunes a medianoche
+    cron: "0 0 0 * * MON"    # Every Monday at 00:00 (RN-13.3.3)
+  monthly-reset:
+    cron: "0 0 0 1 * *"      # First day of each month at 00:00 (RN-13.3.3)
+  semestral-reset:
+    cron: "0 0 0 1 2,8 *"    # Feb 1 and Aug 1 at 00:00 — academic semester start (RN-13.3.3)
 
 # URLs de servicios externos (OpenFeign)
 services:

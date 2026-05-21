@@ -2,7 +2,6 @@ package com.charizad.compiled.gamification_service.infrastructure.adapters.persi
 
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.UserGamificationDocument;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
@@ -12,7 +11,5 @@ public interface UserGamificationMongoRepository extends MongoRepository<UserGam
     Optional<UserGamificationDocument> findByUserId(String userId);
     List<UserGamificationDocument> findByRankingOptInTrue();
     List<UserGamificationDocument> findByRankingOptInTrueOrderByWeeklyXpDesc(PageRequest pageRequest);
-    List<UserGamificationDocument> findByRankingOptInTrueOrderByWeeklyMonasDesc(PageRequest pageRequest);
     long countByRankingOptInTrue();
-    long countByRankingOptInTrueAndWeeklyMonasGreaterThan(int weeklyMonas);
 }

@@ -26,6 +26,8 @@ public class UserGamificationDocument {
     private int totalXp;
     private int weeklyXp;
     private int weeklyMonas;
+    private int monthlyMonas;
+    private int semestralMonas;
     private boolean rankingOptIn;
 
     private List<EarnedBadgeSubdocument> earnedBadges;

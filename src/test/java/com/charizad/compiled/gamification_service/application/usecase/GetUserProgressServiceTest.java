@@ -3,7 +3,10 @@ package com.charizad.compiled.gamification_service.application.usecase;
 import com.charizad.compiled.gamification_service.application.dto.response.BadgeProgressResponse;
 import com.charizad.compiled.gamification_service.application.mapper.UserGamificationMapper;
 import com.charizad.compiled.gamification_service.domain.exceptions.UserGamificationNotFoundException;
+import com.charizad.compiled.gamification_service.domain.model.Badge;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
+import com.charizad.compiled.gamification_service.domain.model.enums.BadgeCategory;
+import com.charizad.compiled.gamification_service.domain.ports.out.BadgeRepositoryPort;
 import com.charizad.compiled.gamification_service.domain.ports.out.UserGamificationRepositoryPort;
 import com.charizad.compiled.gamification_service.domain.valueobjects.BadgeProgress;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,14 +28,15 @@ import static org.mockito.Mockito.*;
 class GetUserProgressServiceTest {
 
     @Mock private UserGamificationRepositoryPort userGamificationRepository;
+    @Mock private BadgeRepositoryPort badgeRepository;
     @Mock private UserGamificationMapper userGamificationMapper;
 
     @InjectMocks
     private GetUserProgressService service;
 
     @Test
-    @DisplayName("Retorna progreso de insignias del usuario")
-    void execute_shouldReturnProgress_whenUserExists() {
+    @DisplayName("Returns one entry per active badge — existing progress mapped via mapper")
+    void execute_shouldReturnOneEntryPerBadge_whenUserHasProgress() {
         BadgeProgress progress = BadgeProgress.builder()
                 .badgeId("badge-001")
                 .currentValue(50)
@@ -41,22 +46,25 @@ class GetUserProgressServiceTest {
 
         UserGamification user = UserGamification.builder()
                 .userId("user-001")
-                .totalXp(100)
-                .weeklyXp(50)
+                .totalXp(100).weeklyXp(50)
                 .rankingOptIn(false)
                 .earnedBadges(new ArrayList<>())
                 .progress(new ArrayList<>(List.of(progress)))
                 .build();
 
+        Badge badge = Badge.builder()
+                .id("badge-001").name("Primer Parche")
+                .description("desc").category(BadgeCategory.COMMON)
+                .xpReward(10).active(true).createdAt(LocalDateTime.now())
+                .build();
+
         BadgeProgressResponse expectedResponse = BadgeProgressResponse.builder()
-                .badgeId("badge-001")
-                .currentValue(50)
-                .requiredValue(100)
-                .completed(false)
-                .percentageComplete(50)
+                .badgeId("badge-001").currentValue(50).requiredValue(100)
+                .completed(false).percentageComplete(50)
                 .build();
 
         when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.of(user));
+        when(badgeRepository.findAllActive()).thenReturn(List.of(badge));
         when(userGamificationMapper.toProgressResponse(progress)).thenReturn(expectedResponse);
 
         List<BadgeProgressResponse> result = service.execute("user-001");
@@ -67,26 +75,37 @@ class GetUserProgressServiceTest {
     }
 
     @Test
-    @DisplayName("Retorna lista vacía si el usuario no tiene progreso")
-    void execute_shouldReturnEmptyList_whenNoProgress() {
+    @DisplayName("Returns zero-progress entry for badges with no user activity")
+    void execute_shouldReturnZeroProgress_whenUserHasNoProgress() {
         UserGamification user = UserGamification.builder()
                 .userId("user-001")
-                .totalXp(0)
-                .weeklyXp(0)
+                .totalXp(0).weeklyXp(0)
                 .rankingOptIn(false)
                 .earnedBadges(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .build();
 
+        Badge badge = Badge.builder()
+                .id("badge-001").name("Primera Conexión")
+                .description("desc").category(BadgeCategory.COMMON)
+                .xpReward(10).active(true).createdAt(LocalDateTime.now())
+                .build();
+
         when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.of(user));
+        when(badgeRepository.findAllActive()).thenReturn(List.of(badge));
 
         List<BadgeProgressResponse> result = service.execute("user-001");
 
-        assertThat(result).isEmpty();
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.get(0).getCurrentValue()).isEqualTo(0);
+        assertThat(result.get(0).getRequiredValue()).isEqualTo(0);
+        assertThat(result.get(0).isCompleted()).isFalse();
+        assertThat(result.get(0).getPercentageComplete()).isEqualTo(0);
     }
 
     @Test
-    @DisplayName("Lanza excepción si el usuario no existe")
+    @DisplayName("Throws exception when user not found")
     void execute_shouldThrow_whenUserNotFound() {
         when(userGamificationRepository.findByUserId("user-999")).thenReturn(Optional.empty());
 
