@@ -1,5 +1,6 @@
 package com.charizad.compiled.gamification_service.infrastructure.adapters.out.messaging;
 
+import com.charizad.compiled.gamification_service.application.dto.event.AchievementUnlockedEventDto;
 import com.charizad.compiled.gamification_service.domain.model.Badge;
 import com.charizad.compiled.gamification_service.domain.ports.out.NotificationEventPort;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,11 @@ public class RabbitNotificationPublisher implements NotificationEventPort {
     @Value("${rabbitmq.exchange.gamification:gamification.events}")
     private String gamificationExchange;
 
-    @Value("${rabbitmq.routing-key.badge-earned:badge.earned}")
+    @Value("${rabbitmq.routing-key.badge-earned}")
     private String badgeEarnedKey;
+
+    @Value("${rabbitmq.routing-key.achievement-unlocked}")
+    private String achievementUnlockedKey;
 
     @Override
     @Async
@@ -46,6 +50,28 @@ public class RabbitNotificationPublisher implements NotificationEventPort {
             log.info("[RabbitMQ] Published badge.earned → userId={} badge={}", userId, badge.getName());
         } catch (Exception e) {
             log.warn("[RabbitMQ] Could not publish badge.earned for userId={}: {}", userId, e.getMessage());
+        }
+    }
+
+    @Override
+    @Async
+    public void notifyAchievementUnlocked(String userId, Badge badge) {
+        try {
+            AchievementUnlockedEventDto payload = AchievementUnlockedEventDto.builder()
+                    .userId(userId)
+                    .monaId(badge.getId())
+                    .monaName(badge.getName())
+                    .monaDescription(badge.getDescription())
+                    .monaCategory(badge.getCategory())
+                    .iconUrl(badge.getIconUrl())
+                    .xpAwarded(badge.getXpReward())
+                    .occurredAt(LocalDateTime.now())
+                    .build();
+
+            rabbitTemplate.convertAndSend(gamificationExchange, achievementUnlockedKey, payload);
+            log.info("[RabbitMQ] Published achievement.unlocked → userId={} mona={}", userId, badge.getName());
+        } catch (Exception e) {
+            log.warn("[RabbitMQ] Could not publish achievement.unlocked for userId={}: {}", userId, e.getMessage());
         }
     }
 }
