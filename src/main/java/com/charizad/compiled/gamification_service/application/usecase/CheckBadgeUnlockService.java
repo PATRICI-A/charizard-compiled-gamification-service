@@ -147,11 +147,11 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
         }
 
         String userId = event.getUserId();
-        UserGamification user = userGamificationRepository.findByUserId(userId).orElse(null);
-        if (user == null) {
-            log.debug("[CheckBadgeUnlock] ZONE_VISITED ignorado — usuario {} no encontrado en gamificación", userId);
-            return List.of();
-        }
+        UserGamification user = userGamificationRepository.findByUserId(userId)
+                .orElseGet(() -> {
+                    log.info("[CheckBadgeUnlock] ZONE_VISITED — creando perfil de gamificación para userId={}", userId);
+                    return userGamificationRepository.save(UserGamification.newUser(userId));
+                });
 
         user.visitZone(campusZone);
         int totalZones = user.getVisitedCampusZones().size();
