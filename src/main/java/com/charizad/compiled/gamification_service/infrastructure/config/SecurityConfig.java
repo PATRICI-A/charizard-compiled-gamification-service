@@ -38,6 +38,10 @@ public class SecurityConfig {
                     "/actuator/health",
                     "/actuator/health/**"
                 ).permitAll()
+                .requestMatchers(req ->
+                    "GET".equals(req.getMethod()) &&
+                    req.getRequestURI().startsWith("/api/v1/gamificacion/internal/")
+                ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/gamificacion/badges").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/gamificacion/badges/award").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/gamificacion/admin/event-codes").hasRole("ADMIN")
