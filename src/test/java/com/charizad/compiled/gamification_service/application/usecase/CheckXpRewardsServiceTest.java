@@ -12,15 +12,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CheckXpRewardsServiceTest {
+
+    private static final UUID REWARD_ID = UUID.fromString("20000000-0000-0000-0000-000000000001");
 
     @Mock private RewardRepositoryPort rewardRepository;
     @Mock private UserGamificationRepositoryPort userGamificationRepository;
@@ -32,7 +34,7 @@ class CheckXpRewardsServiceTest {
     @DisplayName("Desbloquea rewards cuando el usuario supera el threshold")
     void checkAndUnlock_shouldUnlockRewards_whenXpSufficient() {
         Reward reward = Reward.builder()
-                .id("reward-001")
+                .id(REWARD_ID)
                 .name("Gold Title")
                 .type(RewardType.TITLE)
                 .xpThreshold(500)
@@ -51,10 +53,10 @@ class CheckXpRewardsServiceTest {
                 .earnedRewards(new ArrayList<>())
                 .build();
 
-        List<String> unlocked = service.checkAndUnlock(user);
+        List<UUID> unlocked = service.checkAndUnlock(user);
 
-        assertThat(unlocked).containsExactly("reward-001");
-        assertThat(user.hasReward("reward-001")).isTrue();
+        assertThat(unlocked).containsExactly(REWARD_ID);
+        assertThat(user.hasReward(REWARD_ID)).isTrue();
         verify(userGamificationRepository).save(user);
     }
 
@@ -62,7 +64,7 @@ class CheckXpRewardsServiceTest {
     @DisplayName("No desbloquea rewards si el XP no alcanza el threshold")
     void checkAndUnlock_shouldNotUnlock_whenXpBelowThreshold() {
         Reward reward = Reward.builder()
-                .id("reward-001")
+                .id(REWARD_ID)
                 .name("Gold Title")
                 .type(RewardType.TITLE)
                 .xpThreshold(500)
@@ -73,10 +75,10 @@ class CheckXpRewardsServiceTest {
 
         UserGamification user = UserGamification.newUser("user-001");
 
-        List<String> unlocked = service.checkAndUnlock(user);
+        List<UUID> unlocked = service.checkAndUnlock(user);
 
         assertThat(unlocked).isEmpty();
-        assertThat(user.hasReward("reward-001")).isFalse();
+        assertThat(user.hasReward(REWARD_ID)).isFalse();
         verify(userGamificationRepository, never()).save(any());
     }
 
@@ -84,7 +86,7 @@ class CheckXpRewardsServiceTest {
     @DisplayName("No desbloquea rewards ya obtenidos")
     void checkAndUnlock_shouldNotUnlock_whenAlreadyHasReward() {
         Reward reward = Reward.builder()
-                .id("reward-001")
+                .id(REWARD_ID)
                 .name("Gold Title")
                 .type(RewardType.TITLE)
                 .xpThreshold(500)
@@ -104,9 +106,9 @@ class CheckXpRewardsServiceTest {
                 .build();
 
         service.checkAndUnlock(user);
-        assertThat(user.hasReward("reward-001")).isTrue();
+        assertThat(user.hasReward(REWARD_ID)).isTrue();
 
-        List<String> unlocked = service.checkAndUnlock(user);
+        List<UUID> unlocked = service.checkAndUnlock(user);
 
         assertThat(unlocked).isEmpty();
         verify(userGamificationRepository, times(1)).save(user);
@@ -127,7 +129,7 @@ class CheckXpRewardsServiceTest {
                 .earnedRewards(new ArrayList<>())
                 .build();
 
-        List<String> unlocked = service.checkAndUnlock(user);
+        List<UUID> unlocked = service.checkAndUnlock(user);
 
         assertThat(unlocked).isEmpty();
         verify(userGamificationRepository, never()).save(any());

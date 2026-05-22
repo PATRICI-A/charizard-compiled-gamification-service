@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Endpoints llamados por otros microservicios vía OpenFeign para reportar
@@ -59,7 +60,7 @@ public class GamificationEventController {
                 .geoLocationEnabled(true)
                 .build();
 
-        List<String> awarded = checkBadgeUnlockUseCase.execute(event);
+        List<UUID> awarded = checkBadgeUnlockUseCase.execute(event);
 
         return ResponseEntity.ok(Map.of(
                 "userId", userId,

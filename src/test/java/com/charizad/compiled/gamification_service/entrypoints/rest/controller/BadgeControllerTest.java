@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -30,6 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class BadgeControllerTest {
+
+    private static final UUID BADGE_ID_1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID BADGE_ID_999 = UUID.fromString("00000000-0000-0000-0000-000000000999");
 
     @Mock CreateBadgeUseCase createBadgeUseCase;
     @Mock AwardBadgeUseCase awardBadgeUseCase;
@@ -58,7 +62,7 @@ class BadgeControllerTest {
                 .build();
 
         BadgeResponse response = BadgeResponse.builder()
-                .id("badge-001")
+                .id(BADGE_ID_1)
                 .name("El Legendario")
                 .category(BadgeCategory.LEGENDARY)
                 .xpReward(500)
@@ -71,7 +75,7 @@ class BadgeControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value("badge-001"))
+                .andExpect(jsonPath("$.id").value(BADGE_ID_1.toString()))
                 .andExpect(jsonPath("$.name").value("El Legendario"))
                 .andExpect(jsonPath("$.xpReward").value(500));
     }
@@ -97,11 +101,11 @@ class BadgeControllerTest {
     void awardBadge_shouldReturn200() throws Exception {
         AwardBadgeRequest request = AwardBadgeRequest.builder()
                 .userId("user-001")
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID_1)
                 .build();
 
         EarnedBadgeResponse response = EarnedBadgeResponse.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID_1)
                 .badgeName("El Legendario")
                 .xpAwarded(500)
                 .build();
@@ -112,7 +116,7 @@ class BadgeControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.badgeId").value("badge-001"))
+                .andExpect(jsonPath("$.badgeId").value(BADGE_ID_1.toString()))
                 .andExpect(jsonPath("$.xpAwarded").value(500));
     }
 
@@ -121,16 +125,16 @@ class BadgeControllerTest {
     void awardBadge_shouldReturn404_whenBadgeNotFound() throws Exception {
         AwardBadgeRequest request = AwardBadgeRequest.builder()
                 .userId("user-001")
-                .badgeId("badge-999")
+                .badgeId(BADGE_ID_999)
                 .build();
 
         when(awardBadgeUseCase.execute(any()))
-                .thenThrow(new BadgeNotFoundException("badge-999"));
+                .thenThrow(new BadgeNotFoundException(BADGE_ID_999));
 
         mockMvc.perform(post("/api/v1/gamificacion/badges/award")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Insignia no encontrada con id: badge-999"));
+                .andExpect(jsonPath("$.message").value("Insignia no encontrada con id: " + BADGE_ID_999));
     }
 }

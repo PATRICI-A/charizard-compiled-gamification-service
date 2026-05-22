@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,8 +22,9 @@ public class GetMonaByIdService implements GetMonaByIdUseCase {
 
     @Override
     public MonaResponse execute(String userId, String monaId) {
-        Badge badge = badgeRepository.findById(monaId)
-                .orElseThrow(() -> new BadgeNotFoundException(monaId));
+        UUID id = UUID.fromString(monaId);
+        Badge badge = badgeRepository.findById(id)
+                .orElseThrow(() -> new BadgeNotFoundException(id));
 
         Optional<UserGamification> userOpt = userGamificationRepository.findByUserId(userId);
 

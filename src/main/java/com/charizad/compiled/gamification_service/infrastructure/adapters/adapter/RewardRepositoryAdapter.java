@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class RewardRepositoryAdapter implements RewardRepositoryPort {
     }
 
     @Override
-    public Optional<Reward> findById(String id) {
+    public Optional<Reward> findById(UUID id) {
         return mongoRepository.findById(id).map(mapper::toDomain);
     }
 

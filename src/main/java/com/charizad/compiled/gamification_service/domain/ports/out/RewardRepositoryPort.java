@@ -4,12 +4,13 @@ import com.charizad.compiled.gamification_service.domain.model.Reward;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface RewardRepositoryPort {
 
     Reward save(Reward reward);
 
-    Optional<Reward> findById(String id);
+    Optional<Reward> findById(UUID id);
 
     /** Returns all active rewards, ordered by xpThreshold ascending. */
     List<Reward> findAllActive();

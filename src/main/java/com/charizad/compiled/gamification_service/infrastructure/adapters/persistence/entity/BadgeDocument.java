@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 public class BadgeDocument {
 
     @Id
-    private String id;
+    private UUID id;
 
     @Indexed(unique = true)
     private String name;

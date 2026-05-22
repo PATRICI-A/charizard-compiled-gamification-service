@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -18,7 +19,7 @@ import java.util.List;
 public class UserGamificationDocument {
 
     @Id
-    private String id;
+    private UUID id;
 
     @Indexed(unique = true)
     private String userId;

@@ -4,6 +4,8 @@ import com.charizad.compiled.gamification_service.domain.model.Reward;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.RewardDocument;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class RewardDocumentMapper {
 
@@ -22,7 +24,7 @@ public class RewardDocumentMapper {
 
     public RewardDocument toDocument(Reward reward) {
         return RewardDocument.builder()
-                .id(reward.getId())
+                .id(reward.getId() != null ? reward.getId() : UUID.randomUUID())
                 .name(reward.getName())
                 .description(reward.getDescription())
                 .type(reward.getType())

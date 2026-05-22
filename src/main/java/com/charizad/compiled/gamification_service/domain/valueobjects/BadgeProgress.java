@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.UUID;
+
 /**
  * Progreso de un usuario hacia el desbloqueo de una insignia específica.
  * La lógica de evaluación del criterio queda pendiente hasta integración con M02.
@@ -13,7 +15,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class BadgeProgress {
 
-    private final String badgeId;
+    private final UUID badgeId;
     private final int currentValue;
     private final int requiredValue;
     private final boolean completed;

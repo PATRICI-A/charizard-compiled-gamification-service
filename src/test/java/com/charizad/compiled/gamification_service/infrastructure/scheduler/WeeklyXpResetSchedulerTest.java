@@ -71,4 +71,38 @@ class WeeklyXpResetSchedulerTest {
         verify(userGamificationRepository).findAllOptedIn();
         verify(userGamificationRepository).saveAll(List.of());
     }
+
+    @Test
+    @DisplayName("resetMonthlyMonas reinicia monas mensuales y guarda")
+    void resetMonthlyMonas_shouldResetAndSave() {
+        UserGamification user = UserGamification.builder()
+                .userId("user-001").totalXp(500).monthlyMonas(10).rankingOptIn(true)
+                .earnedBadges(new ArrayList<>()).progress(new ArrayList<>())
+                .build();
+
+        when(userGamificationRepository.findAllOptedIn()).thenReturn(List.of(user));
+
+        scheduler.resetMonthlyMonas();
+
+        assertThat(user.getMonthlyMonas()).isZero();
+        assertThat(user.getTotalXp()).isEqualTo(500);
+        verify(userGamificationRepository).saveAll(List.of(user));
+    }
+
+    @Test
+    @DisplayName("resetSemestralMonas reinicia monas semestrales y guarda")
+    void resetSemestralMonas_shouldResetAndSave() {
+        UserGamification user = UserGamification.builder()
+                .userId("user-001").totalXp(500).semestralMonas(15).rankingOptIn(true)
+                .earnedBadges(new ArrayList<>()).progress(new ArrayList<>())
+                .build();
+
+        when(userGamificationRepository.findAllOptedIn()).thenReturn(List.of(user));
+
+        scheduler.resetSemestralMonas();
+
+        assertThat(user.getSemestralMonas()).isZero();
+        assertThat(user.getTotalXp()).isEqualTo(500);
+        verify(userGamificationRepository).saveAll(List.of(user));
+    }
 }

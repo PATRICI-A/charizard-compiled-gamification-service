@@ -3,6 +3,7 @@ package com.charizad.compiled.gamification_service.domain.ports.in;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Evaluates all active rewards against the user's current XP and unlocks
@@ -13,5 +14,5 @@ import java.util.List;
  */
 public interface CheckXpRewardsUseCase {
 
-    List<String> checkAndUnlock(UserGamification user);
+    List<UUID> checkAndUnlock(UserGamification user);
 }

@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,6 +32,8 @@ class CreateRewardServiceTest {
     @Captor
     private ArgumentCaptor<Reward> rewardCaptor;
 
+    private static final UUID REWARD_ID = UUID.fromString("20000000-0000-0000-0000-000000000001");
+
     @Test
     @DisplayName("Crea un reward y retorna la respuesta")
     void execute_shouldCreateAndReturnReward() {
@@ -43,7 +46,7 @@ class CreateRewardServiceTest {
                 .build();
 
         Reward saved = Reward.builder()
-                .id("reward-001")
+                .id(REWARD_ID)
                 .name("Gold Title")
                 .description("Un título dorado")
                 .type(RewardType.TITLE)
@@ -57,7 +60,7 @@ class CreateRewardServiceTest {
 
         RewardResponse result = service.execute(request);
 
-        assertThat(result.getId()).isEqualTo("reward-001");
+        assertThat(result.getId()).isEqualTo(REWARD_ID);
         assertThat(result.getName()).isEqualTo("Gold Title");
         assertThat(result.getDescription()).isEqualTo("Un título dorado");
         assertThat(result.getType()).isEqualTo(RewardType.TITLE);

@@ -9,11 +9,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class BadgeDocumentMapperTest {
+
+    private static final UUID ID_1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID ID_2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
+    private static final UUID ID_3 = UUID.fromString("00000000-0000-0000-0000-000000000003");
 
     private final BadgeDocumentMapper mapper = new BadgeDocumentMapper();
 
@@ -22,7 +27,7 @@ class BadgeDocumentMapperTest {
     void toDomain_shouldMapDocumentToDomain() {
         LocalDateTime now = LocalDateTime.now();
         BadgeDocument doc = BadgeDocument.builder()
-                .id("badge-001")
+                .id(ID_1)
                 .name("Legendario")
                 .description("Insignia legendaria")
                 .category(BadgeCategory.LEGENDARY)
@@ -34,7 +39,7 @@ class BadgeDocumentMapperTest {
 
         Badge result = mapper.toDomain(doc);
 
-        assertThat(result.getId()).isEqualTo("badge-001");
+        assertThat(result.getId()).isEqualTo(ID_1);
         assertThat(result.getName()).isEqualTo("Legendario");
         assertThat(result.getDescription()).isEqualTo("Insignia legendaria");
         assertThat(result.getCategory()).isEqualTo(BadgeCategory.LEGENDARY);
@@ -49,7 +54,7 @@ class BadgeDocumentMapperTest {
     void toDocument_shouldMapDomainToDocument() {
         LocalDateTime now = LocalDateTime.now();
         Badge badge = Badge.builder()
-                .id("badge-001")
+                .id(ID_1)
                 .name("Legendario")
                 .description("Insignia legendaria")
                 .category(BadgeCategory.LEGENDARY)
@@ -61,7 +66,7 @@ class BadgeDocumentMapperTest {
 
         BadgeDocument result = mapper.toDocument(badge);
 
-        assertThat(result.getId()).isEqualTo("badge-001");
+        assertThat(result.getId()).isEqualTo(ID_1);
         assertThat(result.getName()).isEqualTo("Legendario");
         assertThat(result.getDescription()).isEqualTo("Insignia legendaria");
         assertThat(result.getCategory()).isEqualTo(BadgeCategory.LEGENDARY);
@@ -75,7 +80,7 @@ class BadgeDocumentMapperTest {
     @DisplayName("toDomain mapea BadgeDocument inactivo correctamente")
     void toDomain_shouldMapInactiveDocument() {
         BadgeDocument doc = BadgeDocument.builder()
-                .id("badge-002")
+                .id(ID_2)
                 .name("Inactivo")
                 .description("Inactiva")
                 .category(BadgeCategory.RARE)
@@ -93,7 +98,7 @@ class BadgeDocumentMapperTest {
     @DisplayName("toDocument mapea Badge inactivo correctamente")
     void toDocument_shouldMapInactiveBadge() {
         Badge badge = Badge.builder()
-                .id("badge-002")
+                .id(ID_2)
                 .name("Inactivo")
                 .description("Inactiva")
                 .category(BadgeCategory.RARE)
@@ -112,7 +117,7 @@ class BadgeDocumentMapperTest {
     void shouldBeBidirectionalConsistent() {
         LocalDateTime now = LocalDateTime.now();
         BadgeDocument original = BadgeDocument.builder()
-                .id("badge-003")
+                .id(ID_3)
                 .name("Épica")
                 .description("Insignia épica")
                 .category(BadgeCategory.EPIC)

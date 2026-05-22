@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -13,7 +14,7 @@ class EventCodeTest {
 
     private EventCode activeCode() {
         return EventCode.builder()
-                .id("ec1").code("ABC123")
+                .id(UUID.fromString("00000000-0000-0000-0000-ec1000000001")).code("ABC123")
                 .validFrom(LocalDateTime.now().minusHours(1))
                 .validUntil(LocalDateTime.now().plusHours(1))
                 .usedByUserIds(new ArrayList<>())
@@ -30,7 +31,7 @@ class EventCodeTest {
     @DisplayName("isValid — now antes de validFrom retorna false")
     void isValid_beforeValidFrom_false() {
         EventCode code = EventCode.builder()
-                .id("ec").code("X")
+                .id(UUID.fromString("00000000-0000-0000-0000-ec0000000000")).code("X")
                 .validFrom(LocalDateTime.now().plusHours(1))
                 .validUntil(LocalDateTime.now().plusHours(2))
                 .usedByUserIds(new ArrayList<>())
@@ -42,7 +43,7 @@ class EventCodeTest {
     @DisplayName("isValid — now después de validUntil retorna false")
     void isValid_afterValidUntil_false() {
         EventCode code = EventCode.builder()
-                .id("ec").code("X")
+                .id(UUID.fromString("00000000-0000-0000-0000-ec0000000000")).code("X")
                 .validFrom(LocalDateTime.now().minusHours(2))
                 .validUntil(LocalDateTime.now().minusHours(1))
                 .usedByUserIds(new ArrayList<>())
@@ -55,7 +56,7 @@ class EventCodeTest {
     void isValid_exactlyAtValidFrom_true() {
         LocalDateTime boundary = LocalDateTime.of(2026, 5, 19, 10, 0);
         EventCode code = EventCode.builder()
-                .id("ec").code("X")
+                .id(UUID.fromString("00000000-0000-0000-0000-ec0000000000")).code("X")
                 .validFrom(boundary)
                 .validUntil(boundary.plusHours(1))
                 .usedByUserIds(new ArrayList<>())
@@ -69,7 +70,7 @@ class EventCodeTest {
         ArrayList<String> used = new ArrayList<>();
         used.add("u1");
         EventCode code = EventCode.builder()
-                .id("ec").code("X")
+                .id(UUID.fromString("00000000-0000-0000-0000-ec0000000000")).code("X")
                 .validFrom(LocalDateTime.now().minusHours(1))
                 .validUntil(LocalDateTime.now().plusHours(1))
                 .usedByUserIds(used)

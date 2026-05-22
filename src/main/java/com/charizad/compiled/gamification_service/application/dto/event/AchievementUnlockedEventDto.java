@@ -12,7 +12,7 @@ import java.util.UUID;
 public class AchievementUnlockedEventDto {
 
     private UUID userId;
-    private String monaId;
+    private UUID monaId;
     private String monaName;
     private String monaDescription;
     private BadgeCategory monaCategory;

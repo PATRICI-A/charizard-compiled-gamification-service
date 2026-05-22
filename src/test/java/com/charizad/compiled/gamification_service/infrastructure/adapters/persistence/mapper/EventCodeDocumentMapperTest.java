@@ -8,10 +8,17 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class EventCodeDocumentMapperTest {
+
+    private static final UUID EC1 = UUID.fromString("30000000-0000-0000-0000-000000000001");
+    private static final UUID EC2 = UUID.fromString("30000000-0000-0000-0000-000000000002");
+    private static final UUID EC3 = UUID.fromString("30000000-0000-0000-0000-000000000003");
+    private static final UUID EC4 = UUID.fromString("30000000-0000-0000-0000-000000000004");
+    private static final UUID EC5 = UUID.fromString("30000000-0000-0000-0000-000000000005");
 
     private final EventCodeDocumentMapper mapper = new EventCodeDocumentMapper();
 
@@ -22,13 +29,13 @@ class EventCodeDocumentMapperTest {
     @DisplayName("toDomain — mapea todos los campos correctamente")
     void toDomain_mapsAllFields() {
         EventCodeDocument doc = EventCodeDocument.builder()
-                .id("ec1").code("ABC").validFrom(FROM).validUntil(UNTIL)
+                .id(EC1).code("ABC").validFrom(FROM).validUntil(UNTIL)
                 .usedByUserIds(new ArrayList<>(List.of("u1", "u2")))
                 .build();
 
         EventCode domain = mapper.toDomain(doc);
 
-        assertThat(domain.getId()).isEqualTo("ec1");
+        assertThat(domain.getId()).isEqualTo(EC1);
         assertThat(domain.getCode()).isEqualTo("ABC");
         assertThat(domain.getValidFrom()).isEqualTo(FROM);
         assertThat(domain.getValidUntil()).isEqualTo(UNTIL);
@@ -39,7 +46,7 @@ class EventCodeDocumentMapperTest {
     @DisplayName("toDomain — usedByUserIds null en doc → lista vacía en dominio")
     void toDomain_nullUsedByUserIds_emptyList() {
         EventCodeDocument doc = EventCodeDocument.builder()
-                .id("ec2").code("XYZ").validFrom(FROM).validUntil(UNTIL)
+                .id(EC2).code("XYZ").validFrom(FROM).validUntil(UNTIL)
                 .usedByUserIds(null)
                 .build();
 
@@ -53,12 +60,12 @@ class EventCodeDocumentMapperTest {
     void toDomain_usedByUserIdsCopied() {
         ArrayList<String> original = new ArrayList<>(List.of("u1"));
         EventCodeDocument doc = EventCodeDocument.builder()
-                .id("ec3").code("COPY").validFrom(FROM).validUntil(UNTIL)
+                .id(EC3).code("COPY").validFrom(FROM).validUntil(UNTIL)
                 .usedByUserIds(original)
                 .build();
 
         EventCode domain = mapper.toDomain(doc);
-        original.add("u2"); // mutate original
+        original.add("u2");
 
         assertThat(domain.getUsedByUserIds()).doesNotContain("u2");
     }
@@ -67,13 +74,13 @@ class EventCodeDocumentMapperTest {
     @DisplayName("toDocument — mapea todos los campos correctamente")
     void toDocument_mapsAllFields() {
         EventCode domain = EventCode.builder()
-                .id("ec1").code("ABC").validFrom(FROM).validUntil(UNTIL)
+                .id(EC1).code("ABC").validFrom(FROM).validUntil(UNTIL)
                 .usedByUserIds(new ArrayList<>(List.of("u1")))
                 .build();
 
         EventCodeDocument doc = mapper.toDocument(domain);
 
-        assertThat(doc.getId()).isEqualTo("ec1");
+        assertThat(doc.getId()).isEqualTo(EC1);
         assertThat(doc.getCode()).isEqualTo("ABC");
         assertThat(doc.getValidFrom()).isEqualTo(FROM);
         assertThat(doc.getValidUntil()).isEqualTo(UNTIL);
@@ -85,12 +92,11 @@ class EventCodeDocumentMapperTest {
     void toDocument_usedByUserIdsCopied() {
         ArrayList<String> usedBy = new ArrayList<>(List.of("u1"));
         EventCode domain = EventCode.builder()
-                .id("ec4").code("CPY").validFrom(FROM).validUntil(UNTIL)
+                .id(EC4).code("CPY").validFrom(FROM).validUntil(UNTIL)
                 .usedByUserIds(usedBy)
                 .build();
 
         EventCodeDocument doc = mapper.toDocument(domain);
-        // doc list must be independent — mutation via domain model should not affect doc
         assertThat(doc.getUsedByUserIds()).containsExactly("u1");
     }
 
@@ -98,7 +104,7 @@ class EventCodeDocumentMapperTest {
     @DisplayName("round-trip toDomain→toDocument preserva valores")
     void roundTrip_preservesValues() {
         EventCodeDocument original = EventCodeDocument.builder()
-                .id("ec5").code("RT").validFrom(FROM).validUntil(UNTIL)
+                .id(EC5).code("RT").validFrom(FROM).validUntil(UNTIL)
                 .usedByUserIds(new ArrayList<>(List.of("u1", "u3")))
                 .build();
 

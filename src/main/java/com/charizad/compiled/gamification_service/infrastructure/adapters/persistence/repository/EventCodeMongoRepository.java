@@ -4,7 +4,8 @@ import com.charizad.compiled.gamification_service.infrastructure.adapters.persis
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface EventCodeMongoRepository extends MongoRepository<EventCodeDocument, String> {
+public interface EventCodeMongoRepository extends MongoRepository<EventCodeDocument, UUID> {
     Optional<EventCodeDocument> findByCode(String code);
 }

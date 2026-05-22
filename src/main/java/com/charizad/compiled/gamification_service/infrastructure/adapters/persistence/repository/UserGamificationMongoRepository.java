@@ -4,10 +4,12 @@ import com.charizad.compiled.gamification_service.infrastructure.adapters.persis
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.UUID;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface UserGamificationMongoRepository extends MongoRepository<UserGamificationDocument, String> {
+public interface UserGamificationMongoRepository extends MongoRepository<UserGamificationDocument, UUID> {
     Optional<UserGamificationDocument> findByUserId(String userId);
     List<UserGamificationDocument> findByRankingOptInTrue();
     List<UserGamificationDocument> findByRankingOptInTrueOrderByWeeklyXpDesc(PageRequest pageRequest);

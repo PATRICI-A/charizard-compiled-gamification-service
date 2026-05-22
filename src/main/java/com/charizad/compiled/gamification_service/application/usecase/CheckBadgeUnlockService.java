@@ -17,6 +17,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Evaluates which monas (RF13.1) should be unlocked for a user based on an incoming action event.
@@ -48,8 +49,8 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
     private final UserGamificationRepositoryPort userGamificationRepository;
 
     @Override
-    public List<String> execute(BadgeUnlockEventRequest event) {
-        List<String> awarded = new ArrayList<>();
+    public List<UUID> execute(BadgeUnlockEventRequest event) {
+        List<UUID> awarded = new ArrayList<>();
 
         switch (event.getEventType()) {
             case CONNECTION_CREATED -> awarded.addAll(handleConnectionCreated(event));
@@ -61,7 +62,6 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
             default -> log.warn("[CheckBadgeUnlock] Unknown event type: {}", event.getEventType());
         }
 
-        // After any award, check if Coleccionista is now unlocked
         if (!awarded.isEmpty()) {
             tryAwardColeccionista(event.getUserId(), awarded);
         }
@@ -71,8 +71,8 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
 
     // ── CONNECTION_CREATED ────────────────────────────────────────────────────
 
-    private List<String> handleConnectionCreated(BadgeUnlockEventRequest event) {
-        List<String> awarded = new ArrayList<>();
+    private List<UUID> handleConnectionCreated(BadgeUnlockEventRequest event) {
+        List<UUID> awarded = new ArrayList<>();
         int connections = event.getTotalActiveConnections() != null ? event.getTotalActiveConnections() : 0;
 
         if (connections >= 1) {
@@ -97,8 +97,8 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
 
     // ── PARCHE_JOINED_OR_CREATED ──────────────────────────────────────────────
 
-    private List<String> handleParcheJoinedOrCreated(BadgeUnlockEventRequest event) {
-        List<String> awarded = new ArrayList<>();
+    private List<UUID> handleParcheJoinedOrCreated(BadgeUnlockEventRequest event) {
+        List<UUID> awarded = new ArrayList<>();
 
         // Any join or creation → Primer Parche
         tryAward(event.getUserId(), BADGE_PRIMER_PARCHE, awarded);
@@ -122,8 +122,8 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
 
     // ── MEMBER_JOINED_PARCHE ──────────────────────────────────────────────────
 
-    private List<String> handleMemberJoinedParche(BadgeUnlockEventRequest event) {
-        List<String> awarded = new ArrayList<>();
+    private List<UUID> handleMemberJoinedParche(BadgeUnlockEventRequest event) {
+        List<UUID> awarded = new ArrayList<>();
         // The captain gets Imán Social when a new member joins their parche
         if (event.getCaptainUserId() != null) {
             tryAward(event.getCaptainUserId(), BADGE_IMAN_SOCIAL, awarded);
@@ -133,7 +133,7 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
 
     // ── ZONE_VISITED ──────────────────────────────────────────────────────────
 
-    private List<String> handleZoneVisited(BadgeUnlockEventRequest event) {
+    private List<UUID> handleZoneVisited(BadgeUnlockEventRequest event) {
         // RN-13.1.5: geo must be enabled; geo service sets this true on every published event
         if (!Boolean.TRUE.equals(event.getGeoLocationEnabled())) {
             log.debug("[CheckBadgeUnlock] ZONE_VISITED ignorado — geoLocationEnabled=false para userId={}", event.getUserId());
@@ -164,7 +164,7 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
 
         userGamificationRepository.save(user);
 
-        List<String> awarded = new ArrayList<>();
+        List<UUID> awarded = new ArrayList<>();
         if (totalZones >= 3) tryAward(userId, BADGE_EXPLORADOR_I, awarded);
         if (totalZones >= 5) tryAward(userId, BADGE_EXPLORADOR_II, awarded);
         return awarded;
@@ -172,23 +172,23 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
 
     // ── INSTITUTIONAL_EVENT_ATTENDED ─────────────────────────────────────────
 
-    private List<String> handleEventAttended(BadgeUnlockEventRequest event) {
-        List<String> awarded = new ArrayList<>();
+    private List<UUID> handleEventAttended(BadgeUnlockEventRequest event) {
+        List<UUID> awarded = new ArrayList<>();
         tryAward(event.getUserId(), BADGE_ASISTENTE, awarded);
         return awarded;
     }
 
     // ── FIRST_MESSAGE_SENT ────────────────────────────────────────────────────
 
-    private List<String> handleFirstMessageSent(BadgeUnlockEventRequest event) {
-        List<String> awarded = new ArrayList<>();
+    private List<UUID> handleFirstMessageSent(BadgeUnlockEventRequest event) {
+        List<UUID> awarded = new ArrayList<>();
         tryAward(event.getUserId(), BADGE_PRIMER_MENSAJE, awarded);
         return awarded;
     }
 
     // ── COLECCIONISTA ─────────────────────────────────────────────────────────
 
-    private void tryAwardColeccionista(String userId, List<String> awarded) {
+    private void tryAwardColeccionista(String userId, List<UUID> awarded) {
         UserGamification user = userGamificationRepository.findByUserId(userId).orElse(null);
         if (user == null) return;
 
@@ -210,7 +210,7 @@ public class CheckBadgeUnlockService implements CheckBadgeUnlockUseCase {
 
     // ── Helper ────────────────────────────────────────────────────────────────
 
-    private void tryAward(String userId, String badgeName, List<String> awarded) {
+    private void tryAward(String userId, String badgeName, List<UUID> awarded) {
         Optional<Badge> badge = badgeRepository.findByName(badgeName);
         if (badge.isEmpty()) {
             log.warn("[CheckBadgeUnlock] Badge '{}' not found in catalog", badgeName);

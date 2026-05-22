@@ -4,6 +4,8 @@ import com.charizad.compiled.gamification_service.domain.model.Badge;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.BadgeDocument;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class BadgeDocumentMapper {
 
@@ -22,7 +24,7 @@ public class BadgeDocumentMapper {
 
     public BadgeDocument toDocument(Badge badge) {
         return BadgeDocument.builder()
-                .id(badge.getId())
+                .id(badge.getId() != null ? badge.getId() : UUID.randomUUID())
                 .name(badge.getName())
                 .description(badge.getDescription())
                 .category(badge.getCategory())

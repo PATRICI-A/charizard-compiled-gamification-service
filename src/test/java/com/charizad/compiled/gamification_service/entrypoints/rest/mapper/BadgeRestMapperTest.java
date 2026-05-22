@@ -7,10 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class BadgeRestMapperTest {
+
+    private static final UUID BADGE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     private final BadgeRestMapper mapper = new BadgeRestMapper();
 
@@ -31,9 +35,9 @@ class BadgeRestMapperTest {
     @Test
     @DisplayName("toAwardRequest construye AwardBadgeRequest correctamente")
     void toAwardRequest_shouldBuildRequest() {
-        AwardBadgeRequest result = mapper.toAwardRequest("user-001", "badge-001");
+        AwardBadgeRequest result = mapper.toAwardRequest("user-001", BADGE_ID.toString());
 
         assertThat(result.getUserId()).isEqualTo("user-001");
-        assertThat(result.getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.getBadgeId()).isEqualTo(BADGE_ID);
     }
 }

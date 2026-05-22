@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -92,8 +93,9 @@ class GetRankingPositionServiceTest {
     @Test
     @DisplayName("Monthly ranking uses monthlyMonas for the period")
     void execute_monthlyType_usesMonthlyMonas() {
+        UUID ugId = UUID.fromString("10000000-0000-0000-0000-000000000001");
         UserGamification u1 = UserGamification.builder()
-                .id("ug-1").userId("u1")
+                .id(ugId).userId("u1")
                 .weeklyMonas(3).monthlyMonas(20).semestralMonas(5)
                 .rankingOptIn(true)
                 .earnedBadges(new ArrayList<>()).progress(new ArrayList<>()).earnedRewards(new ArrayList<>())
@@ -110,14 +112,37 @@ class GetRankingPositionServiceTest {
         assertThat(response.getRankingType()).isEqualTo(RankingType.MONTHLY);
     }
 
+    @Test
+    @DisplayName("Semester ranking uses semestralMonas for the period")
+    void execute_semesterType_usesSemestralMonas() {
+        UUID ugId = UUID.fromString("10000000-0000-0000-0000-000000000001");
+        UserGamification u1 = UserGamification.builder()
+                .id(ugId).userId("u1")
+                .weeklyMonas(3).monthlyMonas(20).semestralMonas(15)
+                .rankingOptIn(true)
+                .earnedBadges(new ArrayList<>()).progress(new ArrayList<>()).earnedRewards(new ArrayList<>())
+                .build();
+
+        when(userGamificationRepository.findByUserId("u1")).thenReturn(Optional.of(u1));
+        when(userGamificationRepository.findAllOptedInRankedFor(RankingType.SEMESTER))
+                .thenReturn(List.of(u1));
+
+        RankingPositionResponse response = service.execute("u1", RankingType.SEMESTER);
+
+        assertThat(response.getMonasThisPeriod()).isEqualTo(15);
+        assertThat(response.getPosition()).isEqualTo(1);
+        assertThat(response.getRankingType()).isEqualTo(RankingType.SEMESTER);
+    }
+
     private UserGamification buildUser(String userId, boolean optIn, int weeklyMonas, int badgeCount) {
+        UUID ugId = UUID.fromString("10000000-0000-0000-0000-000000000001");
         ArrayList<EarnedBadge> badges = new ArrayList<>();
         for (int i = 0; i < badgeCount; i++) {
             badges.add(EarnedBadge.builder()
-                    .badgeId("b" + i).badgeName("Badge" + i).xpAwarded(10).build());
+                    .badgeId(UUID.randomUUID()).badgeName("Badge" + i).xpAwarded(10).build());
         }
         return UserGamification.builder()
-                .id("ug-1").userId(userId)
+                .id(ugId).userId(userId)
                 .totalXp(badgeCount * 10).weeklyXp(0)
                 .weeklyMonas(weeklyMonas)
                 .monthlyMonas(0).semestralMonas(0)

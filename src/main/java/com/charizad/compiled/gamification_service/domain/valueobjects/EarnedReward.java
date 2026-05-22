@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Immutable record of a reward that a user has already unlocked.
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class EarnedReward {
 
-    private final String rewardId;
+    private final UUID rewardId;
     private final String rewardName;
     private final RewardType rewardType;
     private final LocalDateTime unlockedAt;

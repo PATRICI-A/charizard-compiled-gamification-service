@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,11 +31,13 @@ class GetUserBadgesServiceTest {
     @InjectMocks
     private GetUserBadgesService service;
 
+    private static final UUID BADGE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+
     @Test
     @DisplayName("Retorna lista de insignias del usuario")
     void execute_shouldReturnBadges_whenUserExists() {
         EarnedBadge earned = EarnedBadge.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID)
                 .badgeName("Primer Parche")
                 .earnedAt(LocalDateTime.now())
                 .xpAwarded(100)
@@ -53,7 +56,7 @@ class GetUserBadgesServiceTest {
                 .build();
 
         EarnedBadgeResponse expectedResponse = EarnedBadgeResponse.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID)
                 .badgeName("Primer Parche")
                 .xpAwarded(100)
                 .build();
@@ -64,7 +67,7 @@ class GetUserBadgesServiceTest {
         List<EarnedBadgeResponse> result = service.execute("user-001");
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.get(0).getBadgeId()).isEqualTo(BADGE_ID);
     }
 
     @Test

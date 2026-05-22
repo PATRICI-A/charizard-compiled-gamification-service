@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class UserGamificationDocumentMapper {
@@ -98,7 +99,7 @@ public class UserGamificationDocumentMapper {
                 .toList();
 
         return UserGamificationDocument.builder()
-                .id(user.getId())
+                .id(user.getId() != null ? user.getId() : UUID.randomUUID())
                 .userId(user.getUserId())
                 .totalXp(user.getTotalXp())
                 .weeklyXp(user.getWeeklyXp())

@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,10 +31,10 @@ class GetUserLevelServiceTest {
     private UserGamification buildUser(String userId, int badgeCount) {
         ArrayList<EarnedBadge> badges = new ArrayList<>();
         for (int i = 0; i < badgeCount; i++) {
-            badges.add(EarnedBadge.builder().badgeId("b" + i).badgeName("B" + i).xpAwarded(10).build());
+            badges.add(EarnedBadge.builder().badgeId(UUID.randomUUID()).badgeName("B" + i).xpAwarded(10).build());
         }
         return UserGamification.builder()
-                .id("ug-1").userId(userId)
+                .id(UUID.fromString("10000000-0000-0000-0000-000000000001")).userId(userId)
                 .totalXp(badgeCount * 10).weeklyXp(0).weeklyMonas(0)
                 .rankingOptIn(false)
                 .earnedBadges(badges)

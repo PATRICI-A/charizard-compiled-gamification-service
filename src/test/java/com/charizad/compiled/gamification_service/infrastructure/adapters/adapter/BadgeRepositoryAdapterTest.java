@@ -15,12 +15,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BadgeRepositoryAdapterTest {
+
+    private static final UUID ID_1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID ID_B1 = UUID.fromString("00000000-0000-0000-0000-000000000010");
+    private static final UUID ID_B2 = UUID.fromString("00000000-0000-0000-0000-000000000011");
+    private static final UUID ID_999 = UUID.fromString("00000000-0000-0000-0000-000000000999");
 
     @Mock private BadgeMongoRepository mongoRepository;
     @Mock private BadgeDocumentMapper mapper;
@@ -35,8 +41,8 @@ class BadgeRepositoryAdapterTest {
     void save_shouldMapSaveAndReturnDomain() {
         Badge domain = Badge.builder().name("Test").build();
         BadgeDocument doc = BadgeDocument.builder().name("Test").build();
-        BadgeDocument savedDoc = BadgeDocument.builder().id("badge-001").name("Test").build();
-        Badge savedDomain = Badge.builder().id("badge-001").name("Test").build();
+        BadgeDocument savedDoc = BadgeDocument.builder().id(ID_1).name("Test").build();
+        Badge savedDomain = Badge.builder().id(ID_1).name("Test").build();
 
         when(mapper.toDocument(domain)).thenReturn(doc);
         when(mongoRepository.save(doc)).thenReturn(savedDoc);
@@ -44,7 +50,7 @@ class BadgeRepositoryAdapterTest {
 
         Badge result = adapter.save(domain);
 
-        assertThat(result.getId()).isEqualTo("badge-001");
+        assertThat(result.getId()).isEqualTo(ID_1);
         assertThat(result.getName()).isEqualTo("Test");
         verify(mapper).toDocument(domain);
         verify(mongoRepository).save(doc);
@@ -54,24 +60,24 @@ class BadgeRepositoryAdapterTest {
     @Test
     @DisplayName("findById retorna badge cuando existe")
     void findById_shouldReturnBadge_whenFound() {
-        BadgeDocument doc = BadgeDocument.builder().id("badge-001").build();
-        Badge domain = Badge.builder().id("badge-001").build();
+        BadgeDocument doc = BadgeDocument.builder().id(ID_1).build();
+        Badge domain = Badge.builder().id(ID_1).build();
 
-        when(mongoRepository.findById("badge-001")).thenReturn(Optional.of(doc));
+        when(mongoRepository.findById(ID_1)).thenReturn(Optional.of(doc));
         when(mapper.toDomain(doc)).thenReturn(domain);
 
-        Optional<Badge> result = adapter.findById("badge-001");
+        Optional<Badge> result = adapter.findById(ID_1);
 
         assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo("badge-001");
+        assertThat(result.get().getId()).isEqualTo(ID_1);
     }
 
     @Test
     @DisplayName("findById retorna empty cuando no existe")
     void findById_shouldReturnEmpty_whenNotFound() {
-        when(mongoRepository.findById("badge-999")).thenReturn(Optional.empty());
+        when(mongoRepository.findById(ID_999)).thenReturn(Optional.empty());
 
-        Optional<Badge> result = adapter.findById("badge-999");
+        Optional<Badge> result = adapter.findById(ID_999);
 
         assertThat(result).isEmpty();
     }
@@ -79,10 +85,10 @@ class BadgeRepositoryAdapterTest {
     @Test
     @DisplayName("findAll retorna todas las insignias")
     void findAll_shouldReturnAllBadges() {
-        BadgeDocument doc1 = BadgeDocument.builder().id("b1").name("A").build();
-        BadgeDocument doc2 = BadgeDocument.builder().id("b2").name("B").build();
-        Badge domain1 = Badge.builder().id("b1").name("A").build();
-        Badge domain2 = Badge.builder().id("b2").name("B").build();
+        BadgeDocument doc1 = BadgeDocument.builder().id(ID_B1).name("A").build();
+        BadgeDocument doc2 = BadgeDocument.builder().id(ID_B2).name("B").build();
+        Badge domain1 = Badge.builder().id(ID_B1).name("A").build();
+        Badge domain2 = Badge.builder().id(ID_B2).name("B").build();
 
         when(mongoRepository.findAll()).thenReturn(List.of(doc1, doc2));
         when(mapper.toDomain(doc1)).thenReturn(domain1);
@@ -91,15 +97,15 @@ class BadgeRepositoryAdapterTest {
         List<Badge> result = adapter.findAll();
 
         assertThat(result).hasSize(2);
-        assertThat(result.get(0).getId()).isEqualTo("b1");
-        assertThat(result.get(1).getId()).isEqualTo("b2");
+        assertThat(result.get(0).getId()).isEqualTo(ID_B1);
+        assertThat(result.get(1).getId()).isEqualTo(ID_B2);
     }
 
     @Test
     @DisplayName("findAllActive retorna insignias activas")
     void findAllActive_shouldReturnActiveBadges() {
-        BadgeDocument doc = BadgeDocument.builder().id("b1").active(true).build();
-        Badge domain = Badge.builder().id("b1").active(true).build();
+        BadgeDocument doc = BadgeDocument.builder().id(ID_B1).active(true).build();
+        Badge domain = Badge.builder().id(ID_B1).active(true).build();
 
         when(mongoRepository.findByActiveTrue()).thenReturn(List.of(doc));
         when(mapper.toDomain(doc)).thenReturn(domain);

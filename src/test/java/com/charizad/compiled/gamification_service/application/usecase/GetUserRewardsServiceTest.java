@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,7 +35,7 @@ class GetUserRewardsServiceTest {
     void execute_shouldReturnRewards_whenUserExists() {
         LocalDateTime now = LocalDateTime.now();
         EarnedReward reward = EarnedReward.builder()
-                .rewardId("reward-001")
+                .rewardId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
                 .rewardName("Gold Title")
                 .rewardType(RewardType.TITLE)
                 .unlockedAt(now)
@@ -59,7 +60,7 @@ class GetUserRewardsServiceTest {
         List<EarnedRewardResponse> result = service.execute("user-001");
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getRewardId()).isEqualTo("reward-001");
+        assertThat(result.get(0).getRewardId()).isEqualTo(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         assertThat(result.get(0).getRewardName()).isEqualTo("Gold Title");
         assertThat(result.get(0).getRewardType()).isEqualTo(RewardType.TITLE);
         assertThat(result.get(0).getXpAtUnlock()).isEqualTo(1000);

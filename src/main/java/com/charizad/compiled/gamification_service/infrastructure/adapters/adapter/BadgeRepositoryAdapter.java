@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class BadgeRepositoryAdapter implements BadgeRepositoryPort {
     }
 
     @Override
-    public Optional<Badge> findById(String id) {
+    public Optional<Badge> findById(UUID id) {
         return mongoRepository.findById(id).map(mapper::toDomain);
     }
 

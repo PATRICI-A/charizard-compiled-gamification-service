@@ -10,11 +10,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class BadgeMapperTest {
+
+    private static final UUID BADGE_ID_1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID BADGE_ID_2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
 
     private final BadgeMapper mapper = new BadgeMapper();
 
@@ -62,7 +66,7 @@ class BadgeMapperTest {
     void toResponse_shouldMapDomainToResponse() {
         LocalDateTime now = LocalDateTime.now();
         Badge badge = Badge.builder()
-                .id("badge-001")
+                .id(BADGE_ID_1)
                 .name("Legendario")
                 .description("Insignia legendaria")
                 .category(BadgeCategory.LEGENDARY)
@@ -74,7 +78,7 @@ class BadgeMapperTest {
 
         BadgeResponse result = mapper.toResponse(badge);
 
-        assertThat(result.getId()).isEqualTo("badge-001");
+        assertThat(result.getId()).isEqualTo(BADGE_ID_1);
         assertThat(result.getName()).isEqualTo("Legendario");
         assertThat(result.getDescription()).isEqualTo("Insignia legendaria");
         assertThat(result.getCategory()).isEqualTo(BadgeCategory.LEGENDARY);
@@ -87,7 +91,7 @@ class BadgeMapperTest {
     @DisplayName("toResponse omite active field del response")
     void toResponse_shouldOmitActiveField() {
         Badge badge = Badge.builder()
-                .id("badge-002")
+                .id(BADGE_ID_2)
                 .name("Inactivo")
                 .description("Inactiva")
                 .category(BadgeCategory.RARE)
@@ -98,6 +102,6 @@ class BadgeMapperTest {
 
         BadgeResponse result = mapper.toResponse(badge);
 
-        assertThat(result.getId()).isEqualTo("badge-002");
+        assertThat(result.getId()).isEqualTo(BADGE_ID_2);
     }
 }

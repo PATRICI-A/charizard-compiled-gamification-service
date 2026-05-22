@@ -195,6 +195,9 @@
 							<excludes>
 								<exclude>com/charizad/compiled/gamification_service/GamificationServiceApplication.class</exclude>
 								<exclude>com/charizad/compiled/gamification_service/infrastructure/config/OpenApiConfig.class</exclude>
+								<exclude>com/charizad/compiled/gamification_service/infrastructure/config/RabbitMQConfig.class</exclude>
+								<exclude>com/charizad/compiled/gamification_service/infrastructure/config/MongoConfig.class</exclude>
+								<exclude>com/charizad/compiled/gamification_service/infrastructure/config/SecurityConfig.class</exclude>
 							</excludes>
 						</configuration>
 					</execution>
@@ -203,6 +206,9 @@
 					<excludes>
 						<exclude>com/charizad/compiled/gamification_service/GamificationServiceApplication.class</exclude>
 						<exclude>com/charizad/compiled/gamification_service/infrastructure/config/OpenApiConfig.class</exclude>
+						<exclude>com/charizad/compiled/gamification_service/infrastructure/config/RabbitMQConfig.class</exclude>
+						<exclude>com/charizad/compiled/gamification_service/infrastructure/config/MongoConfig.class</exclude>
+						<exclude>com/charizad/compiled/gamification_service/infrastructure/config/SecurityConfig.class</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

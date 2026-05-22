@@ -13,6 +13,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -33,7 +34,7 @@ class NotificacionAdapterTest {
         ReflectionTestUtils.setField(publisher, "badgeEarnedKey", "badge.earned");
 
         badge = Badge.builder()
-                .id("badge-001")
+                .id(UUID.fromString("00000000-0000-0000-0000-000000000001"))
                 .name("Primer Parche")
                 .category(BadgeCategory.COMMON)
                 .xpReward(100)

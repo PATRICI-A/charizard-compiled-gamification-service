@@ -4,6 +4,8 @@ import com.charizad.compiled.gamification_service.application.dto.request.AwardB
 import com.charizad.compiled.gamification_service.application.dto.request.CreateBadgeRequest;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 /**
  * Mapper para transformar parámetros del controller a DTOs de request.
  * Los DTOs de response se usan directamente desde la capa application.
@@ -18,7 +20,7 @@ public class BadgeRestMapper {
     public AwardBadgeRequest toAwardRequest(String userId, String badgeId) {
         return AwardBadgeRequest.builder()
                 .userId(userId)
-                .badgeId(badgeId)
+                .badgeId(UUID.fromString(badgeId))
                 .build();
     }
 }

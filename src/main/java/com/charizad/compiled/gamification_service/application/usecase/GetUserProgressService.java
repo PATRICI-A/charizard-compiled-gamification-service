@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +29,7 @@ public class GetUserProgressService implements GetUserProgressUseCase {
         UserGamification user = userGamificationRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserGamificationNotFoundException(userId));
 
-        Map<String, BadgeProgress> progressMap = user.getProgress().stream()
+        Map<UUID, BadgeProgress> progressMap = user.getProgress().stream()
                 .collect(Collectors.toMap(BadgeProgress::getBadgeId, p -> p));
 
         return badgeRepository.findAllActive().stream()
