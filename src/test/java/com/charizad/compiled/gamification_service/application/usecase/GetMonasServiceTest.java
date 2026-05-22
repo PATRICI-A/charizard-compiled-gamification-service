@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -26,13 +27,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GetMonasServiceTest {
 
+    private static final UUID B1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID B2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
+
     @Mock private BadgeRepositoryPort badgeRepository;
     @Mock private UserGamificationRepositoryPort userGamificationRepository;
 
     @InjectMocks
     private GetMonasService service;
 
-    private Badge badge(String id, String name, BadgeCategory cat) {
+    private Badge badge(UUID id, String name, BadgeCategory cat) {
         return Badge.builder().id(id).name(name).description("desc-" + name)
                 .category(cat).active(true).build();
     }
@@ -51,8 +55,8 @@ class GetMonasServiceTest {
     @DisplayName("Sin usuario gamificación — todas las monas unlocked=false")
     void execute_noUser_allUnlocked() {
         when(badgeRepository.findAllActive()).thenReturn(List.of(
-                badge("b1", "Primera Conexión", BadgeCategory.COMMON),
-                badge("b2", "Conector", BadgeCategory.UNCOMMON)
+                badge(B1, "Primera Conexión", BadgeCategory.COMMON),
+                badge(B2, "Conector", BadgeCategory.UNCOMMON)
         ));
         when(userGamificationRepository.findByUserId("u1")).thenReturn(Optional.empty());
 
@@ -67,7 +71,7 @@ class GetMonasServiceTest {
     @Test
     @DisplayName("Usuario con mona ganada — unlocked=true, earnedAt=fecha, progressPercentage=100")
     void execute_earnedBadge_unlockedTrue() {
-        Badge b1 = badge("b1", "Asistente", BadgeCategory.RARE);
+        Badge b1 = badge(B1, "Asistente", BadgeCategory.RARE);
         when(badgeRepository.findAllActive()).thenReturn(List.of(b1));
 
         LocalDateTime earned = LocalDateTime.of(2026, 5, 19, 10, 0);
@@ -75,7 +79,7 @@ class GetMonasServiceTest {
                 .userId("u1").totalXp(50).weeklyXp(0).weeklyMonas(1)
                 .rankingOptIn(false)
                 .earnedBadges(List.of(EarnedBadge.builder()
-                        .badgeId("b1").badgeName("Asistente")
+                        .badgeId(B1).badgeName("Asistente")
                         .earnedAt(earned).xpAwarded(50).build()))
                 .progress(new ArrayList<>())
                 .earnedRewards(new ArrayList<>())
@@ -96,7 +100,7 @@ class GetMonasServiceTest {
     @Test
     @DisplayName("Usuario con progreso parcial — currentCount y progressPercentage correctos")
     void execute_partialProgress_correctPercentage() {
-        Badge b1 = badge("b1", "Conector", BadgeCategory.UNCOMMON);
+        Badge b1 = badge(B1, "Conector", BadgeCategory.UNCOMMON);
         when(badgeRepository.findAllActive()).thenReturn(List.of(b1));
 
         UserGamification user = UserGamification.builder()
@@ -104,7 +108,7 @@ class GetMonasServiceTest {
                 .rankingOptIn(false)
                 .earnedBadges(new ArrayList<>())
                 .progress(List.of(BadgeProgress.builder()
-                        .badgeId("b1").currentValue(3).requiredValue(5).completed(false).build()))
+                        .badgeId(B1).currentValue(3).requiredValue(5).completed(false).build()))
                 .earnedRewards(new ArrayList<>())
                 .build();
 
@@ -131,7 +135,7 @@ class GetMonasServiceTest {
     @Test
     @DisplayName("Mona ganada con progreso — targetCount viene del progreso")
     void execute_earnedWithProgress_targetFromProgress() {
-        Badge b1 = badge("b1", "Conector", BadgeCategory.UNCOMMON);
+        Badge b1 = badge(B1, "Conector", BadgeCategory.UNCOMMON);
         when(badgeRepository.findAllActive()).thenReturn(List.of(b1));
 
         LocalDateTime earned = LocalDateTime.now();
@@ -139,10 +143,10 @@ class GetMonasServiceTest {
                 .userId("u1").totalXp(25).weeklyXp(0).weeklyMonas(1)
                 .rankingOptIn(false)
                 .earnedBadges(List.of(EarnedBadge.builder()
-                        .badgeId("b1").badgeName("Conector")
+                        .badgeId(B1).badgeName("Conector")
                         .earnedAt(earned).xpAwarded(25).build()))
                 .progress(List.of(BadgeProgress.builder()
-                        .badgeId("b1").currentValue(5).requiredValue(5).completed(true).build()))
+                        .badgeId(B1).currentValue(5).requiredValue(5).completed(true).build()))
                 .earnedRewards(new ArrayList<>())
                 .build();
 
@@ -160,13 +164,13 @@ class GetMonasServiceTest {
     @Test
     @DisplayName("buildMonaResponse — targetCount=0 da progressPercentage=0")
     void buildMonaResponse_zeroTarget_zeroPercentage() {
-        Badge b1 = badge("b1", "Test", BadgeCategory.COMMON);
+        Badge b1 = badge(B1, "Test", BadgeCategory.COMMON);
         UserGamification user = UserGamification.builder()
                 .userId("u1").totalXp(0).weeklyXp(0).weeklyMonas(0)
                 .rankingOptIn(false)
                 .earnedBadges(new ArrayList<>())
                 .progress(List.of(BadgeProgress.builder()
-                        .badgeId("b1").currentValue(0).requiredValue(0).completed(false).build()))
+                        .badgeId(B1).currentValue(0).requiredValue(0).completed(false).build()))
                 .earnedRewards(new ArrayList<>())
                 .build();
 
@@ -178,13 +182,13 @@ class GetMonasServiceTest {
     @Test
     @DisplayName("buildMonaResponse — progreso > target se limita a 100")
     void buildMonaResponse_overflowProgress_cappedAt100() {
-        Badge b1 = badge("b1", "Test", BadgeCategory.COMMON);
+        Badge b1 = badge(B1, "Test", BadgeCategory.COMMON);
         UserGamification user = UserGamification.builder()
                 .userId("u1").totalXp(0).weeklyXp(0).weeklyMonas(0)
                 .rankingOptIn(false)
                 .earnedBadges(new ArrayList<>())
                 .progress(List.of(BadgeProgress.builder()
-                        .badgeId("b1").currentValue(10).requiredValue(5).completed(false).build()))
+                        .badgeId(B1).currentValue(10).requiredValue(5).completed(false).build()))
                 .earnedRewards(new ArrayList<>())
                 .build();
 
@@ -196,11 +200,11 @@ class GetMonasServiceTest {
     @Test
     @DisplayName("buildMonaResponse campos base correctos")
     void buildMonaResponse_baseFields() {
-        Badge b1 = badge("b1", "Primer Parche", BadgeCategory.COMMON);
+        Badge b1 = badge(B1, "Primer Parche", BadgeCategory.COMMON);
 
         MonaResponse mona = GetMonasService.buildMonaResponse(b1, null);
 
-        assertThat(mona.getMonaId()).isEqualTo("b1");
+        assertThat(mona.getMonaId()).isEqualTo(B1);
         assertThat(mona.getName()).isEqualTo("Primer Parche");
         assertThat(mona.getDescription()).isEqualTo("desc-Primer Parche");
         assertThat(mona.getRarity()).isEqualTo(BadgeCategory.COMMON);

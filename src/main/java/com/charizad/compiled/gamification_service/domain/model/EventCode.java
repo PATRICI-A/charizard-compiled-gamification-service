@@ -8,13 +8,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Builder
 @AllArgsConstructor
 public class EventCode {
 
-    private final String id;
+    private final UUID id;
     private final String code;
     private final LocalDateTime validFrom;
     private final LocalDateTime validUntil;

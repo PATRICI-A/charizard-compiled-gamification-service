@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,7 +20,7 @@ class UserGamificationTest {
     void setUp() {
         user = UserGamification.newUser("user-001");
         badge = EarnedBadge.builder()
-                .badgeId("badge-001")
+                .badgeId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
                 .badgeName("Primer Parche")
                 .earnedAt(LocalDateTime.now())
                 .xpAwarded(100)
@@ -53,20 +54,20 @@ class UserGamificationTest {
 
         assertThatThrownBy(() -> user.awardBadge(badge))
                 .isInstanceOf(BadgeAlreadyEarnedException.class)
-                .hasMessageContaining("badge-001");
+                .hasMessageContaining("00000000-0000-0000-0000-000000000001");
     }
 
     @Test
     @DisplayName("hasBadge retorna true si el usuario posee la insignia")
     void hasBadge_shouldReturnTrue_whenBadgeIsOwned() {
         user.awardBadge(badge);
-        assertThat(user.hasBadge("badge-001")).isTrue();
+        assertThat(user.hasBadge(UUID.fromString("00000000-0000-0000-0000-000000000001"))).isTrue();
     }
 
     @Test
     @DisplayName("hasBadge retorna false si el usuario no posee la insignia")
     void hasBadge_shouldReturnFalse_whenBadgeNotOwned() {
-        assertThat(user.hasBadge("badge-999")).isFalse();
+        assertThat(user.hasBadge(UUID.fromString("00000000-0000-0000-0000-000000000999"))).isFalse();
     }
 
     @Test
@@ -95,7 +96,7 @@ class UserGamificationTest {
     @DisplayName("acumular múltiples insignias suma XP correctamente")
     void awardMultipleBadges_shouldAccumulateXp() {
         EarnedBadge badge2 = EarnedBadge.builder()
-                .badgeId("badge-002")
+                .badgeId(UUID.fromString("00000000-0000-0000-0000-000000000002"))
                 .badgeName("Parche Épico")
                 .earnedAt(LocalDateTime.now())
                 .xpAwarded(250)

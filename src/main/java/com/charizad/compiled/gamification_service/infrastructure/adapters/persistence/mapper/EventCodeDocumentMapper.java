@@ -5,6 +5,7 @@ import com.charizad.compiled.gamification_service.infrastructure.adapters.persis
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Component
 public class EventCodeDocumentMapper {
@@ -21,7 +22,7 @@ public class EventCodeDocumentMapper {
 
     public EventCodeDocument toDocument(EventCode eventCode) {
         return EventCodeDocument.builder()
-                .id(eventCode.getId())
+                .id(eventCode.getId() != null ? eventCode.getId() : UUID.randomUUID())
                 .code(eventCode.getCode())
                 .validFrom(eventCode.getValidFrom())
                 .validUntil(eventCode.getValidUntil())

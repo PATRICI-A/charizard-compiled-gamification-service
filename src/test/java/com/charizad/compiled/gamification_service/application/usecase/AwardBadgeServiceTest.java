@@ -24,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,6 +32,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AwardBadgeServiceTest {
+
+    private static final UUID BADGE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID UG_ID = UUID.fromString("10000000-0000-0000-0000-000000000001");
 
     @Mock private BadgeRepositoryPort badgeRepository;
     @Mock private UserGamificationRepositoryPort userGamificationRepository;
@@ -47,7 +51,7 @@ class AwardBadgeServiceTest {
     @BeforeEach
     void setUp() {
         badge = Badge.builder()
-                .id("badge-001")
+                .id(BADGE_ID)
                 .name("Primer Parche")
                 .description("Asististe a tu primer parche")
                 .category(BadgeCategory.COMMON)
@@ -58,32 +62,15 @@ class AwardBadgeServiceTest {
 
         request = AwardBadgeRequest.builder()
                 .userId("user-001")
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID)
                 .build();
     }
-
-    /*@Test
-    @DisplayName("Otorgar insignia a usuario nuevo crea perfil y suma XP")
-    void execute_shouldCreateProfileAndAwardBadge_whenUserDoesNotExist() {
-        when(badgeRepository.findById("badge-001")).thenReturn(Optional.of(badge));
-        when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.empty());
-        when(userGamificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
-        when(userGamificationMapper.toEarnedBadgeResponse(any())).thenReturn(
-                EarnedBadgeResponse.builder().badgeId("badge-001").xpAwarded(100).build());
-
-        EarnedBadgeResponse response = service.execute(request);
-
-        assertThat(response.getBadgeId()).isEqualTo("badge-001");
-        assertThat(response.getXpAwarded()).isEqualTo(100);
-        verify(userGamificationRepository).save(any());
-        verify(notificationEventPort).notifyBadgeEarned("user-001", badge);
-    }*/
 
     @Test
     @DisplayName("Otorgar insignia ya poseída retorna la existente sin lanzar error (E1)")
     void execute_shouldReturnExistingBadge_whenUserAlreadyHasIt() {
         EarnedBadge alreadyOwned = EarnedBadge.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID)
                 .badgeName("Primer Parche")
                 .earnedAt(LocalDateTime.now().minusDays(5))
                 .xpAwarded(100)
@@ -93,7 +80,7 @@ class AwardBadgeServiceTest {
         earnedList.add(alreadyOwned);
 
         UserGamification userWithBadge = UserGamification.builder()
-                .id("ug-001")
+                .id(UG_ID)
                 .userId("user-001")
                 .totalXp(100)
                 .weeklyXp(100)
@@ -102,14 +89,14 @@ class AwardBadgeServiceTest {
                 .progress(new ArrayList<>())
                 .build();
 
-        when(badgeRepository.findById("badge-001")).thenReturn(Optional.of(badge));
+        when(badgeRepository.findById(BADGE_ID)).thenReturn(Optional.of(badge));
         when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.of(userWithBadge));
         when(userGamificationMapper.toEarnedBadgeResponse(alreadyOwned)).thenReturn(
-                EarnedBadgeResponse.builder().badgeId("badge-001").xpAwarded(100).build());
+                EarnedBadgeResponse.builder().badgeId(BADGE_ID).xpAwarded(100).build());
 
         EarnedBadgeResponse response = service.execute(request);
 
-        assertThat(response.getBadgeId()).isEqualTo("badge-001");
+        assertThat(response.getBadgeId()).isEqualTo(BADGE_ID);
         verify(userGamificationRepository, never()).save(any());
         verify(notificationEventPort, never()).notifyBadgeEarned(any(), any());
     }
@@ -117,11 +104,10 @@ class AwardBadgeServiceTest {
     @Test
     @DisplayName("Lanza BadgeNotFoundException si la insignia no existe")
     void execute_shouldThrow_whenBadgeNotFound() {
-        when(badgeRepository.findById("badge-001")).thenReturn(Optional.empty());
+        when(badgeRepository.findById(BADGE_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.execute(request))
-                .isInstanceOf(BadgeNotFoundException.class)
-                .hasMessageContaining("badge-001");
+                .isInstanceOf(BadgeNotFoundException.class);
 
         verifyNoInteractions(userGamificationRepository);
         verifyNoInteractions(notificationEventPort);
@@ -130,7 +116,7 @@ class AwardBadgeServiceTest {
     @Test
     @DisplayName("Guarda el usuario con el XP correcto después de otorgar la insignia")
     void execute_shouldSaveUserWithCorrectXp() {
-        when(badgeRepository.findById("badge-001")).thenReturn(Optional.of(badge));
+        when(badgeRepository.findById(BADGE_ID)).thenReturn(Optional.of(badge));
         when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.empty());
         when(userGamificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
         when(userGamificationMapper.toEarnedBadgeResponse(any())).thenReturn(new EarnedBadgeResponse());

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Scans all active rewards and grants any whose XP threshold the user has
@@ -27,9 +28,9 @@ public class CheckXpRewardsService implements CheckXpRewardsUseCase {
     private final UserGamificationRepositoryPort userGamificationRepository;
 
     @Override
-    public List<String> checkAndUnlock(UserGamification user) {
+    public List<UUID> checkAndUnlock(UserGamification user) {
         List<Reward> candidates = rewardRepository.findAllActive();
-        List<String> newlyUnlocked = new ArrayList<>();
+        List<UUID> newlyUnlocked = new ArrayList<>();
 
         for (Reward reward : candidates) {
             if (user.getTotalXp() >= reward.getXpThreshold()

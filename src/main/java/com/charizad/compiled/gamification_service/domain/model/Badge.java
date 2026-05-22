@@ -6,13 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Builder
 @AllArgsConstructor
 public class Badge {
 
-    private final String id;
+    private final UUID id;
     private final String name;
     private final String description;
     private final BadgeCategory category;

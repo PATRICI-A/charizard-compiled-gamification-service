@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class EarnedRewardSubdocument {
 
-    private String rewardId;
+    private UUID rewardId;
     private String rewardName;
     private RewardType rewardType;
     private LocalDateTime unlockedAt;

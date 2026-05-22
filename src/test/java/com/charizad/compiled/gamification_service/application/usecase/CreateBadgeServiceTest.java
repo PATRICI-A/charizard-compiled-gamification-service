@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,6 +22,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateBadgeServiceTest {
+
+    private static final UUID BADGE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     @Mock private BadgeRepositoryPort badgeRepository;
     @Mock private BadgeMapper badgeMapper;
@@ -47,7 +50,7 @@ class CreateBadgeServiceTest {
                 .build();
 
         Badge saved = Badge.builder()
-                .id("badge-new")
+                .id(BADGE_ID)
                 .name("El Legendario")
                 .category(BadgeCategory.LEGENDARY)
                 .xpReward(500)
@@ -56,7 +59,7 @@ class CreateBadgeServiceTest {
                 .build();
 
         BadgeResponse expected = BadgeResponse.builder()
-                .id("badge-new")
+                .id(BADGE_ID)
                 .name("El Legendario")
                 .category(BadgeCategory.LEGENDARY)
                 .xpReward(500)
@@ -68,7 +71,7 @@ class CreateBadgeServiceTest {
 
         BadgeResponse result = service.execute(request);
 
-        assertThat(result.getId()).isEqualTo("badge-new");
+        assertThat(result.getId()).isEqualTo(BADGE_ID);
         assertThat(result.getName()).isEqualTo("El Legendario");
         assertThat(result.getXpReward()).isEqualTo(500);
         verify(badgeRepository).save(domain);

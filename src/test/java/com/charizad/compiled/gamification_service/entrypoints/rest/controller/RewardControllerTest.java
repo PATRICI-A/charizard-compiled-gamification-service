@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -33,6 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class RewardControllerTest {
+
+    private static final UUID REWARD_ID = UUID.fromString("20000000-0000-0000-0000-000000000001");
 
     @Mock CreateRewardUseCase createRewardUseCase;
     @Mock GetUserRewardsUseCase getUserRewardsUseCase;
@@ -63,7 +66,7 @@ class RewardControllerTest {
                 .build();
 
         RewardResponse response = RewardResponse.builder()
-                .id("reward-001")
+                .id(REWARD_ID)
                 .name("Gold Title")
                 .description("Un título dorado")
                 .type(RewardType.TITLE)
@@ -78,7 +81,7 @@ class RewardControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value("reward-001"))
+                .andExpect(jsonPath("$.id").value(REWARD_ID.toString()))
                 .andExpect(jsonPath("$.name").value("Gold Title"));
     }
 
@@ -104,7 +107,7 @@ class RewardControllerTest {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken("user-001", null));
         EarnedRewardResponse reward = EarnedRewardResponse.builder()
-                .rewardId("reward-001")
+                .rewardId(REWARD_ID)
                 .rewardName("Gold Title")
                 .rewardType(RewardType.TITLE)
                 .unlockedAt(LocalDateTime.now())
@@ -115,7 +118,7 @@ class RewardControllerTest {
 
         mockMvc.perform(get("/api/v1/rewards/me"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].rewardId").value("reward-001"))
+                .andExpect(jsonPath("$[0].rewardId").value(REWARD_ID.toString()))
                 .andExpect(jsonPath("$[0].rewardName").value("Gold Title"));
     }
 

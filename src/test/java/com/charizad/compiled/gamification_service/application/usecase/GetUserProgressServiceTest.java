@@ -20,12 +20,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetUserProgressServiceTest {
+
+    private static final UUID BADGE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     @Mock private UserGamificationRepositoryPort userGamificationRepository;
     @Mock private BadgeRepositoryPort badgeRepository;
@@ -38,7 +41,7 @@ class GetUserProgressServiceTest {
     @DisplayName("Returns one entry per active badge — existing progress mapped via mapper")
     void execute_shouldReturnOneEntryPerBadge_whenUserHasProgress() {
         BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID)
                 .currentValue(50)
                 .requiredValue(100)
                 .completed(false)
@@ -53,13 +56,13 @@ class GetUserProgressServiceTest {
                 .build();
 
         Badge badge = Badge.builder()
-                .id("badge-001").name("Primer Parche")
+                .id(BADGE_ID).name("Primer Parche")
                 .description("desc").category(BadgeCategory.COMMON)
                 .xpReward(10).active(true).createdAt(LocalDateTime.now())
                 .build();
 
         BadgeProgressResponse expectedResponse = BadgeProgressResponse.builder()
-                .badgeId("badge-001").currentValue(50).requiredValue(100)
+                .badgeId(BADGE_ID).currentValue(50).requiredValue(100)
                 .completed(false).percentageComplete(50)
                 .build();
 
@@ -70,7 +73,7 @@ class GetUserProgressServiceTest {
         List<BadgeProgressResponse> result = service.execute("user-001");
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.get(0).getBadgeId()).isEqualTo(BADGE_ID);
         assertThat(result.get(0).getPercentageComplete()).isEqualTo(50);
     }
 
@@ -86,7 +89,7 @@ class GetUserProgressServiceTest {
                 .build();
 
         Badge badge = Badge.builder()
-                .id("badge-001").name("Primera Conexión")
+                .id(BADGE_ID).name("Primera Conexión")
                 .description("desc").category(BadgeCategory.COMMON)
                 .xpReward(10).active(true).createdAt(LocalDateTime.now())
                 .build();
@@ -97,7 +100,7 @@ class GetUserProgressServiceTest {
         List<BadgeProgressResponse> result = service.execute("user-001");
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.get(0).getBadgeId()).isEqualTo(BADGE_ID);
         assertThat(result.get(0).getCurrentValue()).isEqualTo(0);
         assertThat(result.get(0).getRequiredValue()).isEqualTo(0);
         assertThat(result.get(0).isCompleted()).isFalse();

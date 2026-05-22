@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -27,9 +28,11 @@ class EventCodeRepositoryAdapterTest {
     @InjectMocks
     private EventCodeRepositoryAdapter adapter;
 
+    private static final UUID EC1 = UUID.fromString("30000000-0000-0000-0000-000000000001");
+
     private EventCode domainCode() {
         return EventCode.builder()
-                .id("ec1").code("ABC")
+                .id(EC1).code("ABC")
                 .validFrom(LocalDateTime.now().minusHours(1))
                 .validUntil(LocalDateTime.now().plusHours(1))
                 .usedByUserIds(new ArrayList<>())
@@ -38,7 +41,7 @@ class EventCodeRepositoryAdapterTest {
 
     private EventCodeDocument document() {
         return EventCodeDocument.builder()
-                .id("ec1").code("ABC")
+                .id(EC1).code("ABC")
                 .validFrom(LocalDateTime.now().minusHours(1))
                 .validUntil(LocalDateTime.now().plusHours(1))
                 .usedByUserIds(new ArrayList<>())

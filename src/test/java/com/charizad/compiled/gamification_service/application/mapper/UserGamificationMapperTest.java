@@ -14,11 +14,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class UserGamificationMapperTest {
+
+    private static final UUID B1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID B2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
+    private static final UUID B3 = UUID.fromString("00000000-0000-0000-0000-000000000003");
+    private static final UUID BADGE_ID = UUID.fromString("00000000-0000-0000-0000-000000000010");
+    private static final UUID BADGE_ID_2 = UUID.fromString("00000000-0000-0000-0000-000000000011");
+    private static final UUID BADGE_ID_3 = UUID.fromString("00000000-0000-0000-0000-000000000012");
+    private static final UUID BADGE_ID_4 = UUID.fromString("00000000-0000-0000-0000-000000000013");
 
     private final UserGamificationMapper mapper = new UserGamificationMapper();
 
@@ -26,9 +35,9 @@ class UserGamificationMapperTest {
     @DisplayName("toStatsResponse mapea UserGamification a UserStatsResponse")
     void toStatsResponse_shouldMapCorrectly() {
         List<EarnedBadge> badges = List.of(
-                EarnedBadge.builder().badgeId("b1").build(),
-                EarnedBadge.builder().badgeId("b2").build(),
-                EarnedBadge.builder().badgeId("b3").build()
+                EarnedBadge.builder().badgeId(B1).build(),
+                EarnedBadge.builder().badgeId(B2).build(),
+                EarnedBadge.builder().badgeId(B3).build()
         );
 
         UserGamification user = UserGamification.builder()
@@ -73,7 +82,7 @@ class UserGamificationMapperTest {
     void toEarnedBadgeResponse_shouldMapCorrectly() {
         LocalDateTime now = LocalDateTime.now();
         EarnedBadge earned = EarnedBadge.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID)
                 .badgeName("Primer Parche")
                 .earnedAt(now)
                 .xpAwarded(100)
@@ -81,7 +90,7 @@ class UserGamificationMapperTest {
 
         EarnedBadgeResponse result = mapper.toEarnedBadgeResponse(earned);
 
-        assertThat(result.getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.getBadgeId()).isEqualTo(BADGE_ID);
         assertThat(result.getBadgeName()).isEqualTo("Primer Parche");
         assertThat(result.getEarnedAt()).isEqualTo(now);
         assertThat(result.getXpAwarded()).isEqualTo(100);
@@ -91,7 +100,7 @@ class UserGamificationMapperTest {
     @DisplayName("toProgressResponse calcula porcentaje correctamente")
     void toProgressResponse_shouldCalculatePercentage() {
         BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID)
                 .currentValue(50)
                 .requiredValue(100)
                 .completed(false)
@@ -99,7 +108,7 @@ class UserGamificationMapperTest {
 
         BadgeProgressResponse result = mapper.toProgressResponse(progress);
 
-        assertThat(result.getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.getBadgeId()).isEqualTo(BADGE_ID);
         assertThat(result.getCurrentValue()).isEqualTo(50);
         assertThat(result.getRequiredValue()).isEqualTo(100);
         assertThat(result.isCompleted()).isFalse();
@@ -110,7 +119,7 @@ class UserGamificationMapperTest {
     @DisplayName("toProgressResponse con requiredValue 0 retorna porcentaje 0")
     void toProgressResponse_shouldReturnZeroPercentage_whenRequiredIsZero() {
         BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-002")
+                .badgeId(BADGE_ID_2)
                 .currentValue(100)
                 .requiredValue(0)
                 .completed(false)
@@ -125,7 +134,7 @@ class UserGamificationMapperTest {
     @DisplayName("toProgressResponse limita porcentaje a 100")
     void toProgressResponse_shouldCapPercentageAt100() {
         BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-003")
+                .badgeId(BADGE_ID_3)
                 .currentValue(200)
                 .requiredValue(100)
                 .completed(true)
@@ -140,7 +149,7 @@ class UserGamificationMapperTest {
     @DisplayName("toProgressResponse con 0 completado")
     void toProgressResponse_shouldHandleZeroProgress() {
         BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-004")
+                .badgeId(BADGE_ID_4)
                 .currentValue(0)
                 .requiredValue(100)
                 .completed(false)

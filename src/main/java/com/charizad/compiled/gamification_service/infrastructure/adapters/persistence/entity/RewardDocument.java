@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 public class RewardDocument {
 
     @Id
-    private String id;
+    private UUID id;
 
     private String name;
     private String description;

@@ -12,13 +12,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Builder
 @AllArgsConstructor
 public class UserGamification {
 
-    private final String id;
+    private final UUID id;
     private final String userId;
     private int totalXp;
     private int weeklyXp;
@@ -31,11 +32,11 @@ public class UserGamification {
     private final List<EarnedReward> earnedRewards;
     private final List<String> visitedCampusZones;
 
-    public boolean hasBadge(String badgeId) {
+    public boolean hasBadge(UUID badgeId) {
         return earnedBadges.stream().anyMatch(b -> b.getBadgeId().equals(badgeId));
     }
 
-    public boolean hasReward(String rewardId) {
+    public boolean hasReward(UUID rewardId) {
         return earnedRewards.stream().anyMatch(r -> r.getRewardId().equals(rewardId));
     }
 
@@ -103,7 +104,7 @@ public class UserGamification {
     }
 
     /** Upserts the BadgeProgress entry for the given badgeId. */
-    public void updateProgress(String badgeId, int currentValue, int requiredValue) {
+    public void updateProgress(UUID badgeId, int currentValue, int requiredValue) {
         progress.removeIf(p -> p.getBadgeId().equals(badgeId));
         progress.add(BadgeProgress.builder()
                 .badgeId(badgeId).currentValue(currentValue)

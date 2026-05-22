@@ -17,11 +17,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class UserGamificationDocumentMapperTest {
+
+    private static final UUID UG_ID_1  = UUID.fromString("10000000-0000-0000-0000-000000000001");
+    private static final UUID UG_ID_2  = UUID.fromString("10000000-0000-0000-0000-000000000002");
+    private static final UUID UG_ID_3  = UUID.fromString("10000000-0000-0000-0000-000000000003");
+    private static final UUID UG_ID_10 = UUID.fromString("10000000-0000-0000-0000-000000000010");
+    private static final UUID BADGE_ID_1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID BADGE_ID_2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
+    private static final UUID REWARD_ID  = UUID.fromString("20000000-0000-0000-0000-000000000001");
 
     private final UserGamificationDocumentMapper mapper = new UserGamificationDocumentMapper();
 
@@ -31,21 +40,21 @@ class UserGamificationDocumentMapperTest {
         LocalDateTime now = LocalDateTime.now();
 
         EarnedBadgeSubdocument earnedSub = EarnedBadgeSubdocument.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID_1)
                 .badgeName("Primer Parche")
                 .earnedAt(now)
                 .xpAwarded(100)
                 .build();
 
         BadgeProgressSubdocument progressSub = BadgeProgressSubdocument.builder()
-                .badgeId("badge-002")
+                .badgeId(BADGE_ID_2)
                 .currentValue(50)
                 .requiredValue(100)
                 .completed(false)
                 .build();
 
         UserGamificationDocument doc = UserGamificationDocument.builder()
-                .id("ug-001")
+                .id(UG_ID_1)
                 .userId("user-001")
                 .totalXp(500)
                 .weeklyXp(200)
@@ -56,15 +65,15 @@ class UserGamificationDocumentMapperTest {
 
         UserGamification result = mapper.toDomain(doc);
 
-        assertThat(result.getId()).isEqualTo("ug-001");
+        assertThat(result.getId()).isEqualTo(UG_ID_1);
         assertThat(result.getUserId()).isEqualTo("user-001");
         assertThat(result.getTotalXp()).isEqualTo(500);
         assertThat(result.getWeeklyXp()).isEqualTo(200);
         assertThat(result.isRankingOptIn()).isTrue();
         assertThat(result.getEarnedBadges()).hasSize(1);
-        assertThat(result.getEarnedBadges().get(0).getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.getEarnedBadges().get(0).getBadgeId()).isEqualTo(BADGE_ID_1);
         assertThat(result.getProgress()).hasSize(1);
-        assertThat(result.getProgress().get(0).getBadgeId()).isEqualTo("badge-002");
+        assertThat(result.getProgress().get(0).getBadgeId()).isEqualTo(BADGE_ID_2);
     }
 
     @Test
@@ -73,7 +82,7 @@ class UserGamificationDocumentMapperTest {
         LocalDateTime now = LocalDateTime.now();
 
         EarnedRewardSubdocument rewardSub = EarnedRewardSubdocument.builder()
-                .rewardId("reward-001")
+                .rewardId(REWARD_ID)
                 .rewardName("Gold Title")
                 .rewardType(RewardType.TITLE)
                 .unlockedAt(now)
@@ -81,14 +90,14 @@ class UserGamificationDocumentMapperTest {
                 .build();
 
         EarnedBadgeSubdocument earnedSub = EarnedBadgeSubdocument.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID_1)
                 .badgeName("Primer Parche")
                 .earnedAt(now)
                 .xpAwarded(100)
                 .build();
 
         UserGamificationDocument doc = UserGamificationDocument.builder()
-                .id("ug-010")
+                .id(UG_ID_10)
                 .userId("user-010")
                 .totalXp(1500)
                 .weeklyXp(300)
@@ -100,13 +109,13 @@ class UserGamificationDocumentMapperTest {
 
         UserGamification result = mapper.toDomain(doc);
 
-        assertThat(result.getId()).isEqualTo("ug-010");
+        assertThat(result.getId()).isEqualTo(UG_ID_10);
         assertThat(result.getUserId()).isEqualTo("user-010");
         assertThat(result.getTotalXp()).isEqualTo(1500);
         assertThat(result.getWeeklyXp()).isEqualTo(300);
         assertThat(result.isRankingOptIn()).isTrue();
         assertThat(result.getEarnedRewards()).hasSize(1);
-        assertThat(result.getEarnedRewards().get(0).getRewardId()).isEqualTo("reward-001");
+        assertThat(result.getEarnedRewards().get(0).getRewardId()).isEqualTo(REWARD_ID);
         assertThat(result.getEarnedRewards().get(0).getRewardName()).isEqualTo("Gold Title");
         assertThat(result.getEarnedRewards().get(0).getRewardType()).isEqualTo(RewardType.TITLE);
         assertThat(result.getEarnedRewards().get(0).getUnlockedAt()).isEqualTo(now);
@@ -117,7 +126,7 @@ class UserGamificationDocumentMapperTest {
     @DisplayName("toDomain maneja listas nulas como listas vacías")
     void toDomain_shouldHandleNullLists() {
         UserGamificationDocument doc = UserGamificationDocument.builder()
-                .id("ug-002")
+                .id(UG_ID_2)
                 .userId("user-002")
                 .totalXp(0)
                 .weeklyXp(0)
@@ -138,7 +147,7 @@ class UserGamificationDocumentMapperTest {
         LocalDateTime now = LocalDateTime.now();
 
         EarnedReward reward = EarnedReward.builder()
-                .rewardId("reward-001")
+                .rewardId(REWARD_ID)
                 .rewardName("Gold Title")
                 .rewardType(RewardType.TITLE)
                 .unlockedAt(now)
@@ -146,21 +155,21 @@ class UserGamificationDocumentMapperTest {
                 .build();
 
         EarnedBadge earned = EarnedBadge.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID_1)
                 .badgeName("Primer Parche")
                 .earnedAt(now)
                 .xpAwarded(100)
                 .build();
 
         BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-002")
+                .badgeId(BADGE_ID_2)
                 .currentValue(50)
                 .requiredValue(100)
                 .completed(false)
                 .build();
 
         UserGamification user = UserGamification.builder()
-                .id("ug-001")
+                .id(UG_ID_1)
                 .userId("user-001")
                 .totalXp(500)
                 .weeklyXp(200)
@@ -172,17 +181,17 @@ class UserGamificationDocumentMapperTest {
 
         UserGamificationDocument result = mapper.toDocument(user);
 
-        assertThat(result.getId()).isEqualTo("ug-001");
+        assertThat(result.getId()).isEqualTo(UG_ID_1);
         assertThat(result.getUserId()).isEqualTo("user-001");
         assertThat(result.getTotalXp()).isEqualTo(500);
         assertThat(result.getWeeklyXp()).isEqualTo(200);
         assertThat(result.isRankingOptIn()).isTrue();
         assertThat(result.getEarnedBadges()).hasSize(1);
-        assertThat(result.getEarnedBadges().get(0).getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.getEarnedBadges().get(0).getBadgeId()).isEqualTo(BADGE_ID_1);
         assertThat(result.getProgress()).hasSize(1);
-        assertThat(result.getProgress().get(0).getBadgeId()).isEqualTo("badge-002");
+        assertThat(result.getProgress().get(0).getBadgeId()).isEqualTo(BADGE_ID_2);
         assertThat(result.getEarnedRewards()).hasSize(1);
-        assertThat(result.getEarnedRewards().get(0).getRewardId()).isEqualTo("reward-001");
+        assertThat(result.getEarnedRewards().get(0).getRewardId()).isEqualTo(REWARD_ID);
         assertThat(result.getEarnedRewards().get(0).getRewardName()).isEqualTo("Gold Title");
         assertThat(result.getEarnedRewards().get(0).getRewardType()).isEqualTo(RewardType.TITLE);
         assertThat(result.getEarnedRewards().get(0).getUnlockedAt()).isEqualTo(now);
@@ -193,7 +202,7 @@ class UserGamificationDocumentMapperTest {
     @DisplayName("toDocument mapea usuario sin insignias ni progreso")
     void toDocument_shouldMapEmptyLists() {
         UserGamification user = UserGamification.builder()
-                .id("ug-002")
+                .id(UG_ID_2)
                 .userId("user-002")
                 .totalXp(0)
                 .weeklyXp(0)
@@ -215,7 +224,7 @@ class UserGamificationDocumentMapperTest {
         LocalDateTime now = LocalDateTime.now();
 
         EarnedRewardSubdocument rewardSub = EarnedRewardSubdocument.builder()
-                .rewardId("reward-001")
+                .rewardId(REWARD_ID)
                 .rewardName("Gold Title")
                 .rewardType(RewardType.TITLE)
                 .unlockedAt(now)
@@ -223,21 +232,21 @@ class UserGamificationDocumentMapperTest {
                 .build();
 
         EarnedBadgeSubdocument earnedSub = EarnedBadgeSubdocument.builder()
-                .badgeId("badge-001")
+                .badgeId(BADGE_ID_1)
                 .badgeName("Test")
                 .earnedAt(now)
                 .xpAwarded(100)
                 .build();
 
         BadgeProgressSubdocument progressSub = BadgeProgressSubdocument.builder()
-                .badgeId("badge-002")
+                .badgeId(BADGE_ID_2)
                 .currentValue(30)
                 .requiredValue(100)
                 .completed(false)
                 .build();
 
         UserGamificationDocument original = UserGamificationDocument.builder()
-                .id("ug-003")
+                .id(UG_ID_3)
                 .userId("user-003")
                 .totalXp(300)
                 .weeklyXp(100)

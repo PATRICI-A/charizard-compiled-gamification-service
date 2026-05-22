@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,6 +31,13 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class RedeemEventCodeServiceTest {
 
+    private static final UUID EC1 = UUID.fromString("30000000-0000-0000-0000-000000000001");
+    private static final UUID EC2 = UUID.fromString("30000000-0000-0000-0000-000000000002");
+    private static final UUID EC3 = UUID.fromString("30000000-0000-0000-0000-000000000003");
+    private static final UUID EC4 = UUID.fromString("30000000-0000-0000-0000-000000000004");
+    private static final UUID EC5 = UUID.fromString("30000000-0000-0000-0000-000000000005");
+    private static final UUID BADGE_ID = UUID.fromString("00000000-0000-0000-0000-000000000009");
+
     @Mock private EventCodeRepositoryPort eventCodeRepository;
     @Mock private BadgeRepositoryPort badgeRepository;
     @Mock private AwardBadgeUseCase awardBadgeUseCase;
@@ -37,9 +45,9 @@ class RedeemEventCodeServiceTest {
     @InjectMocks
     private RedeemEventCodeService service;
 
-    private EventCode validCode(String code) {
+    private EventCode validCode(UUID id, String code) {
         return EventCode.builder()
-                .id("ec1").code(code)
+                .id(id).code(code)
                 .validFrom(LocalDateTime.now().minusHours(1))
                 .validUntil(LocalDateTime.now().plusHours(1))
                 .usedByUserIds(new ArrayList<>())
@@ -47,14 +55,14 @@ class RedeemEventCodeServiceTest {
     }
 
     private Badge asistenteBadge() {
-        return Badge.builder().id("b-asistente").name("Asistente")
+        return Badge.builder().id(BADGE_ID).name("Asistente")
                 .category(BadgeCategory.RARE).active(true).build();
     }
 
     @Test
     @DisplayName("Código válido y no usado → otorga Asistente")
     void execute_validCode_awardsAsistente() {
-        EventCode code = validCode("ABC123");
+        EventCode code = validCode(EC1, "ABC123");
         when(eventCodeRepository.findByCode("ABC123")).thenReturn(Optional.of(code));
         when(badgeRepository.findByName("Asistente")).thenReturn(Optional.of(asistenteBadge()));
         EarnedBadgeResponse response = mock(EarnedBadgeResponse.class);
@@ -68,7 +76,7 @@ class RedeemEventCodeServiceTest {
         ArgumentCaptor<AwardBadgeRequest> captor = ArgumentCaptor.forClass(AwardBadgeRequest.class);
         verify(awardBadgeUseCase).execute(captor.capture());
         assertThat(captor.getValue().getUserId()).isEqualTo("u1");
-        assertThat(captor.getValue().getBadgeId()).isEqualTo("b-asistente");
+        assertThat(captor.getValue().getBadgeId()).isEqualTo(BADGE_ID);
     }
 
     @Test
@@ -84,7 +92,7 @@ class RedeemEventCodeServiceTest {
     @DisplayName("Código expirado → InvalidEventCodeException")
     void execute_expiredCode_throws() {
         EventCode expired = EventCode.builder()
-                .id("ec2").code("OLD")
+                .id(EC2).code("OLD")
                 .validFrom(LocalDateTime.now().minusDays(2))
                 .validUntil(LocalDateTime.now().minusDays(1))
                 .usedByUserIds(new ArrayList<>())
@@ -99,7 +107,7 @@ class RedeemEventCodeServiceTest {
     @DisplayName("Código aún no activo → InvalidEventCodeException")
     void execute_notYetActiveCode_throws() {
         EventCode future = EventCode.builder()
-                .id("ec3").code("FUTURE")
+                .id(EC3).code("FUTURE")
                 .validFrom(LocalDateTime.now().plusHours(1))
                 .validUntil(LocalDateTime.now().plusDays(1))
                 .usedByUserIds(new ArrayList<>())
@@ -116,7 +124,7 @@ class RedeemEventCodeServiceTest {
         ArrayList<String> usedBy = new ArrayList<>();
         usedBy.add("u1");
         EventCode used = EventCode.builder()
-                .id("ec4").code("USED")
+                .id(EC4).code("USED")
                 .validFrom(LocalDateTime.now().minusHours(1))
                 .validUntil(LocalDateTime.now().plusHours(1))
                 .usedByUserIds(usedBy)
@@ -130,7 +138,7 @@ class RedeemEventCodeServiceTest {
     @Test
     @DisplayName("Badge Asistente no existe en catálogo → BadgeNotFoundException")
     void execute_badgeNotFound_throws() {
-        EventCode code = validCode("ABC");
+        EventCode code = validCode(EC1, "ABC");
         when(eventCodeRepository.findByCode("ABC")).thenReturn(Optional.of(code));
         when(badgeRepository.findByName("Asistente")).thenReturn(Optional.empty());
 
@@ -144,7 +152,7 @@ class RedeemEventCodeServiceTest {
         ArrayList<String> usedBy = new ArrayList<>();
         usedBy.add("other-user");
         EventCode code = EventCode.builder()
-                .id("ec5").code("SHARED")
+                .id(EC5).code("SHARED")
                 .validFrom(LocalDateTime.now().minusHours(1))
                 .validUntil(LocalDateTime.now().plusHours(1))
                 .usedByUserIds(usedBy)

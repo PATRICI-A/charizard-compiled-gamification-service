@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RewardResponse {
 
-    private String id;
+    private UUID id;
     private String name;
     private String description;
     private RewardType type;

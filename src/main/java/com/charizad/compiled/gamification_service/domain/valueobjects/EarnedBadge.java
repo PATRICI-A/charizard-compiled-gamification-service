@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Builder
 @AllArgsConstructor
 public class EarnedBadge {
 
-    private final String badgeId;
+    private final UUID badgeId;
     private final String badgeName;
     private final LocalDateTime earnedAt;
     private final int xpAwarded;

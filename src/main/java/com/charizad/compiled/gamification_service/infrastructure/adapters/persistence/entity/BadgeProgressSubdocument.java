@@ -5,12 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BadgeProgressSubdocument {
-    private String badgeId;
+    private UUID badgeId;
     private int currentValue;
     private int requiredValue;
     private boolean completed;

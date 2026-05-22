@@ -6,13 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class EarnedBadgeSubdocument {
-    private String badgeId;
+    private UUID badgeId;
     private String badgeName;
     private LocalDateTime earnedAt;
     private int xpAwarded;

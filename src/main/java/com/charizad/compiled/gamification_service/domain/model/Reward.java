@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * A reward that is automatically unlocked when a user's total XP reaches
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Reward {
 
-    private final String id;
+    private final UUID id;
     private final String name;
     private final String description;
     private final RewardType type;

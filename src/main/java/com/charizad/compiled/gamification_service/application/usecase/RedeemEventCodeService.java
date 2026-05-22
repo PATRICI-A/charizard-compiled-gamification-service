@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -35,7 +36,7 @@ public class RedeemEventCodeService implements RedeemEventCodeUseCase {
             throw new InvalidEventCodeException();
         }
 
-        String badgeId = badgeRepository.findByName(BADGE_ASISTENTE)
+        UUID badgeId = badgeRepository.findByName(BADGE_ASISTENTE)
                 .orElseThrow(() -> new BadgeNotFoundException(BADGE_ASISTENTE))
                 .getId();
 
