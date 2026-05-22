@@ -58,7 +58,7 @@ public class AwardBadgeService implements AwardBadgeUseCase {
         checkXpRewardsUseCase.checkAndUnlock(user);
 
         // Publish async notification via RabbitMQ
-        notificationEventPort.notifyBadgeEarned(request.getUserId(), badge);
+        notificationEventPort.notifyAchievementUnlocked(request.getUserId(), badge);
 
         return userGamificationMapper.toEarnedBadgeResponse(earned);
     }
