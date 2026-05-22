@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Publica eventos de gamificación al exchange de RabbitMQ.
@@ -58,7 +59,7 @@ public class RabbitNotificationPublisher implements NotificationEventPort {
     public void notifyAchievementUnlocked(String userId, Badge badge) {
         try {
             AchievementUnlockedEventDto payload = AchievementUnlockedEventDto.builder()
-                    .userId(userId)
+                    .userId(UUID.fromString(userId))
                     .monaId(badge.getId())
                     .monaName(badge.getName())
                     .monaDescription(badge.getDescription())
