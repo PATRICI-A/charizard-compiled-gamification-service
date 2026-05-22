@@ -13,12 +13,17 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Endpoints llamados por otros microservicios vía OpenFeign para reportar
@@ -49,8 +54,18 @@ public class GamificationEventController {
             @ApiResponse(responseCode = "401", description = "Token JWT inválido o ausente", content = @Content)
     })
     public ResponseEntity<Map<String, Object>> onZoneVisited(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId,
+            @Parameter(hidden = true) @AuthenticationPrincipal UUID principalUserId,
             @Valid @RequestBody ZoneVisitedRequest request) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = auth != null && !(auth instanceof AnonymousAuthenticationToken) && auth.isAuthenticated();
+        String bodyUserId = request.getUserId() != null ? request.getUserId().toString() : null;
+        String userId = isAuthenticated ? principalUserId.toString() : bodyUserId;
+
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "userId requerido: envíalo en el body o vía JWT"));
+        }
 
         BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
                 .userId(userId)

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -48,10 +49,19 @@ public class KongAuthFilter extends OncePerRequestFilter {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode claims = mapper.readTree(json);
 
-            String userId = claims.has("sub") ? claims.get("sub").asText() : null;
+            String userIdStr = claims.has("sub") ? claims.get("sub").asText() : null;
             String role = claims.has("role") ? claims.get("role").asText() : "USER";
 
-            if (userId == null) {
+            if (userIdStr == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            UUID userId;
+            try {
+                userId = UUID.fromString(userIdStr);
+            } catch (IllegalArgumentException e) {
+                log.warn("JWT sub no es un UUID válido: {}", userIdStr);
                 filterChain.doFilter(request, response);
                 return;
             }

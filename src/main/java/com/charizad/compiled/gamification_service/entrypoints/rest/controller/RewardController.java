@@ -22,6 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/rewards")
@@ -65,7 +66,7 @@ public class RewardController {
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<List<EarnedRewardResponse>> getMyRewards(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getUserRewardsUseCase.execute(userId));
+            @Parameter(hidden = true) @AuthenticationPrincipal UUID userId) {
+        return ResponseEntity.ok(getUserRewardsUseCase.execute(userId.toString()));
     }
 }

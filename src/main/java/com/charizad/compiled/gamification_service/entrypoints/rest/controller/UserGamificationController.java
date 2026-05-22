@@ -39,6 +39,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/gamificacion")
@@ -69,9 +70,9 @@ public class UserGamificationController {
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<EarnedBadgeResponse> redeemEventCode(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId,
+            @Parameter(hidden = true) @AuthenticationPrincipal UUID userId,
             @Valid @RequestBody RedeemEventCodeRequest request) {
-        return ResponseEntity.ok(redeemEventCodeUseCase.execute(userId, request.getEventCode()));
+        return ResponseEntity.ok(redeemEventCodeUseCase.execute(userId.toString(), request.getEventCode()));
     }
 
     @GetMapping("/monas")
@@ -83,8 +84,8 @@ public class UserGamificationController {
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<List<MonaResponse>> getMonas(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getMonasUseCase.execute(userId));
+            @Parameter(hidden = true) @AuthenticationPrincipal UUID userId) {
+        return ResponseEntity.ok(getMonasUseCase.execute(userId.toString()));
     }
 
     @GetMapping("/monas/{monaId}")
@@ -97,9 +98,9 @@ public class UserGamificationController {
             @ApiResponse(responseCode = "404", description = "Mona not found", content = @Content)
     })
     public ResponseEntity<MonaResponse> getMonaById(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId,
+            @Parameter(hidden = true) @AuthenticationPrincipal UUID userId,
             @PathVariable String monaId) {
-        return ResponseEntity.ok(getMonaByIdUseCase.execute(userId, monaId));
+        return ResponseEntity.ok(getMonaByIdUseCase.execute(userId.toString(), monaId));
     }
 
     @GetMapping("/me/badges")
@@ -111,8 +112,8 @@ public class UserGamificationController {
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<List<EarnedBadgeResponse>> getMyBadges(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getUserBadgesUseCase.execute(userId));
+            @Parameter(hidden = true) @AuthenticationPrincipal UUID userId) {
+        return ResponseEntity.ok(getUserBadgesUseCase.execute(userId.toString()));
     }
 
     @GetMapping("/me/progress")
@@ -124,8 +125,8 @@ public class UserGamificationController {
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<List<BadgeProgressResponse>> getMyProgress(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getUserProgressUseCase.execute(userId));
+            @Parameter(hidden = true) @AuthenticationPrincipal UUID userId) {
+        return ResponseEntity.ok(getUserProgressUseCase.execute(userId.toString()));
     }
 
     @GetMapping("/me/stats")
@@ -137,8 +138,8 @@ public class UserGamificationController {
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<UserStatsResponse> getMyStats(
-            @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getUserStatsUseCase.execute(userId));
+            @AuthenticationPrincipal UUID userId) {
+        return ResponseEntity.ok(getUserStatsUseCase.execute(userId.toString()));
     }
 
     @PatchMapping("/me/ranking/optin")
@@ -152,9 +153,9 @@ public class UserGamificationController {
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<RankingOptInResponse> setRankingOptIn(
-            @AuthenticationPrincipal String userId,
+            @AuthenticationPrincipal UUID userId,
             @Valid @RequestBody SetRankingOptInRequest request) {
-        return ResponseEntity.ok(toggleRankingOptInUseCase.execute(userId, request.getParticipe()));
+        return ResponseEntity.ok(toggleRankingOptInUseCase.execute(userId.toString(), request.getParticipe()));
     }
 
     @GetMapping("/me/rewards")
@@ -166,8 +167,8 @@ public class UserGamificationController {
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<List<EarnedRewardResponse>> getMyRewards(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getUserRewardsUseCase.execute(userId));
+            @Parameter(hidden = true) @AuthenticationPrincipal UUID userId) {
+        return ResponseEntity.ok(getUserRewardsUseCase.execute(userId.toString()));
     }
 
     @GetMapping("/ranking")
@@ -195,10 +196,10 @@ public class UserGamificationController {
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<RankingPositionResponse> getMyPosition(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId,
+            @Parameter(hidden = true) @AuthenticationPrincipal UUID userId,
             @Parameter(description = "Ranking period: WEEKLY, MONTHLY or SEMESTER", example = "WEEKLY")
             @RequestParam(defaultValue = "WEEKLY") String tipo) {
-        return ResponseEntity.ok(getRankingPositionUseCase.execute(userId, parseType(tipo)));
+        return ResponseEntity.ok(getRankingPositionUseCase.execute(userId.toString(), parseType(tipo)));
     }
 
     @GetMapping("/me/nivel")
@@ -211,8 +212,8 @@ public class UserGamificationController {
             @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
     })
     public ResponseEntity<UserLevelResponse> getMiNivel(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getUserLevelUseCase.execute(userId));
+            @Parameter(hidden = true) @AuthenticationPrincipal UUID userId) {
+        return ResponseEntity.ok(getUserLevelUseCase.execute(userId.toString()));
     }
 
     private RankingType parseType(String tipo) {
