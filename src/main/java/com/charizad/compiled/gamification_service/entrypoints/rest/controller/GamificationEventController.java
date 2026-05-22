@@ -28,26 +28,31 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/gamificacion/events")
 @RequiredArgsConstructor
-@Tag(name = "Gamification Events", description = "Endpoints para microservicios — reportan acciones de plataforma que evalúan desbloqueo de monas (Flujo A, RF13.1)")
+@Tag(name = "Gamification Events (Internal)", description = "Internal service-to-service endpoints called by other microservices to report user platform actions that may trigger automatic badge (mona) unlocks. These endpoints are not intended to be called directly by frontend clients.")
 @SecurityRequirement(name = "bearerAuth")
 public class GamificationEventController {
 
     private final CheckBadgeUnlockUseCase checkBadgeUnlockUseCase;
 
-    /**
-     * Llamado por el geo service vía Feign cuando el usuario actualiza su ubicación
-     * exitosamente dentro del campus (RN-13.1.5: geoLocationEnabled=true implícito).
-     * Evalúa monas: Explorador I (3 zonas distintas), Explorador II (5 zonas distintas).
-     */
     @PostMapping("/zone-visited")
     @Operation(
-            summary = "Registrar visita a zona del campus",
-            description = "Llamado por el geo service cuando el usuario actualiza su ubicación en el campus. " +
-                          "Evalúa y otorga las monas Explorador I y Explorador II según las zonas acumuladas (RF13.1 — Flujo A).")
+            summary = "Report a campus zone visit (internal)",
+            description = "Called internally by the Geo Service (via OpenFeign) when an authenticated user successfully updates their location within a recognized campus zone. " +
+                          "This endpoint evaluates whether the reported zone visit triggers the unlock of exploration badges: " +
+                          "'Explorador I' is awarded after visiting 3 distinct campus zones, and 'Explorador II' after visiting 5 distinct zones. " +
+                          "The service records the visited zone in the user's gamification profile and checks accumulated distinct zone count against badge thresholds. " +
+                          "If one or more badges are unlocked as a result, the corresponding XP is credited and the badge IDs are returned in the response. " +
+                          "If no new badges are unlocked, the response contains an empty list of awarded badge IDs. " +
+                          "This endpoint assumes geolocation is enabled for the user (geoLocationEnabled is set to true implicitly). " +
+                          "It should not be called directly by frontend clients — use the Geo Service API instead."
+    )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Evaluación completada. Lista de IDs de monas otorgadas (puede ser vacía)."),
-            @ApiResponse(responseCode = "400", description = "campusZone inválido o ausente", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Token JWT inválido o ausente", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Zone visit processed successfully. Returns a map containing the userId, the campusZone reported, and a list of IDs of any badges newly awarded. The awardedBadgeIds list is empty if no new badges were unlocked."),
+            @ApiResponse(responseCode = "400", description = "Invalid request body. The campusZone field is missing, blank, or contains an unrecognized zone identifier.", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Authentication required. The forwarded JWT token is missing, expired, or malformed.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied. The caller does not have the required service-level permissions to invoke this internal endpoint.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Gamification profile not found. The user's gamification record has not been initialized in the system.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error. An unexpected error occurred while processing the zone visit event.", content = @Content)
     })
     public ResponseEntity<Map<String, Object>> onZoneVisited(
             @Parameter(hidden = true) @AuthenticationPrincipal String userId,

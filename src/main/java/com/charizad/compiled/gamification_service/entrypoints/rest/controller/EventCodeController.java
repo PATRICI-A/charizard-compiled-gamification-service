@@ -20,21 +20,31 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/gamificacion/admin/event-codes")
 @RequiredArgsConstructor
-@Tag(name = "Event Codes (Admin)", description = "Gestión de códigos alfanuméricos de eventos universitarios — RF13.1 Flujo B")
+@Tag(name = "Event Codes (Admin)", description = "Manage alphanumeric attendance codes for university events. Admins generate these codes and distribute them at events. Students redeem them via the Gamification endpoint to earn the 'Asistente' badge.")
 @SecurityRequirement(name = "bearerAuth")
 public class EventCodeController {
 
     private final EventCodeRepositoryPort eventCodeRepository;
 
     @PostMapping
-    @Operation(summary = "Crear código de evento",
-            description = "Registra un nuevo código alfanumérico para un evento universitario. Solo ADMIN.")
+    @Operation(
+            summary = "Create a new event attendance code",
+            description = "Registers a new alphanumeric code that can be distributed to students attending a university event. " +
+                          "When a student redeems this code through the POST /api/v1/gamificacion/monas/evento endpoint, " +
+                          "they earn the 'Asistente' (event attendance) badge along with its associated XP. " +
+                          "Each code has a defined validity window (validFrom / validUntil). " +
+                          "Codes submitted outside that window will be rejected at redemption time. " +
+                          "The code value must be unique across the system — submitting a duplicate code returns a 409 conflict. " +
+                          "This endpoint is restricted to users with the ADMIN role."
+    )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Código creado",
+            @ApiResponse(responseCode = "201", description = "Event code created successfully. Returns the full code record including its generated ID, the code value, and the validity window.",
                     content = @Content(schema = @Schema(implementation = EventCodeResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Token JWT inválido o ausente", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Requiere rol ADMIN", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid request body. One or more fields are missing, blank, or have invalid values (e.g. validUntil is before validFrom).", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Authentication required. The request is missing a JWT token or the provided token is expired or malformed.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied. This endpoint requires the ADMIN role. Regular USER accounts cannot create event codes.", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Conflict. An event code with the same alphanumeric value already exists in the system.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error. An unexpected error occurred while persisting the event code.", content = @Content)
     })
     public ResponseEntity<EventCodeResponse> createEventCode(@Valid @RequestBody CreateEventCodeRequest request) {
         EventCode created = eventCodeRepository.save(

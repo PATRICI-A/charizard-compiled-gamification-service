@@ -20,17 +20,40 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Gamification Service API")
                         .description("""
-                                **Module M04 — Gamification**
+                                ## Gamification Service — Module M04
 
-                                Badge management, XP and weekly ranking.
+                                This microservice is responsible for managing the university platform's gamification system.\s
+                                It handles badge (mona) creation and assignment, XP accumulation, level progression,\s
+                                reward unlocking, and competitive ranking among students.
 
-                                **Authentication:** Bearer JWT issued by M01 (snorlax-energy-auth-service).
+                                ### Core Capabilities
+                                - **Badge Management:** Define collectible badges (monas) tied to specific user actions\s
+                                  such as campus exploration, event attendance, and platform engagement.
+                                - **XP & Levels:** Track each student's experience points and compute their current level\s
+                                  based on total monas collected.
+                                - **Rewards:** Automatically unlock rewards when a student's XP crosses defined thresholds.
+                                - **Ranking:** Maintain WEEKLY, MONTHLY, and SEMESTER leaderboards for opted-in students.
+                                - **Event Codes:** Allow admins to generate alphanumeric codes that students redeem\s
+                                  at university events to earn the "Asistente" badge.
 
-                                **Roles:**
-                                - `ADMIN` — can create and award badges
-                                - `USER` — can query their badges, progress, stats and ranking
+                                ### Badge Unlock Flows
+                                - **Flow A — Automatic:** Triggered internally when another microservice (e.g. geo service)\s
+                                  reports a qualifying user action (campus zone visit, profile completion, etc.).
+                                - **Flow B — Event Code:** Student manually enters a code distributed at a university event.
+                                - **Flow C — Catalogue Query:** Students browse their badge collection and progress.
+
+                                ### Authentication
+                                All endpoints require a valid **Bearer JWT** token issued by the Auth Service (M01 — snorlax-energy-auth-service).\s
+                                Include it in the `Authorization` header as: `Bearer <token>`
+
+                                ### Role-Based Access
+                                | Role | Permissions |
+                                |------|-------------|
+                                | `ADMIN` | Create badges, award badges manually, create event codes, create rewards |
+                                | `USER` | Query own badges, progress, stats, level, rewards, ranking |
+                                | `SERVICE` | Internal endpoints called by other microservices (zone-visited, etc.) |
                                 """)
-                        .version("1.0.0")
+                        .version("v1.0.0")
                         .contact(new Contact()
                                 .name("Charizard Compiled")
                                 .email("charizard.compiled@universidad.edu.co")))
