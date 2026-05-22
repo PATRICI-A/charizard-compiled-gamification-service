@@ -1,8 +1,8 @@
 package com.charizad.compiled.gamification_service.entrypoints.advice;
 
 import com.charizad.compiled.gamification_service.domain.exceptions.AccessDeniedException;
-import com.charizad.compiled.gamification_service.domain.exceptions.BadgeAlreadyEarnedException;
-import com.charizad.compiled.gamification_service.domain.exceptions.BadgeNotFoundException;
+import com.charizad.compiled.gamification_service.domain.exceptions.MonaAlreadyEarnedException;
+import com.charizad.compiled.gamification_service.domain.exceptions.MonaNotFoundException;
 import com.charizad.compiled.gamification_service.domain.exceptions.UserGamificationNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,15 +28,15 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    @DisplayName("BadgeNotFoundException retorna 404")
-    void handleBadgeNotFound_shouldReturn404() {
-        BadgeNotFoundException ex = new BadgeNotFoundException("badge-001");
+    @DisplayName("MonaNotFoundException retorna 404")
+    void handleMonaNotFound_shouldReturn404() {
+        MonaNotFoundException ex = new MonaNotFoundException("Mona-001");
 
-        ResponseEntity<Map<String, Object>> response = handler.handleBadgeNotFound(ex);
+        ResponseEntity<Map<String, Object>> response = handler.handleMonaNotFound(ex);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().get("message")).isEqualTo("Insignia no encontrada con id: badge-001");
+        assertThat(response.getBody().get("message")).isEqualTo("Insignia no encontrada con id: Mona-001");
     }
 
     @Test
@@ -52,11 +52,11 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    @DisplayName("BadgeAlreadyEarnedException retorna 409")
-    void handleBadgeAlreadyEarned_shouldReturn409() {
-        BadgeAlreadyEarnedException ex = new BadgeAlreadyEarnedException("user-001", "badge-001");
+    @DisplayName("MonaAlreadyEarnedException retorna 409")
+    void handleMonaAlreadyEarned_shouldReturn409() {
+        MonaAlreadyEarnedException ex = new MonaAlreadyEarnedException("user-001", "Mona-001");
 
-        ResponseEntity<Map<String, Object>> response = handler.handleBadgeAlreadyEarned(ex);
+        ResponseEntity<Map<String, Object>> response = handler.handleMonaAlreadyEarned(ex);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(response.getBody()).isNotNull();
@@ -89,9 +89,9 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("buildError incluye timestamp, status, error y message")
     void buildError_shouldIncludeAllFields() {
-        BadgeNotFoundException ex = new BadgeNotFoundException("test");
+        MonaNotFoundException ex = new MonaNotFoundException("test");
 
-        ResponseEntity<Map<String, Object>> response = handler.handleBadgeNotFound(ex);
+        ResponseEntity<Map<String, Object>> response = handler.handleMonaNotFound(ex);
 
         assertThat(response.getBody()).containsKeys("timestamp", "status", "error", "message");
         assertThat(response.getBody().get("status")).isEqualTo(404);

@@ -11,8 +11,11 @@ import java.util.Optional;
 public interface UserGamificationMongoRepository extends MongoRepository<UserGamificationDocument, String> {
     Optional<UserGamificationDocument> findByUserId(String userId);
     List<UserGamificationDocument> findByRankingOptInTrue();
-    List<UserGamificationDocument> findByRankingOptInTrueOrderByWeeklyXpDesc(PageRequest pageRequest);
     List<UserGamificationDocument> findByRankingOptInTrueOrderByWeeklyMonasDesc(PageRequest pageRequest);
+    List<UserGamificationDocument> findByRankingOptInTrueOrderByMonthlyMonasDesc(PageRequest pageRequest);
+    List<UserGamificationDocument> findByRankingOptInTrueOrderBySemesterMonasDesc(PageRequest pageRequest);
     long countByRankingOptInTrue();
     long countByRankingOptInTrueAndWeeklyMonasGreaterThan(int weeklyMonas);
+    long countByRankingOptInTrueAndMonthlyMonasGreaterThan(int monthlyMonas);
+    long countByRankingOptInTrueAndSemesterMonasGreaterThan(int semesterMonas);
 }

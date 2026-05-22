@@ -1,13 +1,13 @@
 package com.charizad.compiled.gamification_service.application.usecase;
 
-import com.charizad.compiled.gamification_service.application.dto.request.AwardBadgeRequest;
-import com.charizad.compiled.gamification_service.application.dto.response.EarnedBadgeResponse;
-import com.charizad.compiled.gamification_service.domain.exceptions.BadgeNotFoundException;
+import com.charizad.compiled.gamification_service.application.dto.request.AwardMonaRequest;
+import com.charizad.compiled.gamification_service.application.dto.response.EarnedMonaResponse;
+import com.charizad.compiled.gamification_service.domain.exceptions.MonaNotFoundException;
 import com.charizad.compiled.gamification_service.domain.exceptions.InvalidEventCodeException;
 import com.charizad.compiled.gamification_service.domain.model.EventCode;
-import com.charizad.compiled.gamification_service.domain.ports.in.AwardBadgeUseCase;
+import com.charizad.compiled.gamification_service.domain.ports.in.AwardMonaUseCase;
 import com.charizad.compiled.gamification_service.domain.ports.in.RedeemEventCodeUseCase;
-import com.charizad.compiled.gamification_service.domain.ports.out.BadgeRepositoryPort;
+import com.charizad.compiled.gamification_service.domain.ports.out.MonaRepositoryPort;
 import com.charizad.compiled.gamification_service.domain.ports.out.EventCodeRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,14 +20,14 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class RedeemEventCodeService implements RedeemEventCodeUseCase {
 
-    private static final String BADGE_ASISTENTE = "Asistente";
+    private static final String Mona_ASISTENTE = "Asistente";
 
     private final EventCodeRepositoryPort eventCodeRepository;
-    private final BadgeRepositoryPort badgeRepository;
-    private final AwardBadgeUseCase awardBadgeUseCase;
+    private final MonaRepositoryPort MonaRepository;
+    private final AwardMonaUseCase awardMonaUseCase;
 
     @Override
-    public EarnedBadgeResponse execute(String userId, String eventCode) {
+    public EarnedMonaResponse execute(String userId, String eventCode) {
         EventCode code = eventCodeRepository.findByCode(eventCode)
                 .orElseThrow(InvalidEventCodeException::new);
 
@@ -35,8 +35,8 @@ public class RedeemEventCodeService implements RedeemEventCodeUseCase {
             throw new InvalidEventCodeException();
         }
 
-        String badgeId = badgeRepository.findByName(BADGE_ASISTENTE)
-                .orElseThrow(() -> new BadgeNotFoundException(BADGE_ASISTENTE))
+        String MonaId = MonaRepository.findByName(Mona_ASISTENTE)
+                .orElseThrow(() -> new MonaNotFoundException(Mona_ASISTENTE))
                 .getId();
 
         code.markUsedBy(userId);
@@ -44,9 +44,9 @@ public class RedeemEventCodeService implements RedeemEventCodeUseCase {
 
         log.info("[RedeemEventCode] userId={} canjeó código='{}' → mona Asistente", userId, eventCode);
 
-        return awardBadgeUseCase.execute(AwardBadgeRequest.builder()
+        return awardMonaUseCase.execute(AwardMonaRequest.builder()
                 .userId(userId)
-                .badgeId(badgeId)
+                .monaId(MonaId)
                 .build());
     }
 }

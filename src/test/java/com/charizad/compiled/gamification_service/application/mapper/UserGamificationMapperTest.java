@@ -1,11 +1,11 @@
 package com.charizad.compiled.gamification_service.application.mapper;
 
-import com.charizad.compiled.gamification_service.application.dto.response.BadgeProgressResponse;
-import com.charizad.compiled.gamification_service.application.dto.response.EarnedBadgeResponse;
+import com.charizad.compiled.gamification_service.application.dto.response.MonaProgressResponse;
+import com.charizad.compiled.gamification_service.application.dto.response.EarnedMonaResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.UserStatsResponse;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
-import com.charizad.compiled.gamification_service.domain.valueobjects.BadgeProgress;
-import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge;
+import com.charizad.compiled.gamification_service.domain.valueobjects.MonaProgress;
+import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedMona;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,10 +25,10 @@ class UserGamificationMapperTest {
     @Test
     @DisplayName("toStatsResponse mapea UserGamification a UserStatsResponse")
     void toStatsResponse_shouldMapCorrectly() {
-        List<EarnedBadge> badges = List.of(
-                EarnedBadge.builder().badgeId("b1").build(),
-                EarnedBadge.builder().badgeId("b2").build(),
-                EarnedBadge.builder().badgeId("b3").build()
+        List<EarnedMona> Monas = List.of(
+                EarnedMona.builder().monaId("b1").build(),
+                EarnedMona.builder().monaId("b2").build(),
+                EarnedMona.builder().monaId("b3").build()
         );
 
         UserGamification user = UserGamification.builder()
@@ -36,7 +36,7 @@ class UserGamificationMapperTest {
                 .totalXp(500)
                 .weeklyXp(200)
                 .rankingOptIn(true)
-                .earnedBadges(badges)
+                .earnedMonas(Monas)
                 .progress(new ArrayList<>())
                 .earnedRewards(new ArrayList<>())
                 .build();
@@ -47,42 +47,42 @@ class UserGamificationMapperTest {
         assertThat(result.getTotalXp()).isEqualTo(500);
         assertThat(result.getWeeklyXp()).isEqualTo(200);
         assertThat(result.isRankingOptIn()).isTrue();
-        assertThat(result.getTotalBadgesEarned()).isEqualTo(3);
+        assertThat(result.getTotalMonasEarned()).isEqualTo(3);
     }
 
     @Test
     @DisplayName("toStatsResponse con 0 insignias")
-    void toStatsResponse_shouldHandleZeroBadges() {
+    void toStatsResponse_shouldHandleZeroMonas() {
         UserGamification user = UserGamification.builder()
                 .userId("user-002")
                 .totalXp(0)
                 .weeklyXp(0)
                 .rankingOptIn(false)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .earnedRewards(new ArrayList<>())
                 .build();
 
         UserStatsResponse result = mapper.toStatsResponse(user);
 
-        assertThat(result.getTotalBadgesEarned()).isEqualTo(0);
+        assertThat(result.getTotalMonasEarned()).isEqualTo(0);
     }
 
     @Test
-    @DisplayName("toEarnedBadgeResponse mapea EarnedBadge a EarnedBadgeResponse")
-    void toEarnedBadgeResponse_shouldMapCorrectly() {
+    @DisplayName("toEarnedMonaResponse mapea EarnedMona a EarnedMonaResponse")
+    void toEarnedMonaResponse_shouldMapCorrectly() {
         LocalDateTime now = LocalDateTime.now();
-        EarnedBadge earned = EarnedBadge.builder()
-                .badgeId("badge-001")
-                .badgeName("Primer Parche")
+        EarnedMona earned = EarnedMona.builder()
+                .monaId("Mona-001")
+                .monaName("Primer Parche")
                 .earnedAt(now)
                 .xpAwarded(100)
                 .build();
 
-        EarnedBadgeResponse result = mapper.toEarnedBadgeResponse(earned);
+        EarnedMonaResponse result = mapper.toEarnedMonaResponse(earned);
 
-        assertThat(result.getBadgeId()).isEqualTo("badge-001");
-        assertThat(result.getBadgeName()).isEqualTo("Primer Parche");
+        assertThat(result.getMonaId()).isEqualTo("Mona-001");
+        assertThat(result.getMonaName()).isEqualTo("Primer Parche");
         assertThat(result.getEarnedAt()).isEqualTo(now);
         assertThat(result.getXpAwarded()).isEqualTo(100);
     }
@@ -90,16 +90,16 @@ class UserGamificationMapperTest {
     @Test
     @DisplayName("toProgressResponse calcula porcentaje correctamente")
     void toProgressResponse_shouldCalculatePercentage() {
-        BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-001")
+        MonaProgress progress = MonaProgress.builder()
+                .monaId("Mona-001")
                 .currentValue(50)
                 .requiredValue(100)
                 .completed(false)
                 .build();
 
-        BadgeProgressResponse result = mapper.toProgressResponse(progress);
+        MonaProgressResponse result = mapper.toProgressResponse(progress);
 
-        assertThat(result.getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.getMonaId()).isEqualTo("Mona-001");
         assertThat(result.getCurrentValue()).isEqualTo(50);
         assertThat(result.getRequiredValue()).isEqualTo(100);
         assertThat(result.isCompleted()).isFalse();
@@ -109,14 +109,14 @@ class UserGamificationMapperTest {
     @Test
     @DisplayName("toProgressResponse con requiredValue 0 retorna porcentaje 0")
     void toProgressResponse_shouldReturnZeroPercentage_whenRequiredIsZero() {
-        BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-002")
+        MonaProgress progress = MonaProgress.builder()
+                .monaId("Mona-002")
                 .currentValue(100)
                 .requiredValue(0)
                 .completed(false)
                 .build();
 
-        BadgeProgressResponse result = mapper.toProgressResponse(progress);
+        MonaProgressResponse result = mapper.toProgressResponse(progress);
 
         assertThat(result.getPercentageComplete()).isEqualTo(0);
     }
@@ -124,14 +124,14 @@ class UserGamificationMapperTest {
     @Test
     @DisplayName("toProgressResponse limita porcentaje a 100")
     void toProgressResponse_shouldCapPercentageAt100() {
-        BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-003")
+        MonaProgress progress = MonaProgress.builder()
+                .monaId("Mona-003")
                 .currentValue(200)
                 .requiredValue(100)
                 .completed(true)
                 .build();
 
-        BadgeProgressResponse result = mapper.toProgressResponse(progress);
+        MonaProgressResponse result = mapper.toProgressResponse(progress);
 
         assertThat(result.getPercentageComplete()).isEqualTo(100);
     }
@@ -139,14 +139,14 @@ class UserGamificationMapperTest {
     @Test
     @DisplayName("toProgressResponse con 0 completado")
     void toProgressResponse_shouldHandleZeroProgress() {
-        BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-004")
+        MonaProgress progress = MonaProgress.builder()
+                .monaId("Mona-004")
                 .currentValue(0)
                 .requiredValue(100)
                 .completed(false)
                 .build();
 
-        BadgeProgressResponse result = mapper.toProgressResponse(progress);
+        MonaProgressResponse result = mapper.toProgressResponse(progress);
 
         assertThat(result.getPercentageComplete()).isEqualTo(0);
     }

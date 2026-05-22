@@ -2,6 +2,7 @@ package com.charizad.compiled.gamification_service.application.usecase;
 
 import com.charizad.compiled.gamification_service.application.dto.response.RankingEntryResponse;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
+import com.charizad.compiled.gamification_service.domain.model.enums.RankingType;
 import com.charizad.compiled.gamification_service.domain.ports.out.UserGamificationRepositoryPort;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.out.feign.UserProfileClient;
 import org.junit.jupiter.api.DisplayName;
@@ -39,12 +40,12 @@ class GetRankingServiceTest {
         when(userGamificationRepository.findAllOptedInOrderByWeeklyMonasDesc(10)).thenReturn(users);
         when(userProfileClient.getDisplayName(anyString())).thenReturn(Optional.empty());
 
-        List<RankingEntryResponse> ranking = service.execute(10);
+        List<RankingEntryResponse> ranking = service.execute(RankingType.WEEKLY, 10);
 
         assertThat(ranking).hasSize(3);
         assertThat(ranking.get(0).getPosition()).isEqualTo(1);
         assertThat(ranking.get(0).getUserId()).isEqualTo("user-A");
-        assertThat(ranking.get(0).getMonasThisWeek()).isEqualTo(5);
+        assertThat(ranking.get(0).getMonasThisPeriod()).isEqualTo(5);
         assertThat(ranking.get(1).getPosition()).isEqualTo(2);
         assertThat(ranking.get(2).getPosition()).isEqualTo(3);
     }
@@ -54,7 +55,7 @@ class GetRankingServiceTest {
     void execute_shouldReturnEmpty_whenNoOptInUsers() {
         when(userGamificationRepository.findAllOptedInOrderByWeeklyMonasDesc(10)).thenReturn(List.of());
 
-        List<RankingEntryResponse> ranking = service.execute(10);
+        List<RankingEntryResponse> ranking = service.execute(RankingType.WEEKLY, 10);
 
         assertThat(ranking).isEmpty();
     }
@@ -64,13 +65,13 @@ class GetRankingServiceTest {
     void execute_shouldRespectLimit() {
         when(userGamificationRepository.findAllOptedInOrderByWeeklyMonasDesc(3))
                 .thenReturn(List.of(
-                        buildUser("user-A", 500),
-                        buildUser("user-B", 300),
-                        buildUser("user-C", 100)
+                        buildUser("user-A", 5),
+                        buildUser("user-B", 3),
+                        buildUser("user-C", 1)
                 ));
         when(userProfileClient.getDisplayName(anyString())).thenReturn(Optional.empty());
 
-        List<RankingEntryResponse> ranking = service.execute(3);
+        List<RankingEntryResponse> ranking = service.execute(RankingType.WEEKLY, 3);
 
         verify(userGamificationRepository).findAllOptedInOrderByWeeklyMonasDesc(3);
         assertThat(ranking).hasSize(3);
@@ -83,7 +84,7 @@ class GetRankingServiceTest {
                 .weeklyXp(0)
                 .weeklyMonas(weeklyMonas)
                 .rankingOptIn(true)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .build();
     }

@@ -1,11 +1,11 @@
 package com.charizad.compiled.gamification_service.application.usecase;
 
-import com.charizad.compiled.gamification_service.application.dto.response.BadgeProgressResponse;
+import com.charizad.compiled.gamification_service.application.dto.response.MonaProgressResponse;
 import com.charizad.compiled.gamification_service.application.mapper.UserGamificationMapper;
 import com.charizad.compiled.gamification_service.domain.exceptions.UserGamificationNotFoundException;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
 import com.charizad.compiled.gamification_service.domain.ports.out.UserGamificationRepositoryPort;
-import com.charizad.compiled.gamification_service.domain.valueobjects.BadgeProgress;
+import com.charizad.compiled.gamification_service.domain.valueobjects.MonaProgress;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,8 +32,8 @@ class GetUserProgressServiceTest {
     @Test
     @DisplayName("Retorna progreso de insignias del usuario")
     void execute_shouldReturnProgress_whenUserExists() {
-        BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-001")
+        MonaProgress progress = MonaProgress.builder()
+                .monaId("Mona-001")
                 .currentValue(50)
                 .requiredValue(100)
                 .completed(false)
@@ -44,12 +44,12 @@ class GetUserProgressServiceTest {
                 .totalXp(100)
                 .weeklyXp(50)
                 .rankingOptIn(false)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>(List.of(progress)))
                 .build();
 
-        BadgeProgressResponse expectedResponse = BadgeProgressResponse.builder()
-                .badgeId("badge-001")
+        MonaProgressResponse expectedResponse = MonaProgressResponse.builder()
+                .monaId("Mona-001")
                 .currentValue(50)
                 .requiredValue(100)
                 .completed(false)
@@ -59,10 +59,10 @@ class GetUserProgressServiceTest {
         when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.of(user));
         when(userGamificationMapper.toProgressResponse(progress)).thenReturn(expectedResponse);
 
-        List<BadgeProgressResponse> result = service.execute("user-001");
+        List<MonaProgressResponse> result = service.execute("user-001");
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.get(0).getMonaId()).isEqualTo("Mona-001");
         assertThat(result.get(0).getPercentageComplete()).isEqualTo(50);
     }
 
@@ -74,13 +74,13 @@ class GetUserProgressServiceTest {
                 .totalXp(0)
                 .weeklyXp(0)
                 .rankingOptIn(false)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .build();
 
         when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.of(user));
 
-        List<BadgeProgressResponse> result = service.execute("user-001");
+        List<MonaProgressResponse> result = service.execute("user-001");
 
         assertThat(result).isEmpty();
     }

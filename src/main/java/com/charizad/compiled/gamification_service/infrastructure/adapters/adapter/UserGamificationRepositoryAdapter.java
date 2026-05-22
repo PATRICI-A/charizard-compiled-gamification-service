@@ -32,18 +32,27 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
     }
 
     @Override
-    public List<UserGamification> findAllOptedInOrderByWeeklyXpDesc(int limit) {
+    public List<UserGamification> findAllOptedInOrderByWeeklyMonasDesc(int limit) {
         return mongoRepository
-                .findByRankingOptInTrueOrderByWeeklyXpDesc(PageRequest.of(0, limit))
+                .findByRankingOptInTrueOrderByWeeklyMonasDesc(PageRequest.of(0, limit))
                 .stream()
                 .map(mapper::toDomain)
                 .toList();
     }
 
     @Override
-    public List<UserGamification> findAllOptedInOrderByWeeklyMonasDesc(int limit) {
+    public List<UserGamification> findAllOptedInOrderByMonthlyMonasDesc(int limit) {
         return mongoRepository
-                .findByRankingOptInTrueOrderByWeeklyMonasDesc(PageRequest.of(0, limit))
+                .findByRankingOptInTrueOrderByMonthlyMonasDesc(PageRequest.of(0, limit))
+                .stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<UserGamification> findAllOptedInOrderBySemesterMonasDesc(int limit) {
+        return mongoRepository
+                .findByRankingOptInTrueOrderBySemesterMonasDesc(PageRequest.of(0, limit))
                 .stream()
                 .map(mapper::toDomain)
                 .toList();
@@ -70,7 +79,17 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
     }
 
     @Override
-    public long countOptedInWithMoreMonasThan(int weeklyMonas) {
+    public long countOptedInWithMoreWeeklyMonasThan(int weeklyMonas) {
         return mongoRepository.countByRankingOptInTrueAndWeeklyMonasGreaterThan(weeklyMonas);
+    }
+
+    @Override
+    public long countOptedInWithMoreMonthlyMonasThan(int monthlyMonas) {
+        return mongoRepository.countByRankingOptInTrueAndMonthlyMonasGreaterThan(monthlyMonas);
+    }
+
+    @Override
+    public long countOptedInWithMoreSemesterMonasThan(int semesterMonas) {
+        return mongoRepository.countByRankingOptInTrueAndSemesterMonasGreaterThan(semesterMonas);
     }
 }

@@ -2,27 +2,27 @@
 
 # 🏆 DOSW — Microservicio de Gamificación
 
-### *"Gana insignias, acumula XP y compite en el ranking semanal"*
+### *"Gana monas, acumula XP y compite en el ranking semanal"*
 
 ---
 
 ### 🛠️ Stack Tecnológico
 
-![Java](https://img.shields.io/badge/Java-21-007396?style=for-the-badge&logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.6-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-Latest-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Java](https://img.shields.io/Mona/Java-21-007396?style=for-the-Mona&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/Mona/Spring%20Boot-4.0.6-6DB33F?style=for-the-Mona&logo=spring-boot&logoColor=white)
+![MongoDB](https://img.shields.io/Mona/MongoDB-Latest-47A248?style=for-the-Mona&logo=mongodb&logoColor=white)
 
 ### ☁️ Infraestructura & Calidad
 
-![Railway](https://img.shields.io/badge/Railway-Deploy-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-Container-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Maven](https://img.shields.io/badge/Maven-Build-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
+![Railway](https://img.shields.io/Mona/Railway-Deploy-0B0D0E?style=for-the-Mona&logo=railway&logoColor=white)
+![Docker](https://img.shields.io/Mona/Docker-Container-2496ED?style=for-the-Mona&logo=docker&logoColor=white)
+![Maven](https://img.shields.io/Mona/Maven-Build-C71A36?style=for-the-Mona&logo=apache-maven&logoColor=white)
 
 ### 🏗️ Arquitectura
 
-![Hexagonal](https://img.shields.io/badge/Architecture-Hexagonal-blueviolet?style=for-the-badge)
-![Clean Architecture](https://img.shields.io/badge/Clean-Architecture-blue?style=for-the-badge)
-![REST API](https://img.shields.io/badge/REST-API-009688?style=for-the-badge)
+![Hexagonal](https://img.shields.io/Mona/Architecture-Hexagonal-blueviolet?style=for-the-Mona)
+![Clean Architecture](https://img.shields.io/Mona/Clean-Architecture-blue?style=for-the-Mona)
+![REST API](https://img.shields.io/Mona/REST-API-009688?style=for-the-Mona)
 
 </div>
 
@@ -57,7 +57,7 @@
 
 ## 2. 🎯 Objetivo del microservicio
 
-El microservicio de Gamificación tiene como objetivo gestionar el sistema de recompensas y motivación dentro de la plataforma DOSW. Este servicio administra el catálogo de insignias (*monas*), otorga XP a los estudiantes al completar logros, rastrea el progreso hacia cada insignia, y mantiene un ranking semanal de los participantes más activos. Además, implementa reglas de negocio como la unicidad de insignias por usuario, el reinicio automático del XP semanal cada lunes y la participación opcional en el ranking, garantizando una experiencia de gamificación justa y motivadora para toda la comunidad estudiantil DOSW.
+El microservicio de Gamificación tiene como objetivo gestionar el sistema de recompensas y motivación dentro de la plataforma DOSW. Este servicio administra el catálogo de monas (*monas*), otorga XP a los estudiantes al completar logros, rastrea el progreso hacia cada mona, y mantiene un ranking semanal de los participantes más activos. Además, implementa reglas de negocio como la unicidad de monas por usuario, el reinicio automático del XP semanal cada lunes y la participación opcional en el ranking, garantizando una experiencia de gamificación justa y motivadora para toda la comunidad estudiantil DOSW.
 
 ---
 
@@ -74,16 +74,16 @@ El microservicio de Gamificación tiene como objetivo gestionar el sistema de re
   </thead>
   <tbody>
     <tr>
-      <td><strong>Gestión de Insignias</strong></td>
-      <td>Crea y administra el catálogo de insignias con nombre, descripción, categoría (COMMON → LEGENDARY), recompensa de XP e ícono.</td>
+      <td><strong>Gestión de Monas</strong></td>
+      <td>Crea y administra el catálogo de monas con nombre, descripción, categoría (COMMON → LEGENDARY), recompensa de XP e ícono.</td>
     </tr>
     <tr>
       <td><strong>Otorgamiento de XP</strong></td>
-      <td>Asigna insignias a usuarios acumulando XP total y semanal automáticamente. Si el usuario no tiene perfil, se crea uno nuevo al momento del otorgamiento.</td>
+      <td>Asigna monas a usuarios acumulando XP total y semanal automáticamente. Si el usuario no tiene perfil, se crea uno nuevo al momento del otorgamiento.</td>
     </tr>
     <tr>
-      <td><strong>Progreso hacia Insignias</strong></td>
-      <td>Expone el avance del usuario hacia cada insignia aún no desbloqueada, mostrando el valor actual, el requerido y el porcentaje completado.</td>
+      <td><strong>Progreso hacia Monas</strong></td>
+      <td>Expone el avance del usuario hacia cada mona aún no desbloqueada, mostrando el valor actual, el requerido y el porcentaje completado.</td>
     </tr>
     <tr>
       <td><strong>Ranking Semanal</strong></td>
@@ -95,7 +95,7 @@ El microservicio de Gamificación tiene como objetivo gestionar el sistema de re
     </tr>
     <tr>
       <td><strong>Notificaciones de Eventos</strong></td>
-      <td>Publica eventos de forma asíncrona al servicio de notificaciones (M05) cuando un usuario desbloquea una nueva insignia.</td>
+      <td>Publica eventos de forma asíncrona al servicio de notificaciones (M05) cuando un usuario desbloquea una nueva mona.</td>
     </tr>
   </tbody>
 </table>
@@ -141,7 +141,7 @@ El microservicio de Gamificación tiene como objetivo gestionar el sistema de re
 - **Base:** `main`.
 - **Cierre:** merge a `main` (crear **tag** de **PATCH**) **y** merge a `develop` para mantener paridad.
 - **Ejemplos de nombre:**  
-  `hotfix/fix-ranking-reset`, `hotfix/fix-badge-duplicate`
+  `hotfix/fix-ranking-reset`, `hotfix/fix-Mona-duplicate`
 
 
 ---
@@ -155,7 +155,7 @@ feature/[nombre-funcionalidad]
 ```
 
 **Ejemplos:**
-- `feature/gestionInsignias`
+- `feature/gestionMonas`
 - `feature/rankingSemanal`
 
 **Reglas de nomenclatura:**
@@ -177,7 +177,7 @@ hotfix/[descripcion-breve-del-fix]
 ```
 **Ejemplos:**
 - `hotfix/corregirResetSemanal`
-- `hotfix/fixDuplicadoInsignia`
+- `hotfix/fixDuplicadoMona`
 
 ---
 
@@ -203,7 +203,7 @@ hotfix/[descripcion-breve-del-fix]
 | **Spring Web** | Exposición de endpoints REST (controladores HTTP) dentro de la arquitectura hexagonal. |
 | **Spring Security** | Configuración de seguridad del microservicio; protege endpoints mediante validación de tokens JWT. |
 | **Spring Data MongoDB** | Integración del microservicio con MongoDB usando el patrón Repository y puertos/adaptadores. |
-| **MongoDB** | Base de datos NoSQL principal, con colecciones para `badges` y `user_gamification`. Desplegada en Railway. |
+| **MongoDB** | Base de datos NoSQL principal, con colecciones para `Monas` y `user_gamification`. Desplegada en Railway. |
 | **JJWT 0.12.6** | Validación y parseo de tokens JWT para autenticar las peticiones entrantes al microservicio. |
 | **Apache Maven** | Gestión de dependencias, empaquetado del microservicio y automatización de builds en los pipelines CI/CD. |
 | **Lombok** | Reducción de código repetitivo con anotaciones como `@Getter`, `@Builder`, `@Data` y `@RequiredArgsConstructor`. |
@@ -225,12 +225,12 @@ hotfix/[descripcion-breve-del-fix]
 
 ### 🔑 Funcionalidades principales
 
-### 1️⃣ Crear Insignia
+### 1️⃣ Crear Mona
 
-Permite registrar una nueva insignia en el catálogo del sistema. Solo accesible por usuarios con rol ADMIN mediante token JWT válido.
+Permite registrar una nueva mona en el catálogo del sistema. Solo accesible por usuarios con rol ADMIN mediante token JWT válido.
 
 **Endpoint principal:**  
-`POST /api/v1/badges`
+`POST /api/v1/Monas`
 
 ---
 
@@ -240,11 +240,11 @@ Permite registrar una nueva insignia en el catálogo del sistema. Solo accesible
 
 | 🏷️ Campo | 🗃️ Tipo | ⚠️ Restricciones | 📝 Descripción |
 |---|---|:---:|---|
-| name | String | Obligatorio, no vacío | Nombre único de la insignia. |
+| name | String | Obligatorio, no vacío | Nombre único de la mona. |
 | description | String | Obligatorio, no vacío | Descripción del logro representado. |
-| category | Enum | Obligatorio | Rareza de la insignia (COMMON, UNCOMMON, RARE, EPIC, LEGENDARY). |
-| xpReward | Integer | Mínimo 1 | Puntos de XP que otorga la insignia al ser ganada. |
-| iconUrl | String | Opcional | URL del ícono visual de la insignia. |
+| category | Enum | Obligatorio | Rareza de la mona (COMMON, UNCOMMON, RARE, EPIC, LEGENDARY). |
+| xpReward | Integer | Mínimo 1 | Puntos de XP que otorga la mona al ser ganada. |
+| iconUrl | String | Opcional | URL del ícono visual de la mona. |
 
 </div>
 
@@ -256,11 +256,11 @@ Permite registrar una nueva insignia en el catálogo del sistema. Solo accesible
 
 | 🏷️ Campo | 🗃️ Tipo | 📝 Descripción |
 |---|---|---|
-| id | String | Identificador único de la insignia (ObjectId de MongoDB). |
-| name | String | Nombre de la insignia. |
+| id | String | Identificador único de la mona (ObjectId de MongoDB). |
+| name | String | Nombre de la mona. |
 | description | String | Descripción del logro. |
 | category | Enum | Categoría de rareza. |
-| xpReward | Integer | XP otorgado al ganar la insignia. |
+| xpReward | Integer | XP otorgado al ganar la mona. |
 | iconUrl | String | URL del ícono. |
 | createdAt | LocalDateTime | Fecha y hora de creación. |
 
@@ -271,14 +271,14 @@ Permite registrar una nueva insignia en el catálogo del sistema. Solo accesible
 
 ### ✅ Happy Path (Ejemplo de Uso Exitoso)
 
-1. El administrador envía un POST con los datos de la insignia e incluye su JWT Bearer Token.
+1. El administrador envía un POST con los datos de la mona e incluye su JWT Bearer Token.
 2. El sistema valida el token y verifica que el usuario tiene rol ADMIN.
-3. Se crea la insignia como activa en la colección `badges` de MongoDB.
-4. Se retorna `201 CREATED` con los datos de la insignia.
+3. Se crea la mona como activa en la colección `Monas` de MongoDB.
+4. Se retorna `201 CREATED` con los datos de la mona.
 
 **Request (Solicitud):**
 ```json
-POST /api/v1/badges
+POST /api/v1/Monas
 Headers: Authorization: Bearer <token>
 
 {
@@ -286,7 +286,7 @@ Headers: Authorization: Bearer <token>
   "description": "Asististe a tu primer parche en DOSW",
   "category": "COMMON",
   "xpReward": 100,
-  "iconUrl": "https://cdn.dosw.app/badges/primer-parche.png"
+  "iconUrl": "https://cdn.dosw.app/Monas/primer-parche.png"
 }
 ```
 
@@ -298,7 +298,7 @@ Headers: Authorization: Bearer <token>
   "description": "Asististe a tu primer parche en DOSW",
   "category": "COMMON",
   "xpReward": 100,
-  "iconUrl": "https://cdn.dosw.app/badges/primer-parche.png",
+  "iconUrl": "https://cdn.dosw.app/Monas/primer-parche.png",
   "createdAt": "2026-05-08T10:00:00"
 }
 ```
@@ -307,12 +307,12 @@ Headers: Authorization: Bearer <token>
 
 ### 🖼️ Diagrama de Secuencia
 
-![Diagrama de Secuencia Crear Insignia](docs/images/crearInsignia.png)
+![Diagrama de Secuencia Crear Mona](docs/images/crearMona.png)
 
 <details>
 <summary><strong>🟢 Explicación del Flujo</strong></summary>
 
-El proceso inicia cuando el administrador envía un POST al `BadgeController` con el JWT en el header. El `JwtAuthFilter` valida el token y extrae el rol del usuario. El `CreateBadgeUseCase` recibe el request, construye la entidad de dominio `Badge` y la persiste en MongoDB a través del `BadgeRepositoryAdapter`. Se retorna la respuesta con la insignia creada.
+El proceso inicia cuando el administrador envía un POST al `MonaController` con el JWT en el header. El `JwtAuthFilter` valida el token y extrae el rol del usuario. El `CreateMonaUseCase` recibe el request, construye la entidad de dominio `Mona` y la persiste en MongoDB a través del `MonaRepositoryAdapter`. Se retorna la respuesta con la mona creada.
 
 </details>
 
@@ -324,21 +324,21 @@ El proceso inicia cuando el administrador envía un POST al `BadgeController` co
 
 | 🔢 **Código HTTP** | ⚠️ **Escenario** | 💬 **Mensaje de Error** |
 |:------------------:|:----------------|:------------------------|
-| ![400](https://img.shields.io/badge/400-Bad_Request-red?style=flat) | Datos inválidos | `"El nombre de la insignia es obligatorio"` |
-| ![400](https://img.shields.io/badge/400-Bad_Request-red?style=flat) | XP inválido | `"La recompensa de XP debe ser mayor que 0"` |
-| ![401](https://img.shields.io/badge/401-Unauthorized-red?style=flat) | Token ausente o inválido | `"Token JWT ausente o inválido"` |
-| ![403](https://img.shields.io/badge/403-Forbidden-red?style=flat) | No es ADMIN | `"Acceso denegado — se requiere rol ADMIN"` |
+| ![400](https://img.shields.io/Mona/400-Bad_Request-red?style=flat) | Datos inválidos | `"El nombre de la mona es obligatorio"` |
+| ![400](https://img.shields.io/Mona/400-Bad_Request-red?style=flat) | XP inválido | `"La recompensa de XP debe ser mayor que 0"` |
+| ![401](https://img.shields.io/Mona/401-Unauthorized-red?style=flat) | Token ausente o inválido | `"Token JWT ausente o inválido"` |
+| ![403](https://img.shields.io/Mona/403-Forbidden-red?style=flat) | No es ADMIN | `"Acceso denegado — se requiere rol ADMIN"` |
 
 </div>
 
 ---
 
-### 2️⃣ Otorgar Insignia a un Usuario
+### 2️⃣ Otorgar Mona a un Usuario
 
-Permite asignar una insignia existente del catálogo a un usuario específico. Si el usuario no tiene perfil de gamificación, se crea automáticamente. Si ya posee la insignia, se retorna la existente sin generar error.
+Permite asignar una mona existente del catálogo a un usuario específico. Si el usuario no tiene perfil de gamificación, se crea automáticamente. Si ya posee la mona, se retorna la existente sin generar error.
 
 **Endpoint principal:**  
-`POST /api/v1/badges/award`
+`POST /api/v1/Monas/award`
 
 ---
 
@@ -348,8 +348,8 @@ Permite asignar una insignia existente del catálogo a un usuario específico. S
 
 | 🏷️ Campo | 🗃️ Tipo | ⚠️ Restricciones | 📝 Descripción |
 |---|---|:---:|---|
-| userId | String | Obligatorio, no vacío | ID del usuario que recibirá la insignia. |
-| badgeId | String | Obligatorio, no vacío | ID de la insignia a otorgar. |
+| userId | String | Obligatorio, no vacío | ID del usuario que recibirá la mona. |
+| MonaId | String | Obligatorio, no vacío | ID de la mona a otorgar. |
 
 </div>
 
@@ -361,10 +361,10 @@ Permite asignar una insignia existente del catálogo a un usuario específico. S
 
 | 🏷️ Campo | 🗃️ Tipo | 📝 Descripción |
 |---|---|---|
-| badgeId | String | ID de la insignia ganada. |
-| badgeName | String | Nombre de la insignia. |
+| MonaId | String | ID de la mona ganada. |
+| MonaName | String | Nombre de la mona. |
 | earnedAt | LocalDateTime | Fecha y hora en que fue otorgada. |
-| xpAwarded | Integer | XP acreditado al usuario por esta insignia. |
+| xpAwarded | Integer | XP acreditado al usuario por esta mona. |
 
 </div>
 
@@ -372,29 +372,29 @@ Permite asignar una insignia existente del catálogo a un usuario específico. S
 
 ### ✅ Happy Path (Ejemplo de Uso Exitoso)
 
-1. El administrador envía un POST con el `userId` y el `badgeId`.
-2. El sistema verifica que la insignia existe en el catálogo.
+1. El administrador envía un POST con el `userId` y el `MonaId`.
+2. El sistema verifica que la mona existe en el catálogo.
 3. Si el usuario no tiene perfil, se crea un `UserGamification` nuevo.
-4. Se otorga la insignia, se suma el XP (total y semanal) y se persiste.
+4. Se otorga la mona, se suma el XP (total y semanal) y se persiste.
 5. Se dispara una notificación asíncrona al servicio M05.
-6. Se retorna `200 OK` con los datos de la insignia ganada.
+6. Se retorna `200 OK` con los datos de la mona ganada.
 
 **Request (Solicitud):**
 ```json
-POST /api/v1/badges/award
+POST /api/v1/Monas/award
 Headers: Authorization: Bearer <token>
 
 {
   "userId": "user-abc123",
-  "badgeId": "6641b3c8e4f2a30012345678"
+  "MonaId": "6641b3c8e4f2a30012345678"
 }
 ```
 
 **Response (Respuesta):**
 ```json
 {
-  "badgeId": "6641b3c8e4f2a30012345678",
-  "badgeName": "Primer Parche",
+  "MonaId": "6641b3c8e4f2a30012345678",
+  "MonaName": "Primer Parche",
   "earnedAt": "2026-05-08T10:15:00",
   "xpAwarded": 100
 }
@@ -404,12 +404,12 @@ Headers: Authorization: Bearer <token>
 
 ### 🖼️ Diagrama de Secuencia
 
-![Diagrama de Secuencia Otorgar Insignia](docs/images/otorgarInsignia.png)
+![Diagrama de Secuencia Otorgar Mona](docs/images/otorgarMona.png)
 
 <details>
 <summary><strong>🟢 Explicación del Flujo</strong></summary>
 
-El `AwardBadgeService` verifica que la insignia exista vía `BadgeRepositoryPort`. Luego busca el perfil del usuario en `UserGamificationRepositoryPort`; si no existe, crea uno nuevo con `UserGamification.newUser()`. Invoca `awardBadge()` en el dominio (que suma XP y registra la insignia) y persiste el resultado. Finalmente, dispara `notifyBadgeEarned()` de forma asíncrona hacia el microservicio de notificaciones.
+El `AwardMonaservice` verifica que la mona exista vía `MonaRepositoryPort`. Luego busca el perfil del usuario en `UserGamificationRepositoryPort`; si no existe, crea uno nuevo con `UserGamification.newUser()`. Invoca `awardMona()` en el dominio (que suma XP y registra la mona) y persiste el resultado. Finalmente, dispara `notifyMonaEarned()` de forma asíncrona hacia el microservicio de notificaciones.
 
 </details>
 
@@ -421,21 +421,21 @@ El `AwardBadgeService` verifica que la insignia exista vía `BadgeRepositoryPort
 
 | 🔢 **Código HTTP** | ⚠️ **Escenario** | 💬 **Mensaje de Error** |
 |:------------------:|:----------------|:------------------------|
-| ![400](https://img.shields.io/badge/400-Bad_Request-red?style=flat) | Campos vacíos | `"El userId es obligatorio"` |
-| ![401](https://img.shields.io/badge/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
-| ![403](https://img.shields.io/badge/403-Forbidden-red?style=flat) | No es ADMIN | `"Acceso denegado — se requiere rol ADMIN"` |
-| ![404](https://img.shields.io/badge/404-Not_Found-orange?style=flat) | Insignia no existe | `"Badge not found: <badgeId>"` |
+| ![400](https://img.shields.io/Mona/400-Bad_Request-red?style=flat) | Campos vacíos | `"El userId es obligatorio"` |
+| ![401](https://img.shields.io/Mona/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
+| ![403](https://img.shields.io/Mona/403-Forbidden-red?style=flat) | No es ADMIN | `"Acceso denegado — se requiere rol ADMIN"` |
+| ![404](https://img.shields.io/Mona/404-Not_Found-orange?style=flat) | Mona no existe | `"Mona not found: <MonaId>"` |
 
 </div>
 
 ---
 
-### 3️⃣ Consultar Mis Insignias
+### 3️⃣ Consultar Mis Monas
 
-Retorna todas las insignias desbloqueadas por el usuario autenticado.
+Retorna todas las monas desbloqueadas por el usuario autenticado.
 
 **Endpoint principal:**  
-`GET /api/v1/gamification/me/badges`
+`GET /api/v1/gamification/me/Monas`
 
 ---
 
@@ -445,7 +445,7 @@ Retorna todas las insignias desbloqueadas por el usuario autenticado.
 
 | 🏷️ Campo | 🗃️ Tipo | 📝 Descripción |
 |---|---|---|
-| (lista) | List\<EarnedBadgeResponse\> | Lista de insignias ganadas por el usuario. |
+| (lista) | List\<EarnedMonaResponse\> | Lista de monas ganadas por el usuario. |
 
 </div>
 
@@ -455,11 +455,11 @@ Retorna todas las insignias desbloqueadas por el usuario autenticado.
 
 1. El usuario envía un GET con su JWT Bearer Token.
 2. El sistema extrae el `userId` del token JWT.
-3. Se retorna la lista de insignias ganadas.
+3. Se retorna la lista de monas ganadas.
 
 **Request (Solicitud):**
 ```
-GET /api/v1/gamification/me/badges
+GET /api/v1/gamification/me/Monas
 Headers: Authorization: Bearer <token>
 ```
 
@@ -467,8 +467,8 @@ Headers: Authorization: Bearer <token>
 ```json
 [
   {
-    "badgeId": "6641b3c8e4f2a30012345678",
-    "badgeName": "Primer Parche",
+    "MonaId": "6641b3c8e4f2a30012345678",
+    "MonaName": "Primer Parche",
     "earnedAt": "2026-05-08T10:15:00",
     "xpAwarded": 100
   }
@@ -479,12 +479,12 @@ Headers: Authorization: Bearer <token>
 
 ### 🖼️ Diagrama de Secuencia
 
-![Diagrama de Secuencia Mis Insignias](docs/images/misInsignias.png)
+![Diagrama de Secuencia Mis Monas](docs/images/misMonas.png)
 
 <details>
 <summary><strong>🟢 Explicación del Flujo</strong></summary>
 
-El `UserGamificationController` extrae el `userId` del principal autenticado. El `GetUserBadgesUseCase` busca el perfil del usuario y retorna la lista de `EarnedBadge` mapeada a `EarnedBadgeResponse`.
+El `UserGamificationController` extrae el `userId` del principal autenticado. El `GetUserMonasUseCase` busca el perfil del usuario y retorna la lista de `EarnedMona` mapeada a `EarnedMonaResponse`.
 
 </details>
 
@@ -496,16 +496,16 @@ El `UserGamificationController` extrae el `userId` del principal autenticado. El
 
 | 🔢 **Código HTTP** | ⚠️ **Escenario** | 💬 **Mensaje de Error** |
 |:------------------:|:----------------|:------------------------|
-| ![401](https://img.shields.io/badge/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
-| ![404](https://img.shields.io/badge/404-Not_Found-orange?style=flat) | Sin perfil de gamificación | `"UserGamification not found for userId: <id>"` |
+| ![401](https://img.shields.io/Mona/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
+| ![404](https://img.shields.io/Mona/404-Not_Found-orange?style=flat) | Sin perfil de gamificación | `"UserGamification not found for userId: <id>"` |
 
 </div>
 
 ---
 
-### 4️⃣ Consultar Mi Progreso hacia Insignias
+### 4️⃣ Consultar Mi Progreso hacia Monas
 
-Retorna el progreso actual del usuario autenticado hacia cada insignia aún no desbloqueada.
+Retorna el progreso actual del usuario autenticado hacia cada mona aún no desbloqueada.
 
 **Endpoint principal:**  
 `GET /api/v1/gamification/me/progress`
@@ -518,7 +518,7 @@ Retorna el progreso actual del usuario autenticado hacia cada insignia aún no d
 
 | 🏷️ Campo | 🗃️ Tipo | 📝 Descripción |
 |---|---|---|
-| badgeId | String | ID de la insignia objetivo. |
+| MonaId | String | ID de la mona objetivo. |
 | currentValue | Integer | Valor actual de progreso. |
 | requiredValue | Integer | Valor requerido para desbloquear. |
 | completed | Boolean | Indica si el criterio ya fue completado. |
@@ -531,7 +531,7 @@ Retorna el progreso actual del usuario autenticado hacia cada insignia aún no d
 ### ✅ Happy Path (Ejemplo de Uso Exitoso)
 
 1. El usuario envía un GET con su JWT.
-2. El sistema retorna el progreso por insignia no desbloqueada.
+2. El sistema retorna el progreso por mona no desbloqueada.
 
 **Request (Solicitud):**
 ```
@@ -543,7 +543,7 @@ Headers: Authorization: Bearer <token>
 ```json
 [
   {
-    "badgeId": "6641b3c8e4f2a30098765432",
+    "MonaId": "6641b3c8e4f2a30098765432",
     "currentValue": 3,
     "requiredValue": 5,
     "completed": false,
@@ -561,7 +561,7 @@ Headers: Authorization: Bearer <token>
 <details>
 <summary><strong>🟢 Explicación del Flujo</strong></summary>
 
-El `GetUserProgressUseCase` recupera el perfil de gamificación del usuario y retorna su lista de `BadgeProgress` mapeada a `BadgeProgressResponse`.
+El `GetUserProgressUseCase` recupera el perfil de gamificación del usuario y retorna su lista de `MonaProgress` mapeada a `MonaProgressResponse`.
 
 </details>
 
@@ -573,8 +573,8 @@ El `GetUserProgressUseCase` recupera el perfil de gamificación del usuario y re
 
 | 🔢 **Código HTTP** | ⚠️ **Escenario** | 💬 **Mensaje de Error** |
 |:------------------:|:----------------|:------------------------|
-| ![401](https://img.shields.io/badge/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
-| ![404](https://img.shields.io/badge/404-Not_Found-orange?style=flat) | Sin perfil | `"UserGamification not found for userId: <id>"` |
+| ![401](https://img.shields.io/Mona/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
+| ![404](https://img.shields.io/Mona/404-Not_Found-orange?style=flat) | Sin perfil | `"UserGamification not found for userId: <id>"` |
 
 </div>
 
@@ -582,7 +582,7 @@ El `GetUserProgressUseCase` recupera el perfil de gamificación del usuario y re
 
 ### 5️⃣ Consultar Mis Estadísticas
 
-Retorna XP total, XP semanal, cantidad de insignias ganadas y estado de participación en el ranking.
+Retorna XP total, XP semanal, cantidad de monas ganadas y estado de participación en el ranking.
 
 **Endpoint principal:**  
 `GET /api/v1/gamification/me/stats`
@@ -599,7 +599,7 @@ Retorna XP total, XP semanal, cantidad de insignias ganadas y estado de particip
 | totalXp | Integer | XP acumulado total del usuario. |
 | weeklyXp | Integer | XP acumulado en la semana actual. |
 | rankingOptIn | Boolean | Si el usuario participa en el ranking semanal. |
-| totalBadgesEarned | Integer | Número total de insignias desbloqueadas. |
+| totalMonasEarned | Integer | Número total de monas desbloqueadas. |
 
 </div>
 
@@ -623,7 +623,7 @@ Headers: Authorization: Bearer <token>
   "totalXp": 350,
   "weeklyXp": 100,
   "rankingOptIn": true,
-  "totalBadgesEarned": 3
+  "totalMonasEarned": 3
 }
 ```
 
@@ -636,7 +636,7 @@ Headers: Authorization: Bearer <token>
 <details>
 <summary><strong>🟢 Explicación del Flujo</strong></summary>
 
-El `GetUserStatsUseCase` recupera el `UserGamification` del usuario y construye el `UserStatsResponse` con el conteo de insignias, XP total, XP semanal y estado del ranking.
+El `GetUserStatsUseCase` recupera el `UserGamification` del usuario y construye el `UserStatsResponse` con el conteo de monas, XP total, XP semanal y estado del ranking.
 
 </details>
 
@@ -648,8 +648,8 @@ El `GetUserStatsUseCase` recupera el `UserGamification` del usuario y construye 
 
 | 🔢 **Código HTTP** | ⚠️ **Escenario** | 💬 **Mensaje de Error** |
 |:------------------:|:----------------|:------------------------|
-| ![401](https://img.shields.io/badge/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
-| ![404](https://img.shields.io/badge/404-Not_Found-orange?style=flat) | Sin perfil | `"UserGamification not found for userId: <id>"` |
+| ![401](https://img.shields.io/Mona/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
+| ![404](https://img.shields.io/Mona/404-Not_Found-orange?style=flat) | Sin perfil | `"UserGamification not found for userId: <id>"` |
 
 </div>
 
@@ -720,7 +720,7 @@ El `ToggleRankingOptInUseCase` recupera el perfil del usuario, invoca `toggleRan
 
 | 🔢 **Código HTTP** | ⚠️ **Escenario** | 💬 **Mensaje de Error** |
 |:------------------:|:----------------|:------------------------|
-| ![401](https://img.shields.io/badge/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
+| ![401](https://img.shields.io/Mona/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
 
 </div>
 
@@ -756,7 +756,7 @@ Retorna el top N de usuarios que participan en el ranking, ordenados por XP sema
 | position | Integer | Posición en el ranking (1 = primero). |
 | userId | String | ID del usuario. |
 | weeklyXp | Integer | XP acumulado en la semana actual. |
-| totalBadgesEarned | Integer | Número total de insignias del usuario. |
+| totalMonasEarned | Integer | Número total de monas del usuario. |
 
 </div>
 
@@ -781,13 +781,13 @@ Headers: Authorization: Bearer <token>
     "position": 1,
     "userId": "user-abc123",
     "weeklyXp": 350,
-    "totalBadgesEarned": 5
+    "totalMonasEarned": 5
   },
   {
     "position": 2,
     "userId": "user-def456",
     "weeklyXp": 200,
-    "totalBadgesEarned": 3
+    "totalMonasEarned": 3
   }
 ]
 ```
@@ -813,8 +813,8 @@ El `GetRankingUseCase` consulta el repositorio filtrando únicamente usuarios co
 
 | 🔢 **Código HTTP** | ⚠️ **Escenario** | 💬 **Mensaje de Error** |
 |:------------------:|:----------------|:------------------------|
-| ![200](https://img.shields.io/badge/200-OK-success?style=flat) | Sin participantes | Lista vacía `[]` |
-| ![401](https://img.shields.io/badge/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
+| ![200](https://img.shields.io/Mona/200-OK-success?style=flat) | Sin participantes | Lista vacía `[]` |
+| ![401](https://img.shields.io/Mona/401-Unauthorized-red?style=flat) | Token inválido | `"Token JWT ausente o inválido"` |
 
 </div>
 
@@ -845,14 +845,14 @@ El microservicio de Gamificación separa controladores, casos de uso, lógica de
 
 **Flujo principal:**
 
-- **BadgeController / UserGamificationController**
+- **MonaController / UserGamificationController**
   - Reciben solicitudes HTTP y las delegan a los puertos de entrada correspondientes.
 
 **Lógica de Negocio (Dominio):**
 
 - **Casos de Uso (Application Layer)**
-  - `CreateBadgeUseCase`, `AwardBadgeUseCase`
-  - `GetUserBadgesUseCase`, `GetUserProgressUseCase`, `GetUserStatsUseCase`
+  - `CreateMonaUseCase`, `AwardMonaUseCase`
+  - `GetUserMonasUseCase`, `GetUserProgressUseCase`, `GetUserStatsUseCase`
   - `ToggleRankingOptInUseCase`, `GetRankingUseCase`
   - Cada caso de uso implementa un puerto de entrada y orquesta la lógica mediante puertos de salida.
 
@@ -862,11 +862,11 @@ El microservicio de Gamificación separa controladores, casos de uso, lógica de
 **Integración y Adaptadores:**
 
 - **Persistencia:**
-  - Adaptadores `BadgeRepositoryAdapter` y `UserGamificationRepositoryAdapter` implementan los puertos de salida.
-  - Persiste en MongoDB en las colecciones `badges` y `user_gamification`.
+  - Adaptadores `MonaRepositoryAdapter` y `UserGamificationRepositoryAdapter` implementan los puertos de salida.
+  - Persiste en MongoDB en las colecciones `Monas` y `user_gamification`.
 
 - **Notificaciones:**
-  - `NotificacionAdapter` publica eventos de forma asíncrona al microservicio M05 (`notifyBadgeEarned`) cuando un usuario desbloquea una insignia.
+  - `NotificacionAdapter` publica eventos de forma asíncrona al microservicio M05 (`notifyMonaEarned`) cuando un usuario desbloquea una mona.
 
 - **Seguridad:**
   - `JwtAuthFilter` intercepta todas las peticiones, valida el JWT y extrae el `userId` y `role` para poblar el `SecurityContext`.
@@ -885,15 +885,15 @@ El microservicio se integra con otros sistemas del ecosistema DOSW.
 
 | 🌍 **Microservicio** | ⚙️ **Operación** | 📋 **Propósito** |
 |:---------------|:----------------|:-----------------------|
-| **Hangout Service** | Unirse a parche / Invitación aceptada | Dispara el otorgamiento de insignias y XP al usuario |
-| **Notification Service (M05)** | Insignia desbloqueada | Enviar notificación push al estudiante cuando gana una insignia |
+| **Hangout Service** | Unirse a parche / Invitación aceptada | Dispara el otorgamiento de monas y XP al usuario |
+| **Notification Service (M05)** | Mona desbloqueada | Enviar notificación push al estudiante cuando gana una mona |
 
 </div>
 
 **Dominio y Mapeo:**
 
-- Las entidades `Badge` y `UserGamification` encapsulan la lógica central.
-- Los value objects `EarnedBadge` y `BadgeProgress` representan subdocumentos embebidos en MongoDB.
+- Las entidades `Mona` y `UserGamification` encapsulan la lógica central.
+- Los value objects `EarnedMona` y `MonaProgress` representan subdocumentos embebidos en MongoDB.
 
 > El diagrama ilustra cómo el dominio de gamificación se mantiene aislado de la infraestructura, permitiendo cambiar la base de datos o los adaptadores externos sin afectar las reglas de negocio.
 
@@ -905,22 +905,22 @@ El microservicio se integra con otros sistemas del ecosistema DOSW.
 <img src="docs/images/gamification_db.png" alt="Diagrama de base de datos" width="600"/>
 </div>
 
-El microservicio de Gamificación utiliza **MongoDB** como motor de base de datos NoSQL. Contiene dos colecciones principales: `badges` y `user_gamification`.
+El microservicio de Gamificación utiliza **MongoDB** como motor de base de datos NoSQL. Contiene dos colecciones principales: `Monas` y `user_gamification`.
 
-#### 📋 Colección: `badges`
+#### 📋 Colección: `Monas`
 
 <div align="center">
 
 | 🏷️ Campo | 🗃️ Tipo | 📝 Descripción | ⚠️ Restricciones |
 |:---|:---|:---|:---|
-| **_id** | `ObjectId` | Identificador único de la insignia | Primary Key (auto) |
-| **name** | `String` | Nombre de la insignia | NOT NULL, Unique |
+| **_id** | `ObjectId` | Identificador único de la mona | Primary Key (auto) |
+| **name** | `String` | Nombre de la mona | NOT NULL, Unique |
 | **description** | `String` | Descripción del logro | NOT NULL |
 | **category** | `String` | Rareza: COMMON, UNCOMMON, RARE, EPIC, LEGENDARY | NOT NULL |
-| **xpReward** | `Integer` | XP otorgado al ganar la insignia | NOT NULL, ≥ 1 |
+| **xpReward** | `Integer` | XP otorgado al ganar la mona | NOT NULL, ≥ 1 |
 | **iconUrl** | `String` | URL del ícono visual | Opcional |
 | **createdAt** | `LocalDateTime` | Fecha de creación | NOT NULL |
-| **active** | `Boolean` | Si la insignia está activa en el catálogo | NOT NULL |
+| **active** | `Boolean` | Si la mona está activa en el catálogo | NOT NULL |
 
 </div>
 
@@ -935,31 +935,31 @@ El microservicio de Gamificación utiliza **MongoDB** como motor de base de dato
 | **totalXp** | `Integer` | XP total acumulado | NOT NULL, DEFAULT 0 |
 | **weeklyXp** | `Integer` | XP acumulado en la semana | NOT NULL, DEFAULT 0 |
 | **rankingOptIn** | `Boolean` | Participación en el ranking | NOT NULL, DEFAULT false |
-| **earnedBadges** | `Array<EarnedBadge>` | Subdocumentos de insignias ganadas | Embebido |
-| **progress** | `Array<BadgeProgress>` | Subdocumentos de progreso por insignia | Embebido |
+| **earnedMonas** | `Array<EarnedMona>` | Subdocumentos de monas ganadas | Embebido |
+| **progress** | `Array<MonaProgress>` | Subdocumentos de progreso por mona | Embebido |
 
 </div>
 
-##### Subdocumento: `EarnedBadge`
+##### Subdocumento: `EarnedMona`
 
 <div align="center">
 
 | 🏷️ Campo | 🗃️ Tipo | 📝 Descripción |
 |:---|:---|:---|
-| **badgeId** | `String` | ID de la insignia ganada |
-| **badgeName** | `String` | Nombre de la insignia |
+| **MonaId** | `String` | ID de la mona ganada |
+| **MonaName** | `String` | Nombre de la mona |
 | **earnedAt** | `LocalDateTime` | Fecha y hora de desbloqueo |
 | **xpAwarded** | `Integer` | XP acreditado en ese momento |
 
 </div>
 
-##### Subdocumento: `BadgeProgress`
+##### Subdocumento: `MonaProgress`
 
 <div align="center">
 
 | 🏷️ Campo | 🗃️ Tipo | 📝 Descripción |
 |:---|:---|:---|
-| **badgeId** | `String` | ID de la insignia objetivo |
+| **MonaId** | `String` | ID de la mona objetivo |
 | **currentValue** | `Integer` | Valor actual de progreso |
 | **requiredValue** | `Integer` | Valor requerido para desbloquear |
 | **completed** | `Boolean` | Si el criterio fue completado |
@@ -976,12 +976,12 @@ El microservicio de Gamificación utiliza **MongoDB** como motor de base de dato
 
 **Resumen del diseño de dominio:**
 
-La arquitectura de dominio se centra en las entidades **Badge** y **UserGamification**.
+La arquitectura de dominio se centra en las entidades **Mona** y **UserGamification**.
 
-- **Entidad de Dominio:** `Badge` contiene identificadores, datos del logro y metadatos del catálogo. El campo `active` controla su visibilidad.
-- **Perfil de Usuario:** `UserGamification` vincula un estudiante con su historial de insignias, XP total, XP semanal y estado en el ranking.
-- **Value Objects:** `EarnedBadge` y `BadgeProgress` son subdocumentos inmutables embebidos en `UserGamification`.
-- **Enumeraciones:** `BadgeCategory` garantiza categorías controladas (COMMON, UNCOMMON, RARE, EPIC, LEGENDARY).
+- **Entidad de Dominio:** `Mona` contiene identificadores, datos del logro y metadatos del catálogo. El campo `active` controla su visibilidad.
+- **Perfil de Usuario:** `UserGamification` vincula un estudiante con su historial de monas, XP total, XP semanal y estado en el ranking.
+- **Value Objects:** `EarnedMona` y `MonaProgress` son subdocumentos inmutables embebidos en `UserGamification`.
+- **Enumeraciones:** `MonaCategory` garantiza categorías controladas (COMMON, UNCOMMON, RARE, EPIC, LEGENDARY).
 
 > Este diseño asegura la integridad de los datos de gamificación y permite extender funcionalidades (nuevas categorías, nuevos criterios de desbloqueo) sin afectar las reglas de negocio centrales.
 
@@ -1004,14 +1004,14 @@ La arquitectura de dominio se centra en las entidades **Badge** y **UserGamifica
   </thead>
   <tbody>
     <tr>
-      <td><b>CreateBadgeRequest</b></td>
+      <td><b>CreateMonaRequest</b></td>
       <td>name, description, category, xpReward, iconUrl</td>
-      <td>Solicitud para registrar una nueva insignia en el catálogo. Valida nombre, descripción y XP mínimo de 1.</td>
+      <td>Solicitud para registrar una nueva mona en el catálogo. Valida nombre, descripción y XP mínimo de 1.</td>
     </tr>
     <tr>
-      <td><b>AwardBadgeRequest</b></td>
-      <td>userId, badgeId</td>
-      <td>Solicitud para otorgar una insignia existente a un usuario específico.</td>
+      <td><b>AwardMonaRequest</b></td>
+      <td>userId, MonaId</td>
+      <td>Solicitud para otorgar una mona existente a un usuario específico.</td>
     </tr>
     <tr>
       <td><b>ToggleRankingOptInRequest</b></td>
@@ -1034,28 +1034,28 @@ La arquitectura de dominio se centra en las entidades **Badge** y **UserGamifica
   </thead>
   <tbody>
     <tr>
-      <td><b>BadgeResponse</b></td>
+      <td><b>MonaResponse</b></td>
       <td>id, name, description, category, xpReward, iconUrl, createdAt</td>
-      <td>Respuesta completa con los datos de una insignia del catálogo.</td>
+      <td>Respuesta completa con los datos de una mona del catálogo.</td>
     </tr>
     <tr>
-      <td><b>EarnedBadgeResponse</b></td>
-      <td>badgeId, badgeName, earnedAt, xpAwarded</td>
-      <td>Confirmación de insignia ganada con timestamp y XP acreditado.</td>
+      <td><b>EarnedMonaResponse</b></td>
+      <td>MonaId, MonaName, earnedAt, xpAwarded</td>
+      <td>Confirmación de mona ganada con timestamp y XP acreditado.</td>
     </tr>
     <tr>
-      <td><b>BadgeProgressResponse</b></td>
-      <td>badgeId, currentValue, requiredValue, completed, percentageComplete</td>
-      <td>Progreso del usuario hacia una insignia aún no desbloqueada.</td>
+      <td><b>MonaProgressResponse</b></td>
+      <td>MonaId, currentValue, requiredValue, completed, percentageComplete</td>
+      <td>Progreso del usuario hacia una mona aún no desbloqueada.</td>
     </tr>
     <tr>
       <td><b>UserStatsResponse</b></td>
-      <td>userId, totalXp, weeklyXp, rankingOptIn, totalBadgesEarned</td>
+      <td>userId, totalXp, weeklyXp, rankingOptIn, totalMonasEarned</td>
       <td>Resumen del estado de gamificación del usuario autenticado.</td>
     </tr>
     <tr>
       <td><b>RankingEntryResponse</b></td>
-      <td>position, userId, weeklyXp, totalBadgesEarned</td>
+      <td>position, userId, weeklyXp, totalMonasEarned</td>
       <td>Entrada del ranking semanal con posición y métricas del usuario.</td>
     </tr>
   </tbody>
@@ -1074,9 +1074,9 @@ La arquitectura de dominio se centra en las entidades **Badge** y **UserGamifica
   </thead>
   <tbody>
     <tr>
-      <td><b>BadgeCategory</b></td>
+      <td><b>MonaCategory</b></td>
       <td>COMMON, UNCOMMON, RARE, EPIC, LEGENDARY</td>
-      <td>Nivel de rareza de la insignia, de menor a mayor dificultad de obtención.</td>
+      <td>Nivel de rareza de la mona, de menor a mayor dificultad de obtención.</td>
     </tr>
   </tbody>
 </table>
@@ -1156,9 +1156,9 @@ El **Global Exception Handler** captura y maneja todas las excepciones del siste
 
 | ⚠️ **Excepción** | 🔢 **HTTP** | 💬 **Escenario** |
 |:----------------|:----------:|:----------------|
-| `BadgeNotFoundException` | 404 | La insignia solicitada no existe en el catálogo |
+| `MonaNotFoundException` | 404 | La mona solicitada no existe en el catálogo |
 | `UserGamificationNotFoundException` | 404 | El perfil de gamificación del usuario no existe |
-| `BadgeAlreadyEarnedException` | 409 | El usuario ya posee la insignia que se intenta otorgar |
+| `MonaAlreadyEarnedException` | 409 | El usuario ya posee la mona que se intenta otorgar |
 | `AccessDeniedException` | 403 | El usuario no tiene permisos para la operación |
 | `MethodArgumentNotValidException` | 400 | Validación de campos del DTO fallida (`@NotBlank`, `@Min`, etc.) |
 | `Exception` (genérica) | 500 | Error inesperado del servidor |
@@ -1202,9 +1202,9 @@ El microservicio de **Gamificación** implementa una **estrategia integral de pr
 
 | 🧪 **Tipo de Prueba** | 📋 **Descripción** | 🛠️ **Herramientas** |
 |:---------------------|:-------------------|:--------------------|
-| **Pruebas Unitarias de Casos de Uso** | Validan el funcionamiento aislado de cada caso de uso con mocks de puertos | ![JUnit](https://img.shields.io/badge/JUnit_5-25A162?style=flat&logo=junit5&logoColor=white) ![Mockito](https://img.shields.io/badge/Mockito-C5D928?style=flat) |
-| **Pruebas de Dominio** | Verifican la lógica de negocio pura en las entidades (`UserGamification`) | ![JUnit](https://img.shields.io/badge/JUnit_5-25A162?style=flat&logo=junit5&logoColor=white) |
-| **Pruebas de Controlador** | Validan los endpoints REST con MockMvc y MongoDB embebido | ![Spring Test](https://img.shields.io/badge/Spring_Test-6DB33F?style=flat&logo=spring&logoColor=white) ![Flapdoodle](https://img.shields.io/badge/Flapdoodle_MongoDB-47A248?style=flat) |
+| **Pruebas Unitarias de Casos de Uso** | Validan el funcionamiento aislado de cada caso de uso con mocks de puertos | ![JUnit](https://img.shields.io/Mona/JUnit_5-25A162?style=flat&logo=junit5&logoColor=white) ![Mockito](https://img.shields.io/Mona/Mockito-C5D928?style=flat) |
+| **Pruebas de Dominio** | Verifican la lógica de negocio pura en las entidades (`UserGamification`) | ![JUnit](https://img.shields.io/Mona/JUnit_5-25A162?style=flat&logo=junit5&logoColor=white) |
+| **Pruebas de Controlador** | Validan los endpoints REST con MockMvc y MongoDB embebido | ![Spring Test](https://img.shields.io/Mona/Spring_Test-6DB33F?style=flat&logo=spring&logoColor=white) ![Flapdoodle](https://img.shields.io/Mona/Flapdoodle_MongoDB-47A248?style=flat) |
 
 </div>
 
@@ -1221,7 +1221,7 @@ mvn test
 #### **2️⃣ Ejecutar una prueba específica**
 
 ```bash
-mvn test -Dtest=AwardBadgeServiceTest
+mvn test -Dtest=AwardMonaserviceTest
 ```
 
 #### **3️⃣ Ejecutar pruebas desde IntelliJ IDEA**
@@ -1238,14 +1238,14 @@ mvn test -Dtest=AwardBadgeServiceTest
 
 | 🧪 **Clase de Prueba** | 📋 **Qué valida** |
 |:-----------------------|:------------------|
-| `AwardBadgeServiceTest` | Otorgamiento de insignias, creación de perfil nuevo, manejo de insignia ya poseída, suma correcta de XP |
-| `CreateBadgeServiceTest` | Creación de insignias en el catálogo con validaciones de datos |
+| `AwardMonaserviceTest` | Otorgamiento de monas, creación de perfil nuevo, manejo de mona ya poseída, suma correcta de XP |
+| `CreateMonaserviceTest` | Creación de monas en el catálogo con validaciones de datos |
 | `GetRankingServiceTest` | Construcción del ranking semanal ordenado por XP con asignación de posiciones |
-| `GetUserBadgesServiceTest` | Recuperación de insignias ganadas por usuario |
+| `GetUserMonasServiceTest` | Recuperación de monas ganadas por usuario |
 | `GetUserStatsServiceTest` | Cálculo de estadísticas de gamificación del usuario |
 | `ToggleRankingOptInServiceTest` | Alternancia de participación en el ranking y creación de perfil si no existe |
-| `UserGamificationTest` | Lógica de dominio: `awardBadge()`, `resetWeeklyXp()`, `toggleRankingOptIn()`, `hasBadge()` |
-| `BadgeControllerTest` | Endpoints de `BadgeController` con MockMvc |
+| `UserGamificationTest` | Lógica de dominio: `awardMona()`, `resetWeeklyXp()`, `toggleRankingOptIn()`, `hasMona()` |
+| `MonaControllerTest` | Endpoints de `MonaController` con MockMvc |
 | `UserGamificationControllerTest` | Endpoints de `UserGamificationController` con MockMvc |
 
 </div>
@@ -1256,20 +1256,20 @@ mvn test -Dtest=AwardBadgeServiceTest
 
 ```java
 @Test
-@DisplayName("Otorgar insignia a usuario nuevo crea perfil y suma XP")
-void execute_shouldCreateProfileAndAwardBadge_whenUserDoesNotExist() {
-    when(badgeRepository.findById("badge-001")).thenReturn(Optional.of(badge));
+@DisplayName("Otorgar mona a usuario nuevo crea perfil y suma XP")
+void execute_shouldCreateProfileAndAwardMona_whenUserDoesNotExist() {
+    when(MonaRepository.findById("Mona-001")).thenReturn(Optional.of(Mona));
     when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.empty());
     when(userGamificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
-    when(userGamificationMapper.toEarnedBadgeResponse(any())).thenReturn(
-            EarnedBadgeResponse.builder().badgeId("badge-001").xpAwarded(100).build());
+    when(userGamificationMapper.toEarnedMonaResponse(any())).thenReturn(
+            EarnedMonaResponse.builder().MonaId("Mona-001").xpAwarded(100).build());
 
-    EarnedBadgeResponse response = service.execute(request);
+    EarnedMonaResponse response = service.execute(request);
 
-    assertThat(response.getBadgeId()).isEqualTo("badge-001");
+    assertThat(response.getMonaId()).isEqualTo("Mona-001");
     assertThat(response.getXpAwarded()).isEqualTo(100);
     verify(userGamificationRepository).save(any());
-    verify(notificationEventPort).notifyBadgeEarned("user-001", badge);
+    verify(notificationEventPort).notifyMonaEarned("user-001", Mona);
 }
 ```
 
@@ -1311,41 +1311,41 @@ charizard-compiled-gamification-service/
 │   │   │   │
 │   │   │   ├── 📁 application/                              # 🔵 CAPA DE APLICACIÓN
 │   │   │   │   ├── 📁 dto/
-│   │   │   │   │   ├── 📁 request/   (CreateBadgeRequest, AwardBadgeRequest, ToggleRankingOptInRequest)
-│   │   │   │   │   └── 📁 response/  (BadgeResponse, EarnedBadgeResponse, BadgeProgressResponse,
+│   │   │   │   │   ├── 📁 request/   (CreateMonaRequest, AwardMonaRequest, ToggleRankingOptInRequest)
+│   │   │   │   │   └── 📁 response/  (MonaResponse, EarnedMonaResponse, MonaProgressResponse,
 │   │   │   │   │                      UserStatsResponse, RankingEntryResponse)
-│   │   │   │   ├── 📁 mapper/        (BadgeMapper, UserGamificationMapper)
-│   │   │   │   └── 📁 usecase/       (CreateBadgeService, AwardBadgeService, GetUserBadgesService,
+│   │   │   │   ├── 📁 mapper/        (MonaMapper, UserGamificationMapper)
+│   │   │   │   └── 📁 usecase/       (CreateMonaservice, AwardMonaservice, GetUserMonasService,
 │   │   │   │                          GetUserProgressService, GetUserStatsService,
 │   │   │   │                          ToggleRankingOptInService, GetRankingService)
 │   │   │   │
 │   │   │   ├── 📁 domain/                                   # 🟢 CAPA DE DOMINIO
-│   │   │   │   ├── 📁 exceptions/    (BadgeNotFoundException, UserGamificationNotFoundException,
-│   │   │   │   │                      BadgeAlreadyEarnedException, AccessDeniedException)
-│   │   │   │   ├── 📁 model/         (Badge, UserGamification)
-│   │   │   │   │   └── 📁 enums/     (BadgeCategory)
+│   │   │   │   ├── 📁 exceptions/    (MonaNotFoundException, UserGamificationNotFoundException,
+│   │   │   │   │                      MonaAlreadyEarnedException, AccessDeniedException)
+│   │   │   │   ├── 📁 model/         (Mona, UserGamification)
+│   │   │   │   │   └── 📁 enums/     (MonaCategory)
 │   │   │   │   ├── 📁 ports/
-│   │   │   │   │   ├── 📁 in/        (CreateBadgeUseCase, AwardBadgeUseCase, GetUserBadgesUseCase,
+│   │   │   │   │   ├── 📁 in/        (CreateMonaUseCase, AwardMonaUseCase, GetUserMonasUseCase,
 │   │   │   │   │   │                  GetUserProgressUseCase, GetUserStatsUseCase,
 │   │   │   │   │   │                  ToggleRankingOptInUseCase, GetRankingUseCase)
-│   │   │   │   │   └── 📁 out/       (BadgeRepositoryPort, UserGamificationRepositoryPort,
+│   │   │   │   │   └── 📁 out/       (MonaRepositoryPort, UserGamificationRepositoryPort,
 │   │   │   │   │                      NotificationEventPort)
-│   │   │   │   └── 📁 valueobjects/  (EarnedBadge, BadgeProgress)
+│   │   │   │   └── 📁 valueobjects/  (EarnedMona, MonaProgress)
 │   │   │   │
 │   │   │   ├── 📁 entrypoints/                              # 🟠 ENTRADA (DRIVING ADAPTERS)
 │   │   │   │   ├── 📁 advice/        (GlobalExceptionHandler)
 │   │   │   │   └── 📁 rest/
-│   │   │   │       ├── 📁 controller/ (BadgeController, UserGamificationController)
-│   │   │   │       └── 📁 mapper/    (BadgeRestMapper, UserGamificationRestMapper)
+│   │   │   │       ├── 📁 controller/ (MonaController, UserGamificationController)
+│   │   │   │       └── 📁 mapper/    (MonaRestMapper, UserGamificationRestMapper)
 │   │   │   │
 │   │   │   └── 📁 infrastructure/                           # 🟠 INFRAESTRUCTURA (DRIVEN ADAPTERS)
 │   │   │       ├── 📁 adapters/
-│   │   │       │   ├── 📁 adapter/   (BadgeRepositoryAdapter, UserGamificationRepositoryAdapter)
+│   │   │       │   ├── 📁 adapter/   (MonaRepositoryAdapter, UserGamificationRepositoryAdapter)
 │   │   │       │   └── 📁 persistence/
-│   │   │       │       ├── 📁 entity/   (BadgeDocument, UserGamificationDocument,
-│   │   │       │       │                 EarnedBadgeSubdocument, BadgeProgressSubdocument)
-│   │   │       │       ├── 📁 mapper/   (BadgeDocumentMapper, UserGamificationDocumentMapper)
-│   │   │       │       └── 📁 repository/ (BadgeMongoRepository, UserGamificationMongoRepository)
+│   │   │       │       ├── 📁 entity/   (MonaDocument, UserGamificationDocument,
+│   │   │       │       │                 EarnedMonasubdocument, MonaProgressSubdocument)
+│   │   │       │       ├── 📁 mapper/   (MonaDocumentMapper, UserGamificationDocumentMapper)
+│   │   │       │       └── 📁 repository/ (MonaMongoRepository, UserGamificationMongoRepository)
 │   │   │       ├── 📁 config/        (MongoConfig, SecurityConfig, OpenApiConfig, DataSeeder)
 │   │   │       ├── 📁 external/      (NotificacionAdapter)
 │   │   │       └── 📁 scheduler/     (WeeklyXpResetScheduler)
@@ -1355,11 +1355,11 @@ charizard-compiled-gamification-service/
 │   │
 │   └── 📁 test/                                             # 🧪 PRUEBAS
 │       └── 📁 java/.../
-│           ├── 📁 application/usecase/   (AwardBadgeServiceTest, CreateBadgeServiceTest,
-│           │                              GetRankingServiceTest, GetUserBadgesServiceTest,
+│           ├── 📁 application/usecase/   (AwardMonaserviceTest, CreateMonaserviceTest,
+│           │                              GetRankingServiceTest, GetUserMonasServiceTest,
 │           │                              GetUserStatsServiceTest, ToggleRankingOptInServiceTest)
 │           ├── 📁 domain/model/          (UserGamificationTest)
-│           └── 📁 entrypoints/rest/controller/ (BadgeControllerTest, UserGamificationControllerTest)
+│           └── 📁 entrypoints/rest/controller/ (MonaControllerTest, UserGamificationControllerTest)
 │
 ├── 📄 Dockerfile
 ├── 📄 docker-compose.yml
@@ -1377,7 +1377,7 @@ charizard-compiled-gamification-service/
 
 | 🎨 **Capa** | 📋 **Responsabilidad** | 🔗 **Dependencias** |
 |:-----------|:----------------------|:-------------------|
-| **🟢 Domain** | Lógica de negocio pura, entidades (`Badge`, `UserGamification`), value objects, enums y puertos (interfaces) | ❌ Ninguna (independiente) |
+| **🟢 Domain** | Lógica de negocio pura, entidades (`Mona`, `UserGamification`), value objects, enums y puertos (interfaces) | ❌ Ninguna (independiente) |
 | **🔵 Application** | Casos de uso, DTOs y mappers | ✅ Solo `Domain` |
 | **🟠 Entrypoints** | Controladores REST y manejador global de excepciones | ✅ `Domain` + `Application` |
 | **🟠 Infrastructure** | Adaptadores MongoDB, scheduler, notificaciones asíncronas y configuración | ✅ `Domain` + `Application` |
@@ -1460,7 +1460,7 @@ El proyecto implementa un **pipeline automatizado** con **GitHub Actions** para 
 
 | 🌍 Ambiente | 📝 Estado |
 |:-----------|:---------|
-| **🟢 Producción (Railway)** | ![Active](https://img.shields.io/badge/Status-Active-success?style=flat) |
+| **🟢 Producción (Railway)** | ![Active](https://img.shields.io/Mona/Status-Active-success?style=flat) |
 
 </div>
 
@@ -1482,10 +1482,10 @@ El flujo de trabajo ejecuta los siguientes pasos en cada push o PR:
 
 | Componente | Servicio | Propósito |
 |:-----------|:---------|:----------|
-| **Compute** | ![Railway](https://img.shields.io/badge/Railway-0B0D0E?logo=railway&logoColor=white) | Ejecución del contenedor Docker del microservicio |
-| **Database** | ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white) | Persistencia de insignias y perfiles de gamificación |
-| **CI/CD** | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white) | Automatización de pruebas y despliegue continuo |
-| **API Docs** | ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=black) | Documentación interactiva de endpoints REST |
+| **Compute** | ![Railway](https://img.shields.io/Mona/Railway-0B0D0E?logo=railway&logoColor=white) | Ejecución del contenedor Docker del microservicio |
+| **Database** | ![MongoDB](https://img.shields.io/Mona/MongoDB-47A248?logo=mongodb&logoColor=white) | Persistencia de monas y perfiles de gamificación |
+| **CI/CD** | ![GitHub Actions](https://img.shields.io/Mona/GitHub_Actions-2088FF?logo=github-actions&logoColor=white) | Automatización de pruebas y despliegue continuo |
+| **API Docs** | ![Swagger](https://img.shields.io/Mona/Swagger-85EA2D?logo=swagger&logoColor=black) | Documentación interactiva de endpoints REST |
 
 </div>
 
@@ -1529,9 +1529,9 @@ Compromiso, Coraje, Enfoque, Apertura y Respeto fueron los pilares para afrontar
 
 ### 🏆 Equipo **Charizard Compiled**
 
-![Team](https://img.shields.io/badge/Team-Charizard_Compiled-blueviolet?style=for-the-badge&logo=github&logoColor=white)
-![Course](https://img.shields.io/badge/Course-DOSW-orange?style=for-the-badge)
-![Year](https://img.shields.io/badge/Year-2026--1-blue?style=for-the-badge)
+![Team](https://img.shields.io/Mona/Team-Charizard_Compiled-blueviolet?style=for-the-Mona&logo=github&logoColor=white)
+![Course](https://img.shields.io/Mona/Course-DOSW-orange?style=for-the-Mona)
+![Year](https://img.shields.io/Mona/Year-2026--1-blue?style=for-the-Mona)
 
 > 💡 **DOSW Gamification Service** es un proyecto académico, pero su arquitectura y calidad están pensadas para ser escalables y adaptables a escenarios reales en instituciones educativas.
 

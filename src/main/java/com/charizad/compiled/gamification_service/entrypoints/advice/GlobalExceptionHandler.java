@@ -1,8 +1,8 @@
 package com.charizad.compiled.gamification_service.entrypoints.advice;
 
 import com.charizad.compiled.gamification_service.domain.exceptions.AccessDeniedException;
-import com.charizad.compiled.gamification_service.domain.exceptions.BadgeAlreadyEarnedException;
-import com.charizad.compiled.gamification_service.domain.exceptions.BadgeNotFoundException;
+import com.charizad.compiled.gamification_service.domain.exceptions.MonaAlreadyEarnedException;
+import com.charizad.compiled.gamification_service.domain.exceptions.MonaNotFoundException;
 import com.charizad.compiled.gamification_service.domain.exceptions.InvalidEventCodeException;
 import com.charizad.compiled.gamification_service.domain.exceptions.RewardNotFoundException;
 import com.charizad.compiled.gamification_service.domain.exceptions.UserGamificationNotFoundException;
@@ -19,8 +19,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BadgeNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleBadgeNotFound(BadgeNotFoundException ex) {
+    @ExceptionHandler(MonaNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleMonaNotFound(MonaNotFoundException ex) {
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
@@ -29,8 +29,8 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(BadgeAlreadyEarnedException.class)
-    public ResponseEntity<Map<String, Object>> handleBadgeAlreadyEarned(BadgeAlreadyEarnedException ex) {
+    @ExceptionHandler(MonaAlreadyEarnedException.class)
+    public ResponseEntity<Map<String, Object>> handleMonaAlreadyEarned(MonaAlreadyEarnedException ex) {
         return buildError(HttpStatus.CONFLICT, ex.getMessage());
     }
 

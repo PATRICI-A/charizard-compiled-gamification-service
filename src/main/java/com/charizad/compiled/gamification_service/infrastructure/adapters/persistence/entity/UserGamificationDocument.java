@@ -25,11 +25,15 @@ public class UserGamificationDocument {
 
     private int totalXp;
     private int weeklyXp;
+    private int monthlyXp;
+    private int semesterXp;
     private int weeklyMonas;
+    private int monthlyMonas;
+    private int semesterMonas;
     private boolean rankingOptIn;
 
-    private List<EarnedBadgeSubdocument> earnedBadges;
-    private List<BadgeProgressSubdocument> progress;
+    private List<EarnedMonaSubdocument> earnedMonas;
+    private List<MonaProgressSubdocument> progress;
     private List<EarnedRewardSubdocument> earnedRewards;
     private List<String> visitedCampusZones;
 }

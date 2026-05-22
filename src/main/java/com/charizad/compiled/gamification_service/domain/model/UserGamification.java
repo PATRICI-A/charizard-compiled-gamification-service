@@ -1,8 +1,8 @@
 package com.charizad.compiled.gamification_service.domain.model;
 
-import com.charizad.compiled.gamification_service.domain.exceptions.BadgeAlreadyEarnedException;
-import com.charizad.compiled.gamification_service.domain.valueobjects.BadgeProgress;
-import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge;
+import com.charizad.compiled.gamification_service.domain.exceptions.MonaAlreadyEarnedException;
+import com.charizad.compiled.gamification_service.domain.valueobjects.MonaProgress;
+import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedMona;
 import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedReward;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,41 +22,56 @@ public class UserGamification {
     private final String userId;
     private int totalXp;
     private int weeklyXp;
+    private int monthlyXp;
+    private int semesterXp;
     private int weeklyMonas;
+    private int monthlyMonas;
+    private int semesterMonas;
     private boolean rankingOptIn;
-    private final List<EarnedBadge> earnedBadges;
-    private final List<BadgeProgress> progress;
+    private final List<EarnedMona> earnedMonas;
+    private final List<MonaProgress> progress;
     private final List<EarnedReward> earnedRewards;
     private final List<String> visitedCampusZones;
 
-    public boolean hasBadge(String badgeId) {
-        return earnedBadges.stream().anyMatch(b -> b.getBadgeId().equals(badgeId));
+    public boolean hasMona(String monaId) {
+        return earnedMonas.stream().anyMatch(b -> b.getMonaId().equals(monaId));
     }
 
     public boolean hasReward(String rewardId) {
         return earnedRewards.stream().anyMatch(r -> r.getRewardId().equals(rewardId));
     }
 
-    public void awardBadge(EarnedBadge earned) {
-        if (hasBadge(earned.getBadgeId())) {
-            throw new BadgeAlreadyEarnedException(userId, earned.getBadgeId());
+    public void awardMona(EarnedMona earned) {
+        if (hasMona(earned.getMonaId())) {
+            throw new MonaAlreadyEarnedException(userId, earned.getMonaId());
         }
-        earnedBadges.add(earned);
+        earnedMonas.add(earned);
         totalXp += earned.getXpAwarded();
         weeklyXp += earned.getXpAwarded();
+        monthlyXp += earned.getXpAwarded();
+        semesterXp += earned.getXpAwarded();
         weeklyMonas++;
+        monthlyMonas++;
+        semesterMonas++;
     }
 
     public void unlockReward(EarnedReward earned) {
         earnedRewards.add(earned);
     }
 
-    public void resetWeeklyXp() {
+    public void resetWeeklyStats() {
         weeklyXp = 0;
+        weeklyMonas = 0;
     }
 
-    public void resetWeeklyMonas() {
-        weeklyMonas = 0;
+    public void resetMonthlyStats() {
+        monthlyXp = 0;
+        monthlyMonas = 0;
+    }
+
+    public void resetSemesterStats() {
+        semesterXp = 0;
+        semesterMonas = 0;
     }
 
     public void toggleRankingOptIn() {
@@ -67,11 +82,11 @@ public class UserGamification {
         rankingOptIn = participar;
     }
 
-    public List<EarnedBadge> getEarnedBadges() {
-        return Collections.unmodifiableList(earnedBadges);
+    public List<EarnedMona> getEarnedMonas() {
+        return Collections.unmodifiableList(earnedMonas);
     }
 
-    public List<BadgeProgress> getProgress() {
+    public List<MonaProgress> getProgress() {
         return Collections.unmodifiableList(progress);
     }
 
@@ -90,18 +105,18 @@ public class UserGamification {
         return true;
     }
 
-    /** Upserts the BadgeProgress entry for the given badgeId. */
-    public void updateProgress(String badgeId, int currentValue, int requiredValue) {
-        progress.removeIf(p -> p.getBadgeId().equals(badgeId));
-        progress.add(BadgeProgress.builder()
-                .badgeId(badgeId).currentValue(currentValue)
+    /** Upserts the MonaProgress entry for the given monaId. */
+    public void updateProgress(String monaId, int currentValue, int requiredValue) {
+        progress.removeIf(p -> p.getMonaId().equals(monaId));
+        progress.add(MonaProgress.builder()
+                .monaId(monaId).currentValue(currentValue)
                 .requiredValue(requiredValue)
                 .completed(currentValue >= requiredValue)
                 .build());
     }
 
     public int getTotalMonas() {
-        return earnedBadges.size();
+        return earnedMonas.size();
     }
 
     public static UserGamification newUser(String userId) {
@@ -109,9 +124,13 @@ public class UserGamification {
                 .userId(userId)
                 .totalXp(0)
                 .weeklyXp(0)
+                .monthlyXp(0)
+                .semesterXp(0)
                 .weeklyMonas(0)
+                .monthlyMonas(0)
+                .semesterMonas(0)
                 .rankingOptIn(false)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .earnedRewards(new ArrayList<>())
                 .visitedCampusZones(new ArrayList<>())

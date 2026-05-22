@@ -34,7 +34,7 @@ class ToggleRankingOptInServiceTest {
                 .weeklyXp(0)
                 .weeklyMonas(0)
                 .rankingOptIn(false)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .build();
 
@@ -55,7 +55,7 @@ class ToggleRankingOptInServiceTest {
                 .weeklyXp(0)
                 .weeklyMonas(0)
                 .rankingOptIn(true)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .build();
 

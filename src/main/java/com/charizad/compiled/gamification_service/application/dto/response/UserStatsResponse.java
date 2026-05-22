@@ -18,6 +18,6 @@ public class UserStatsResponse {
     private int nivel;
     private String levelName;
     private boolean rankingOptIn;
-    private int totalBadgesEarned;
+    private int totalMonasEarned;
     private int totalRewardsUnlocked;
 }

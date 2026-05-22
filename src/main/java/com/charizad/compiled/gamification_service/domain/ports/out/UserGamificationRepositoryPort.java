@@ -8,10 +8,13 @@ import java.util.Optional;
 public interface UserGamificationRepositoryPort {
     UserGamification save(UserGamification userGamification);
     Optional<UserGamification> findByUserId(String userId);
-    List<UserGamification> findAllOptedInOrderByWeeklyXpDesc(int limit);
     List<UserGamification> findAllOptedInOrderByWeeklyMonasDesc(int limit);
+    List<UserGamification> findAllOptedInOrderByMonthlyMonasDesc(int limit);
+    List<UserGamification> findAllOptedInOrderBySemesterMonasDesc(int limit);
     List<UserGamification> findAllOptedIn();
     void saveAll(List<UserGamification> users);
     long countAllOptedIn();
-    long countOptedInWithMoreMonasThan(int weeklyMonas);
+    long countOptedInWithMoreWeeklyMonasThan(int weeklyMonas);
+    long countOptedInWithMoreMonthlyMonasThan(int monthlyMonas);
+    long countOptedInWithMoreSemesterMonasThan(int semesterMonas);
 }

@@ -1,7 +1,7 @@
 package com.charizad.compiled.gamification_service.domain.model;
 
-import com.charizad.compiled.gamification_service.domain.exceptions.BadgeAlreadyEarnedException;
-import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge;
+import com.charizad.compiled.gamification_service.domain.exceptions.MonaAlreadyEarnedException;
+import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedMona;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,14 +13,14 @@ import static org.assertj.core.api.Assertions.*;
 class UserGamificationTest {
 
     private UserGamification user;
-    private EarnedBadge badge;
+    private EarnedMona Mona;
 
     @BeforeEach
     void setUp() {
         user = UserGamification.newUser("user-001");
-        badge = EarnedBadge.builder()
-                .badgeId("badge-001")
-                .badgeName("Primer Parche")
+        Mona = EarnedMona.builder()
+                .monaId("Mona-001")
+                .monaName("Primer Parche")
                 .earnedAt(LocalDateTime.now())
                 .xpAwarded(100)
                 .build();
@@ -32,50 +32,51 @@ class UserGamificationTest {
         assertThat(user.getTotalXp()).isZero();
         assertThat(user.getWeeklyXp()).isZero();
         assertThat(user.isRankingOptIn()).isFalse();
-        assertThat(user.getEarnedBadges()).isEmpty();
+        assertThat(user.getEarnedMonas()).isEmpty();
         assertThat(user.getProgress()).isEmpty();
     }
 
     @Test
-    @DisplayName("awardBadge suma XP total y semanal correctamente")
-    void awardBadge_shouldAddXpToTotalAndWeekly() {
-        user.awardBadge(badge);
+    @DisplayName("awardMona suma XP total y semanal correctamente")
+    void awardMona_shouldAddXpToTotalAndWeekly() {
+        user.awardMona(Mona);
 
         assertThat(user.getTotalXp()).isEqualTo(100);
         assertThat(user.getWeeklyXp()).isEqualTo(100);
-        assertThat(user.getEarnedBadges()).hasSize(1);
+        assertThat(user.getEarnedMonas()).hasSize(1);
     }
 
     @Test
-    @DisplayName("awardBadge lanza excepción si el usuario ya tiene la insignia")
-    void awardBadge_shouldThrow_whenBadgeAlreadyEarned() {
-        user.awardBadge(badge);
+    @DisplayName("awardMona lanza excepción si el usuario ya tiene la insignia")
+    void awardMona_shouldThrow_whenMonaAlreadyEarned() {
+        user.awardMona(Mona);
 
-        assertThatThrownBy(() -> user.awardBadge(badge))
-                .isInstanceOf(BadgeAlreadyEarnedException.class)
-                .hasMessageContaining("badge-001");
+        assertThatThrownBy(() -> user.awardMona(Mona))
+                .isInstanceOf(MonaAlreadyEarnedException.class)
+                .hasMessageContaining("Mona-001");
     }
 
     @Test
-    @DisplayName("hasBadge retorna true si el usuario posee la insignia")
-    void hasBadge_shouldReturnTrue_whenBadgeIsOwned() {
-        user.awardBadge(badge);
-        assertThat(user.hasBadge("badge-001")).isTrue();
+    @DisplayName("hasMona retorna true si el usuario posee la insignia")
+    void hasMona_shouldReturnTrue_whenMonaIsOwned() {
+        user.awardMona(Mona);
+        assertThat(user.hasMona("Mona-001")).isTrue();
     }
 
     @Test
-    @DisplayName("hasBadge retorna false si el usuario no posee la insignia")
-    void hasBadge_shouldReturnFalse_whenBadgeNotOwned() {
-        assertThat(user.hasBadge("badge-999")).isFalse();
+    @DisplayName("hasMona retorna false si el usuario no posee la insignia")
+    void hasMona_shouldReturnFalse_whenMonaNotOwned() {
+        assertThat(user.hasMona("Mona-999")).isFalse();
     }
 
     @Test
-    @DisplayName("resetWeeklyXp pone weeklyXp en cero pero conserva totalXp")
-    void resetWeeklyXp_shouldZeroWeeklyXp_butKeepTotal() {
-        user.awardBadge(badge);
-        user.resetWeeklyXp();
+    @DisplayName("resetWeeklyStats pone weeklyXp y weeklyMonas en cero pero conserva totalXp")
+    void resetWeeklyStats_shouldZeroWeeklyStats_butKeepTotal() {
+        user.awardMona(Mona);
+        user.resetWeeklyStats();
 
         assertThat(user.getWeeklyXp()).isZero();
+        assertThat(user.getWeeklyMonas()).isZero();
         assertThat(user.getTotalXp()).isEqualTo(100);
     }
 
@@ -93,28 +94,28 @@ class UserGamificationTest {
 
     @Test
     @DisplayName("acumular múltiples insignias suma XP correctamente")
-    void awardMultipleBadges_shouldAccumulateXp() {
-        EarnedBadge badge2 = EarnedBadge.builder()
-                .badgeId("badge-002")
-                .badgeName("Parche Épico")
+    void awardMultipleMonas_shouldAccumulateXp() {
+        EarnedMona Mona2 = EarnedMona.builder()
+                .monaId("Mona-002")
+                .monaName("Parche Épico")
                 .earnedAt(LocalDateTime.now())
                 .xpAwarded(250)
                 .build();
 
-        user.awardBadge(badge);
-        user.awardBadge(badge2);
+        user.awardMona(Mona);
+        user.awardMona(Mona2);
 
         assertThat(user.getTotalXp()).isEqualTo(350);
         assertThat(user.getWeeklyXp()).isEqualTo(350);
-        assertThat(user.getEarnedBadges()).hasSize(2);
+        assertThat(user.getEarnedMonas()).hasSize(2);
     }
 
     @Test
-    @DisplayName("getEarnedBadges retorna lista no modificable")
-    void getEarnedBadges_shouldReturnUnmodifiableList() {
-        user.awardBadge(badge);
+    @DisplayName("getEarnedMonas retorna lista no modificable")
+    void getEarnedMonas_shouldReturnUnmodifiableList() {
+        user.awardMona(Mona);
 
-        assertThatThrownBy(() -> user.getEarnedBadges().clear())
+        assertThatThrownBy(() -> user.getEarnedMonas().clear())
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 }

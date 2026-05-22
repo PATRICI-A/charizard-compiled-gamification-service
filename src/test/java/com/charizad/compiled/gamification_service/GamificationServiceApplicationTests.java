@@ -1,6 +1,6 @@
 package com.charizad.compiled.gamification_service;
 
-import com.charizad.compiled.gamification_service.domain.ports.out.BadgeRepositoryPort;
+import com.charizad.compiled.gamification_service.domain.ports.out.MonaRepositoryPort;
 import com.charizad.compiled.gamification_service.domain.ports.out.NotificationEventPort;
 import com.charizad.compiled.gamification_service.domain.ports.out.UserGamificationRepositoryPort;
 import org.junit.jupiter.api.Test;
@@ -24,8 +24,8 @@ class GamificationServiceApplicationTests {
 	static class TestMongoMockConfig {
 
 		@Bean
-		BadgeRepositoryPort badgeRepositoryPort() {
-			return Mockito.mock(BadgeRepositoryPort.class);
+		MonaRepositoryPort MonaRepositoryPort() {
+			return Mockito.mock(MonaRepositoryPort.class);
 		}
 
 		@Bean

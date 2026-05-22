@@ -1,7 +1,7 @@
 package com.charizad.compiled.gamification_service.infrastructure.adapters.in.messaging;
 
-import com.charizad.compiled.gamification_service.domain.model.BadgeUnlockEventType;
-import com.charizad.compiled.gamification_service.domain.ports.in.CheckBadgeUnlockUseCase;
+import com.charizad.compiled.gamification_service.domain.model.MonaUnlockEventType;
+import com.charizad.compiled.gamification_service.domain.ports.in.CheckMonaUnlockUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GamificationEventListenerTest {
 
-    @Mock private CheckBadgeUnlockUseCase checkBadgeUnlockUseCase;
+    @Mock private CheckMonaUnlockUseCase checkMonaUnlockUseCase;
 
     @InjectMocks
     private GamificationEventListener listener;
@@ -37,13 +37,13 @@ class GamificationEventListenerTest {
                 "totalActiveConnections", 5,
                 "userRegisteredAt", "2026-01-01T00:00:00"
         );
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onConnectionCreated(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e ->
+        verify(checkMonaUnlockUseCase).execute(argThat(e ->
                 "u1".equals(e.getUserId()) &&
-                e.getEventType() == BadgeUnlockEventType.CONNECTION_CREATED &&
+                e.getEventType() == MonaUnlockEventType.CONNECTION_CREATED &&
                 e.getTotalActiveConnections() == 5 &&
                 e.getUserRegisteredAt() != null
         ));
@@ -57,11 +57,11 @@ class GamificationEventListenerTest {
         payload.put("totalActiveConnections", 3);
         payload.put("userRegisteredAt", null);
 
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onConnectionCreated(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e -> e.getUserRegisteredAt() == null));
+        verify(checkMonaUnlockUseCase).execute(argThat(e -> e.getUserRegisteredAt() == null));
     }
 
     @Test
@@ -73,18 +73,18 @@ class GamificationEventListenerTest {
                 "totalActiveConnections", 1,
                 "userRegisteredAt", dt
         );
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onConnectionCreated(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e -> dt.equals(e.getUserRegisteredAt())));
+        verify(checkMonaUnlockUseCase).execute(argThat(e -> dt.equals(e.getUserRegisteredAt())));
     }
 
     @Test
     @DisplayName("onConnectionCreated — excepción en use case no propaga")
     void onConnectionCreated_useCaseThrows_noException() {
         Map<String, Object> payload = Map.of("userId", "u1", "totalActiveConnections", 1);
-        when(checkBadgeUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
+        when(checkMonaUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
 
         // Should not throw
         listener.onConnectionCreated(payload);
@@ -102,13 +102,13 @@ class GamificationEventListenerTest {
                 "totalParchesCreated", 3,
                 "parcheScheduledAt", scheduled.toString()
         );
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onParcheCreated(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e ->
+        verify(checkMonaUnlockUseCase).execute(argThat(e ->
                 "u1".equals(e.getUserId()) &&
-                e.getEventType() == BadgeUnlockEventType.PARCHE_JOINED_OR_CREATED &&
+                e.getEventType() == MonaUnlockEventType.PARCHE_JOINED_OR_CREATED &&
                 Boolean.TRUE.equals(e.getIsCreator()) &&
                 e.getTotalParchesCreated() == 3
         ));
@@ -121,18 +121,18 @@ class GamificationEventListenerTest {
         payload.put("userId", "u1");
         payload.put("totalParchesCreated", 1);
         payload.put("parcheScheduledAt", null);
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onParcheCreated(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e -> Boolean.FALSE.equals(e.getIsCreator())));
+        verify(checkMonaUnlockUseCase).execute(argThat(e -> Boolean.FALSE.equals(e.getIsCreator())));
     }
 
     @Test
     @DisplayName("onParcheCreated — excepción en use case no propaga")
     void onParcheCreated_useCaseThrows_noException() {
         Map<String, Object> payload = Map.of("userId", "u1");
-        when(checkBadgeUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
+        when(checkMonaUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
 
         listener.onParcheCreated(payload);
     }
@@ -143,13 +143,13 @@ class GamificationEventListenerTest {
     @DisplayName("onMemberJoined — userId y captainUserId mapeados")
     void onMemberJoined_mapsPayload() {
         Map<String, Object> payload = Map.of("userId", "u1", "captainUserId", "captain1");
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onMemberJoined(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e ->
+        verify(checkMonaUnlockUseCase).execute(argThat(e ->
                 "u1".equals(e.getUserId()) &&
-                e.getEventType() == BadgeUnlockEventType.MEMBER_JOINED_PARCHE &&
+                e.getEventType() == MonaUnlockEventType.MEMBER_JOINED_PARCHE &&
                 "captain1".equals(e.getCaptainUserId())
         ));
     }
@@ -158,7 +158,7 @@ class GamificationEventListenerTest {
     @DisplayName("onMemberJoined — excepción en use case no propaga")
     void onMemberJoined_useCaseThrows_noException() {
         Map<String, Object> payload = Map.of("userId", "u1", "captainUserId", "c1");
-        when(checkBadgeUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
+        when(checkMonaUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
 
         listener.onMemberJoined(payload);
     }
@@ -169,13 +169,13 @@ class GamificationEventListenerTest {
     @DisplayName("onMessageSent — eventType=FIRST_MESSAGE_SENT")
     void onMessageSent_correctEventType() {
         Map<String, Object> payload = Map.of("userId", "u1");
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onMessageSent(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e ->
+        verify(checkMonaUnlockUseCase).execute(argThat(e ->
                 "u1".equals(e.getUserId()) &&
-                e.getEventType() == BadgeUnlockEventType.FIRST_MESSAGE_SENT
+                e.getEventType() == MonaUnlockEventType.FIRST_MESSAGE_SENT
         ));
     }
 
@@ -183,7 +183,7 @@ class GamificationEventListenerTest {
     @DisplayName("onMessageSent — excepción no propaga")
     void onMessageSent_useCaseThrows_noException() {
         Map<String, Object> payload = Map.of("userId", "u1");
-        when(checkBadgeUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
+        when(checkMonaUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
 
         listener.onMessageSent(payload);
     }
@@ -200,13 +200,13 @@ class GamificationEventListenerTest {
                 "campusZone", "Bloque de Ingeniería",
                 "updatedAt", "2026-05-19T10:00:00"
         );
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onZoneVisited(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e ->
+        verify(checkMonaUnlockUseCase).execute(argThat(e ->
                 "u1".equals(e.getUserId()) &&
-                e.getEventType() == BadgeUnlockEventType.ZONE_VISITED &&
+                e.getEventType() == MonaUnlockEventType.ZONE_VISITED &&
                 "Bloque de Ingeniería".equals(e.getCampusZone()) &&
                 Boolean.TRUE.equals(e.getGeoLocationEnabled())
         ));
@@ -218,29 +218,29 @@ class GamificationEventListenerTest {
         Map<String, Object> payload = new HashMap<>();
         payload.put("userId", "u1");
         payload.put("campusZone", null);
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onZoneVisited(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e -> e.getCampusZone() == null));
+        verify(checkMonaUnlockUseCase).execute(argThat(e -> e.getCampusZone() == null));
     }
 
     @Test
     @DisplayName("onZoneVisited — geoLocationEnabled siempre true independiente del payload")
     void onZoneVisited_geoLocationEnabledAlwaysTrue() {
         Map<String, Object> payload = Map.of("userId", "u1", "campusZone", "Cafetería");
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onZoneVisited(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e -> Boolean.TRUE.equals(e.getGeoLocationEnabled())));
+        verify(checkMonaUnlockUseCase).execute(argThat(e -> Boolean.TRUE.equals(e.getGeoLocationEnabled())));
     }
 
     @Test
     @DisplayName("onZoneVisited — excepción no propaga")
     void onZoneVisited_useCaseThrows_noException() {
         Map<String, Object> payload = Map.of("userId", "u1", "campusZone", "Zona A");
-        when(checkBadgeUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
+        when(checkMonaUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
 
         listener.onZoneVisited(payload);
     }
@@ -251,13 +251,13 @@ class GamificationEventListenerTest {
     @DisplayName("onEventAttended — eventType=INSTITUTIONAL_EVENT_ATTENDED")
     void onEventAttended_correctEventType() {
         Map<String, Object> payload = Map.of("userId", "u1");
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onEventAttended(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e ->
+        verify(checkMonaUnlockUseCase).execute(argThat(e ->
                 "u1".equals(e.getUserId()) &&
-                e.getEventType() == BadgeUnlockEventType.INSTITUTIONAL_EVENT_ATTENDED
+                e.getEventType() == MonaUnlockEventType.INSTITUTIONAL_EVENT_ATTENDED
         ));
     }
 
@@ -265,7 +265,7 @@ class GamificationEventListenerTest {
     @DisplayName("onEventAttended — excepción no propaga")
     void onEventAttended_useCaseThrows_noException() {
         Map<String, Object> payload = Map.of("userId", "u1");
-        when(checkBadgeUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
+        when(checkMonaUnlockUseCase.execute(any())).thenThrow(new RuntimeException("fail"));
 
         listener.onEventAttended(payload);
     }
@@ -278,10 +278,10 @@ class GamificationEventListenerTest {
         Map<String, Object> payload = new HashMap<>();
         payload.put("userId", "u1");
         payload.put("totalActiveConnections", null);
-        when(checkBadgeUnlockUseCase.execute(any())).thenReturn(List.of());
+        when(checkMonaUnlockUseCase.execute(any())).thenReturn(List.of());
 
         listener.onConnectionCreated(payload);
 
-        verify(checkBadgeUnlockUseCase).execute(argThat(e -> e.getTotalActiveConnections() == 0));
+        verify(checkMonaUnlockUseCase).execute(argThat(e -> e.getTotalActiveConnections() == 0));
     }
 }

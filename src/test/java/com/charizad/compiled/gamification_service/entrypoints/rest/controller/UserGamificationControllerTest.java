@@ -1,6 +1,6 @@
 package com.charizad.compiled.gamification_service.entrypoints.rest.controller;
 
-import com.charizad.compiled.gamification_service.application.dto.response.EarnedBadgeResponse;
+import com.charizad.compiled.gamification_service.application.dto.response.EarnedMonaResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.RankingEntryResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.UserStatsResponse;
 import com.charizad.compiled.gamification_service.domain.exceptions.UserGamificationNotFoundException;
@@ -27,6 +27,7 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class UserGamificationControllerTest {
 
-    @Mock GetUserBadgesUseCase getUserBadgesUseCase;
+    @Mock GetUserMonasUseCase getUserMonasUseCase;
     @Mock GetUserProgressUseCase getUserProgressUseCase;
     @Mock GetUserStatsUseCase getUserStatsUseCase;
     @Mock ToggleRankingOptInUseCase toggleRankingOptInUseCase;
@@ -60,32 +61,32 @@ class UserGamificationControllerTest {
     }
 
     @Test
-    @DisplayName("GET /me/badges retorna 200 con lista de insignias")
-    void getMyBadges_shouldReturn200() throws Exception {
-        List<EarnedBadgeResponse> badges = List.of(
-                EarnedBadgeResponse.builder()
-                        .badgeId("badge-001")
-                        .badgeName("Primer Parche")
+    @DisplayName("GET /me/Monas retorna 200 con lista de insignias")
+    void getMyMonas_shouldReturn200() throws Exception {
+        List<EarnedMonaResponse> Monas = List.of(
+                EarnedMonaResponse.builder()
+                        .monaId("Mona-001")
+                        .monaName("Primer Parche")
                         .earnedAt(LocalDateTime.now())
                         .xpAwarded(100)
                         .build()
         );
 
-        when(getUserBadgesUseCase.execute(any())).thenReturn(badges);
+        when(getUserMonasUseCase.execute(any())).thenReturn(Monas);
 
-        mockMvc.perform(get("/api/v1/gamificacion/me/badges"))
+        mockMvc.perform(get("/api/v1/gamificacion/me/Monas"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].badgeId").value("badge-001"))
+                .andExpect(jsonPath("$[0].monaId").value("Mona-001"))
                 .andExpect(jsonPath("$[0].xpAwarded").value(100));
     }
 
     @Test
-    @DisplayName("GET /me/badges retorna 404 si no existe el perfil")
-    void getMyBadges_shouldReturn404_whenProfileNotFound() throws Exception {
-        when(getUserBadgesUseCase.execute(any()))
+    @DisplayName("GET /me/Monas retorna 404 si no existe el perfil")
+    void getMyMonas_shouldReturn404_whenProfileNotFound() throws Exception {
+        when(getUserMonasUseCase.execute(any()))
                 .thenThrow(new UserGamificationNotFoundException("user-999"));
 
-        mockMvc.perform(get("/api/v1/gamificacion/me/badges"))
+        mockMvc.perform(get("/api/v1/gamificacion/me/Monas"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(
                         "Perfil de gamificación no encontrado para el usuario: user-999"));
@@ -99,7 +100,7 @@ class UserGamificationControllerTest {
                 .totalXp(350)
                 .weeklyXp(150)
                 .rankingOptIn(true)
-                .totalBadgesEarned(2)
+                .totalMonasEarned(2)
                 .build();
 
         when(getUserStatsUseCase.execute(any())).thenReturn(stats);
@@ -109,7 +110,7 @@ class UserGamificationControllerTest {
                 .andExpect(jsonPath("$.totalXp").value(350))
                 .andExpect(jsonPath("$.weeklyXp").value(150))
                 .andExpect(jsonPath("$.rankingOptIn").value(true))
-                .andExpect(jsonPath("$.totalBadgesEarned").value(2));
+                .andExpect(jsonPath("$.totalMonasEarned").value(2));
     }
 
     @Test
@@ -131,24 +132,24 @@ class UserGamificationControllerTest {
     @DisplayName("GET /ranking retorna 200 con el ranking semanal")
     void getRanking_shouldReturn200() throws Exception {
         List<RankingEntryResponse> ranking = List.of(
-                RankingEntryResponse.builder().position(1).userId("user-A").weeklyXp(500).totalBadgesEarned(3).build(),
-                RankingEntryResponse.builder().position(2).userId("user-B").weeklyXp(300).totalBadgesEarned(2).build()
+                RankingEntryResponse.builder().position(1).userId("user-A").monasThisPeriod(3).build(),
+                RankingEntryResponse.builder().position(2).userId("user-B").monasThisPeriod(2).build()
         );
 
-        when(getRankingUseCase.execute(anyInt())).thenReturn(ranking);
+        when(getRankingUseCase.execute(any(com.charizad.compiled.gamification_service.domain.model.enums.RankingType.class), anyInt())).thenReturn(ranking);
 
-        mockMvc.perform(get("/api/v1/gamificacion/ranking?limit=10"))
+        mockMvc.perform(get("/api/v1/gamificacion/ranking?limit=10&tipo=WEEKLY"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].position").value(1))
                 .andExpect(jsonPath("$[0].userId").value("user-A"))
-                .andExpect(jsonPath("$[0].weeklyXp").value(500))
+                .andExpect(jsonPath("$[0].monasThisPeriod").value(3))
                 .andExpect(jsonPath("$[1].position").value(2));
     }
 
     @Test
     @DisplayName("GET /ranking usa limit=10 por defecto")
     void getRanking_shouldUseDefaultLimit() throws Exception {
-        when(getRankingUseCase.execute(10)).thenReturn(List.of());
+        when(getRankingUseCase.execute(any(com.charizad.compiled.gamification_service.domain.model.enums.RankingType.class), eq(10))).thenReturn(List.of());
 
         mockMvc.perform(get("/api/v1/gamificacion/ranking"))
                 .andExpect(status().isOk());

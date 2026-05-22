@@ -1,8 +1,8 @@
 package com.charizad.compiled.gamification_service.infrastructure.adapters.in.messaging;
 
-import com.charizad.compiled.gamification_service.application.dto.request.BadgeUnlockEventRequest;
-import com.charizad.compiled.gamification_service.domain.model.BadgeUnlockEventType;
-import com.charizad.compiled.gamification_service.domain.ports.in.CheckBadgeUnlockUseCase;
+import com.charizad.compiled.gamification_service.application.dto.request.MonaUnlockEventRequest;
+import com.charizad.compiled.gamification_service.domain.model.MonaUnlockEventType;
+import com.charizad.compiled.gamification_service.domain.ports.in.CheckMonaUnlockUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
- * Consumes events published by other microservices and triggers badge unlock evaluation.
+ * Consumes events published by other microservices and triggers Mona unlock evaluation.
  *
- * Each method maps a RabbitMQ event to a {@link BadgeUnlockEventRequest} and delegates
- * to {@link CheckBadgeUnlockUseCase}.
+ * Each method maps a RabbitMQ event to a {@link MonaUnlockEventRequest} and delegates
+ * to {@link CheckMonaUnlockUseCase}.
  *
  * Expected payload format for all events: Map<String, Object> with at least "userId".
  * Additional fields depend on the event type — see each method.
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GamificationEventListener {
 
-    private final CheckBadgeUnlockUseCase checkBadgeUnlockUseCase;
+    private final CheckMonaUnlockUseCase checkMonaUnlockUseCase;
 
     /**
      * Published by social-matching when a user creates or reaches a connection milestone.
@@ -36,13 +36,13 @@ public class GamificationEventListener {
     public void onConnectionCreated(Map<String, Object> payload) {
         log.info("[RabbitMQ] connection.created received for userId={}", payload.get("userId"));
         try {
-            BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+            MonaUnlockEventRequest event = MonaUnlockEventRequest.builder()
                     .userId((String) payload.get("userId"))
-                    .eventType(BadgeUnlockEventType.CONNECTION_CREATED)
+                    .eventType(MonaUnlockEventType.CONNECTION_CREATED)
                     .totalActiveConnections(toInt(payload.get("totalActiveConnections")))
                     .userRegisteredAt(toLocalDateTime(payload.get("userRegisteredAt")))
                     .build();
-            checkBadgeUnlockUseCase.execute(event);
+            checkMonaUnlockUseCase.execute(event);
         } catch (Exception e) {
             log.error("[RabbitMQ] Error processing connection.created: {}", e.getMessage(), e);
         }
@@ -57,14 +57,14 @@ public class GamificationEventListener {
     public void onParcheCreated(Map<String, Object> payload) {
         log.info("[RabbitMQ] parche.created received for userId={}", payload.get("userId"));
         try {
-            BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+            MonaUnlockEventRequest event = MonaUnlockEventRequest.builder()
                     .userId((String) payload.get("userId"))
-                    .eventType(BadgeUnlockEventType.PARCHE_JOINED_OR_CREATED)
+                    .eventType(MonaUnlockEventType.PARCHE_JOINED_OR_CREATED)
                     .isCreator((Boolean) payload.getOrDefault("isCreator", false))
                     .totalParchesCreated(toInt(payload.get("totalParchesCreated")))
                     .parcheScheduledAt(toLocalDateTime(payload.get("parcheScheduledAt")))
                     .build();
-            checkBadgeUnlockUseCase.execute(event);
+            checkMonaUnlockUseCase.execute(event);
         } catch (Exception e) {
             log.error("[RabbitMQ] Error processing parche.created: {}", e.getMessage(), e);
         }
@@ -79,12 +79,12 @@ public class GamificationEventListener {
     public void onMemberJoined(Map<String, Object> payload) {
         log.info("[RabbitMQ] member.joined received for userId={}", payload.get("userId"));
         try {
-            BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+            MonaUnlockEventRequest event = MonaUnlockEventRequest.builder()
                     .userId((String) payload.get("userId"))
-                    .eventType(BadgeUnlockEventType.MEMBER_JOINED_PARCHE)
+                    .eventType(MonaUnlockEventType.MEMBER_JOINED_PARCHE)
                     .captainUserId((String) payload.get("captainUserId"))
                     .build();
-            checkBadgeUnlockUseCase.execute(event);
+            checkMonaUnlockUseCase.execute(event);
         } catch (Exception e) {
             log.error("[RabbitMQ] Error processing member.joined: {}", e.getMessage(), e);
         }
@@ -99,11 +99,11 @@ public class GamificationEventListener {
     public void onMessageSent(Map<String, Object> payload) {
         log.info("[RabbitMQ] message.sent received for userId={}", payload.get("userId"));
         try {
-            BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+            MonaUnlockEventRequest event = MonaUnlockEventRequest.builder()
                     .userId((String) payload.get("userId"))
-                    .eventType(BadgeUnlockEventType.FIRST_MESSAGE_SENT)
+                    .eventType(MonaUnlockEventType.FIRST_MESSAGE_SENT)
                     .build();
-            checkBadgeUnlockUseCase.execute(event);
+            checkMonaUnlockUseCase.execute(event);
         } catch (Exception e) {
             log.error("[RabbitMQ] Error processing message.sent: {}", e.getMessage(), e);
         }
@@ -119,13 +119,13 @@ public class GamificationEventListener {
     public void onZoneVisited(Map<String, Object> payload) {
         log.info("[RabbitMQ] geo.location.updated received for userId={}", payload.get("userId"));
         try {
-            BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+            MonaUnlockEventRequest event = MonaUnlockEventRequest.builder()
                     .userId((String) payload.get("userId"))
-                    .eventType(BadgeUnlockEventType.ZONE_VISITED)
+                    .eventType(MonaUnlockEventType.ZONE_VISITED)
                     .campusZone((String) payload.get("campusZone"))
                     .geoLocationEnabled(true)
                     .build();
-            checkBadgeUnlockUseCase.execute(event);
+            checkMonaUnlockUseCase.execute(event);
         } catch (Exception e) {
             log.error("[RabbitMQ] Error processing geo.location.updated: {}", e.getMessage(), e);
         }
@@ -140,11 +140,11 @@ public class GamificationEventListener {
     public void onEventAttended(Map<String, Object> payload) {
         log.info("[RabbitMQ] event.attended received for userId={}", payload.get("userId"));
         try {
-            BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+            MonaUnlockEventRequest event = MonaUnlockEventRequest.builder()
                     .userId((String) payload.get("userId"))
-                    .eventType(BadgeUnlockEventType.INSTITUTIONAL_EVENT_ATTENDED)
+                    .eventType(MonaUnlockEventType.INSTITUTIONAL_EVENT_ATTENDED)
                     .build();
-            checkBadgeUnlockUseCase.execute(event);
+            checkMonaUnlockUseCase.execute(event);
         } catch (Exception e) {
             log.error("[RabbitMQ] Error processing event.attended: {}", e.getMessage(), e);
         }

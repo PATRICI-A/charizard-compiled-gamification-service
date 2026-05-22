@@ -2,11 +2,11 @@ package com.charizad.compiled.gamification_service.infrastructure.adapters.persi
 
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
 import com.charizad.compiled.gamification_service.domain.model.enums.RewardType;
-import com.charizad.compiled.gamification_service.domain.valueobjects.BadgeProgress;
-import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge;
+import com.charizad.compiled.gamification_service.domain.valueobjects.MonaProgress;
+import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedMona;
 import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedReward;
-import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.BadgeProgressSubdocument;
-import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.EarnedBadgeSubdocument;
+import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.MonaProgressSubdocument;
+import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.EarnedMonaSubdocument;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.EarnedRewardSubdocument;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.UserGamificationDocument;
 import org.junit.jupiter.api.DisplayName;
@@ -30,15 +30,15 @@ class UserGamificationDocumentMapperTest {
     void toDomain_shouldMapDocumentWithLists() {
         LocalDateTime now = LocalDateTime.now();
 
-        EarnedBadgeSubdocument earnedSub = EarnedBadgeSubdocument.builder()
-                .badgeId("badge-001")
-                .badgeName("Primer Parche")
+        EarnedMonaSubdocument earnedSub = EarnedMonaSubdocument.builder()
+                .monaId("Mona-001")
+                .monaName("Primer Parche")
                 .earnedAt(now)
                 .xpAwarded(100)
                 .build();
 
-        BadgeProgressSubdocument progressSub = BadgeProgressSubdocument.builder()
-                .badgeId("badge-002")
+        MonaProgressSubdocument progressSub = MonaProgressSubdocument.builder()
+                .monaId("Mona-002")
                 .currentValue(50)
                 .requiredValue(100)
                 .completed(false)
@@ -50,7 +50,7 @@ class UserGamificationDocumentMapperTest {
                 .totalXp(500)
                 .weeklyXp(200)
                 .rankingOptIn(true)
-                .earnedBadges(List.of(earnedSub))
+                .earnedMonas(List.of(earnedSub))
                 .progress(List.of(progressSub))
                 .build();
 
@@ -61,10 +61,10 @@ class UserGamificationDocumentMapperTest {
         assertThat(result.getTotalXp()).isEqualTo(500);
         assertThat(result.getWeeklyXp()).isEqualTo(200);
         assertThat(result.isRankingOptIn()).isTrue();
-        assertThat(result.getEarnedBadges()).hasSize(1);
-        assertThat(result.getEarnedBadges().get(0).getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.getEarnedMonas()).hasSize(1);
+        assertThat(result.getEarnedMonas().get(0).getMonaId()).isEqualTo("Mona-001");
         assertThat(result.getProgress()).hasSize(1);
-        assertThat(result.getProgress().get(0).getBadgeId()).isEqualTo("badge-002");
+        assertThat(result.getProgress().get(0).getMonaId()).isEqualTo("Mona-002");
     }
 
     @Test
@@ -80,9 +80,9 @@ class UserGamificationDocumentMapperTest {
                 .xpAtUnlock(1000)
                 .build();
 
-        EarnedBadgeSubdocument earnedSub = EarnedBadgeSubdocument.builder()
-                .badgeId("badge-001")
-                .badgeName("Primer Parche")
+        EarnedMonaSubdocument earnedSub = EarnedMonaSubdocument.builder()
+                .monaId("Mona-001")
+                .monaName("Primer Parche")
                 .earnedAt(now)
                 .xpAwarded(100)
                 .build();
@@ -93,7 +93,7 @@ class UserGamificationDocumentMapperTest {
                 .totalXp(1500)
                 .weeklyXp(300)
                 .rankingOptIn(true)
-                .earnedBadges(List.of(earnedSub))
+                .earnedMonas(List.of(earnedSub))
                 .progress(new ArrayList<>())
                 .earnedRewards(List.of(rewardSub))
                 .build();
@@ -122,13 +122,13 @@ class UserGamificationDocumentMapperTest {
                 .totalXp(0)
                 .weeklyXp(0)
                 .rankingOptIn(false)
-                .earnedBadges(null)
+                .earnedMonas(null)
                 .progress(null)
                 .build();
 
         UserGamification result = mapper.toDomain(doc);
 
-        assertThat(result.getEarnedBadges()).isEmpty();
+        assertThat(result.getEarnedMonas()).isEmpty();
         assertThat(result.getProgress()).isEmpty();
     }
 
@@ -145,15 +145,15 @@ class UserGamificationDocumentMapperTest {
                 .xpAtUnlock(1000)
                 .build();
 
-        EarnedBadge earned = EarnedBadge.builder()
-                .badgeId("badge-001")
-                .badgeName("Primer Parche")
+        EarnedMona earned = EarnedMona.builder()
+                .monaId("Mona-001")
+                .monaName("Primer Parche")
                 .earnedAt(now)
                 .xpAwarded(100)
                 .build();
 
-        BadgeProgress progress = BadgeProgress.builder()
-                .badgeId("badge-002")
+        MonaProgress progress = MonaProgress.builder()
+                .monaId("Mona-002")
                 .currentValue(50)
                 .requiredValue(100)
                 .completed(false)
@@ -165,7 +165,7 @@ class UserGamificationDocumentMapperTest {
                 .totalXp(500)
                 .weeklyXp(200)
                 .rankingOptIn(true)
-                .earnedBadges(List.of(earned))
+                .earnedMonas(List.of(earned))
                 .progress(List.of(progress))
                 .earnedRewards(List.of(reward))
                 .build();
@@ -177,10 +177,10 @@ class UserGamificationDocumentMapperTest {
         assertThat(result.getTotalXp()).isEqualTo(500);
         assertThat(result.getWeeklyXp()).isEqualTo(200);
         assertThat(result.isRankingOptIn()).isTrue();
-        assertThat(result.getEarnedBadges()).hasSize(1);
-        assertThat(result.getEarnedBadges().get(0).getBadgeId()).isEqualTo("badge-001");
+        assertThat(result.getEarnedMonas()).hasSize(1);
+        assertThat(result.getEarnedMonas().get(0).getMonaId()).isEqualTo("Mona-001");
         assertThat(result.getProgress()).hasSize(1);
-        assertThat(result.getProgress().get(0).getBadgeId()).isEqualTo("badge-002");
+        assertThat(result.getProgress().get(0).getMonaId()).isEqualTo("Mona-002");
         assertThat(result.getEarnedRewards()).hasSize(1);
         assertThat(result.getEarnedRewards().get(0).getRewardId()).isEqualTo("reward-001");
         assertThat(result.getEarnedRewards().get(0).getRewardName()).isEqualTo("Gold Title");
@@ -198,14 +198,14 @@ class UserGamificationDocumentMapperTest {
                 .totalXp(0)
                 .weeklyXp(0)
                 .rankingOptIn(false)
-                .earnedBadges(List.of())
+                .earnedMonas(List.of())
                 .progress(List.of())
                 .earnedRewards(new ArrayList<>())
                 .build();
 
         UserGamificationDocument result = mapper.toDocument(user);
 
-        assertThat(result.getEarnedBadges()).isEmpty();
+        assertThat(result.getEarnedMonas()).isEmpty();
         assertThat(result.getProgress()).isEmpty();
     }
 
@@ -222,15 +222,15 @@ class UserGamificationDocumentMapperTest {
                 .xpAtUnlock(1000)
                 .build();
 
-        EarnedBadgeSubdocument earnedSub = EarnedBadgeSubdocument.builder()
-                .badgeId("badge-001")
-                .badgeName("Test")
+        EarnedMonaSubdocument earnedSub = EarnedMonaSubdocument.builder()
+                .monaId("Mona-001")
+                .monaName("Test")
                 .earnedAt(now)
                 .xpAwarded(100)
                 .build();
 
-        BadgeProgressSubdocument progressSub = BadgeProgressSubdocument.builder()
-                .badgeId("badge-002")
+        MonaProgressSubdocument progressSub = MonaProgressSubdocument.builder()
+                .monaId("Mona-002")
                 .currentValue(30)
                 .requiredValue(100)
                 .completed(false)
@@ -242,7 +242,7 @@ class UserGamificationDocumentMapperTest {
                 .totalXp(300)
                 .weeklyXp(100)
                 .rankingOptIn(true)
-                .earnedBadges(List.of(earnedSub))
+                .earnedMonas(List.of(earnedSub))
                 .progress(List.of(progressSub))
                 .earnedRewards(List.of(rewardSub))
                 .build();
@@ -255,7 +255,7 @@ class UserGamificationDocumentMapperTest {
         assertThat(result.getTotalXp()).isEqualTo(original.getTotalXp());
         assertThat(result.getWeeklyXp()).isEqualTo(original.getWeeklyXp());
         assertThat(result.isRankingOptIn()).isEqualTo(original.isRankingOptIn());
-        assertThat(result.getEarnedBadges()).hasSize(original.getEarnedBadges().size());
+        assertThat(result.getEarnedMonas()).hasSize(original.getEarnedMonas().size());
         assertThat(result.getProgress()).hasSize(original.getProgress().size());
         assertThat(result.getEarnedRewards()).hasSize(original.getEarnedRewards().size());
     }

@@ -35,7 +35,7 @@ class GetUserStatsServiceTest {
                 .totalXp(350)
                 .weeklyXp(150)
                 .rankingOptIn(true)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .build();
 
@@ -44,7 +44,7 @@ class GetUserStatsServiceTest {
                 .totalXp(350)
                 .weeklyXp(150)
                 .rankingOptIn(true)
-                .totalBadgesEarned(0)
+                .totalMonasEarned(0)
                 .build();
 
         when(userGamificationRepository.findByUserId("user-001")).thenReturn(Optional.of(user));

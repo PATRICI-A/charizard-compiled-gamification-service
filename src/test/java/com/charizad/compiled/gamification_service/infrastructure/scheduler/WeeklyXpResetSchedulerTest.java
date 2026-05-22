@@ -32,7 +32,7 @@ class WeeklyXpResetSchedulerTest {
                 .weeklyXp(200)
                 .weeklyMonas(3)
                 .rankingOptIn(true)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .build();
 
@@ -42,7 +42,7 @@ class WeeklyXpResetSchedulerTest {
                 .weeklyXp(100)
                 .weeklyMonas(1)
                 .rankingOptIn(true)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .build();
 

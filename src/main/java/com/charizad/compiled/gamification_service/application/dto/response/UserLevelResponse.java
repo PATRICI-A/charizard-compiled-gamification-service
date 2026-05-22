@@ -14,5 +14,7 @@ public class UserLevelResponse {
     private int nivel;
     private String levelName;
     private int totalMonas;
-    private int monasParaSiguienteNivel;
+    private int totalXp;
+    private int xpParaSiguienteNivel;
+    private int xpRestante;
 }

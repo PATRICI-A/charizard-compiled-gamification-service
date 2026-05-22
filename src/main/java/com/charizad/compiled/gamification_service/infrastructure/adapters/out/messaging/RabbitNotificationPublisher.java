@@ -1,6 +1,6 @@
 package com.charizad.compiled.gamification_service.infrastructure.adapters.out.messaging;
 
-import com.charizad.compiled.gamification_service.domain.model.Badge;
+import com.charizad.compiled.gamification_service.domain.model.Mona;
 import com.charizad.compiled.gamification_service.domain.ports.out.NotificationEventPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,25 +27,25 @@ public class RabbitNotificationPublisher implements NotificationEventPort {
     @Value("${rabbitmq.exchange.gamification:gamification.events}")
     private String gamificationExchange;
 
-    @Value("${rabbitmq.routing-key.badge-earned:badge.earned}")
-    private String badgeEarnedKey;
+    @Value("${rabbitmq.routing-key.Mona-earned:Mona.earned}")
+    private String MonaEarnedKey;
 
     @Override
     @Async
-    public void notifyBadgeEarned(String userId, Badge badge) {
+    public void notifyMonaEarned(String userId, Mona Mona) {
         try {
             Map<String, Object> payload = Map.of(
                     "userId", userId,
-                    "badgeId", badge.getId(),
-                    "badgeName", badge.getName(),
-                    "badgeCategory", badge.getCategory().name(),
-                    "xpAwarded", badge.getXpReward(),
+                    "MonaId", Mona.getId(),
+                    "MonaName", Mona.getName(),
+                    "MonaCategory", Mona.getCategory().name(),
+                    "xpAwarded", Mona.getXpReward(),
                     "occurredAt", LocalDateTime.now().toString()
             );
-            rabbitTemplate.convertAndSend(gamificationExchange, badgeEarnedKey, payload);
-            log.info("[RabbitMQ] Published badge.earned → userId={} badge={}", userId, badge.getName());
+            rabbitTemplate.convertAndSend(gamificationExchange, MonaEarnedKey, payload);
+            log.info("[RabbitMQ] Published Mona.earned → userId={} Mona={}", userId, Mona.getName());
         } catch (Exception e) {
-            log.warn("[RabbitMQ] Could not publish badge.earned for userId={}: {}", userId, e.getMessage());
+            log.warn("[RabbitMQ] Could not publish Mona.earned for userId={}: {}", userId, e.getMessage());
         }
     }
 }

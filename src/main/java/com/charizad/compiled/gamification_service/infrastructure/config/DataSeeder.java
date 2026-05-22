@@ -1,8 +1,8 @@
 package com.charizad.compiled.gamification_service.infrastructure.config;
 
-import com.charizad.compiled.gamification_service.domain.model.enums.BadgeCategory;
-import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.BadgeDocument;
-import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.repository.BadgeMongoRepository;
+import com.charizad.compiled.gamification_service.domain.model.enums.MonaCategory;
+import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.MonaDocument;
+import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.repository.MonaMongoRepository;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.repository.UserGamificationMongoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +18,14 @@ import java.util.List;
  * Siembra el catálogo oficial de las 13 monas (RF13.1) al arrancar en entorno dev.
  * En producción las monas deben cargarse mediante un script de migración separado.
  *
- * Solo se ejecuta si la colección 'badges' está vacía y el perfil NO es 'prod' ni 'test'.
+ * Solo se ejecuta si la colección 'Monas' está vacía y el perfil NO es 'prod' ni 'test'.
  */
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class DataSeeder {
 
-    private final BadgeMongoRepository badgeRepository;
+    private final MonaMongoRepository MonaRepository;
     private final UserGamificationMongoRepository userRepository;
 
     @Bean
@@ -33,7 +33,7 @@ public class DataSeeder {
     public CommandLineRunner seedData() {
         return args -> {
             try {
-                if (badgeRepository.count() > 0) {
+                if (MonaRepository.count() > 0) {
                     log.info("Catálogo de monas ya existe, omitiendo seeder.");
                     return;
                 }
@@ -47,80 +47,80 @@ public class DataSeeder {
     }
 
     private void seedOfficialMonas() {
-        List<BadgeDocument> monas = List.of(
-                badge("Primera Conexión",
+        List<MonaDocument> monas = List.of(
+                Mona("Primera Conexión",
                         "Realizaste tu primera conexión con otro usuario en la plataforma.",
-                        BadgeCategory.COMMON, 10,
+                        MonaCategory.COMMON, 100,
                         "https://cdn.example.com/monas/primera-conexion.png"),
 
-                badge("Conector",
+                Mona("Conector",
                         "Acumulaste 5 conexiones activas.",
-                        BadgeCategory.UNCOMMON, 25,
+                        MonaCategory.UNCOMMON, 250,
                         "https://cdn.example.com/monas/conector.png"),
 
-                badge("Embajador Social",
+                Mona("Embajador Social",
                         "Acumulaste 10 conexiones activas.",
-                        BadgeCategory.RARE, 50,
+                        MonaCategory.RARE, 500,
                         "https://cdn.example.com/monas/embajador-social.png"),
 
-                badge("Primer Parche",
+                Mona("Primer Parche",
                         "Te uniste o creaste tu primer parche.",
-                        BadgeCategory.COMMON, 10,
+                        MonaCategory.COMMON, 100,
                         "https://cdn.example.com/monas/primer-parche.png"),
 
-                badge("Anfitrión",
+                Mona("Anfitrión",
                         "Creaste 2 parches como capitán.",
-                        BadgeCategory.UNCOMMON, 25,
+                        MonaCategory.UNCOMMON, 250,
                         "https://cdn.example.com/monas/anfitrion.png"),
 
-                badge("Planificador",
+                Mona("Planificador",
                         "Creaste un parche con más de 3 días de anticipación.",
-                        BadgeCategory.COMMON, 15,
+                        MonaCategory.COMMON, 100,
                         "https://cdn.example.com/monas/planificador.png"),
 
-                badge("Explorador I",
+                Mona("Explorador I",
                         "Visitaste 3 zonas distintas del campus.",
-                        BadgeCategory.COMMON, 15,
+                        MonaCategory.COMMON, 100,
                         "https://cdn.example.com/monas/explorador-i.png"),
 
-                badge("Explorador II",
+                Mona("Explorador II",
                         "Visitaste 5 zonas distintas del campus.",
-                        BadgeCategory.UNCOMMON, 30,
+                        MonaCategory.UNCOMMON, 250,
                         "https://cdn.example.com/monas/explorador-ii.png"),
 
-                badge("Asistente",
+                Mona("Asistente",
                         "Asististe a un evento universitario institucional guardado.",
-                        BadgeCategory.RARE, 50,
+                        MonaCategory.RARE, 500,
                         "https://cdn.example.com/monas/asistente.png"),
 
-                badge("Primer Mensaje",
+                Mona("Primer Mensaje",
                         "Enviaste el primer mensaje en un parche recién creado.",
-                        BadgeCategory.COMMON, 10,
+                        MonaCategory.COMMON, 100,
                         "https://cdn.example.com/monas/primer-mensaje.png"),
 
-                badge("Imán Social",
+                Mona("Imán Social",
                         "Un nuevo usuario se unió a un parche que tú creaste.",
-                        BadgeCategory.COMMON, 15,
+                        MonaCategory.COMMON, 100,
                         "https://cdn.example.com/monas/iman-social.png"),
 
-                badge("Meteoro Social",
+                Mona("Meteoro Social",
                         "Pasaste de 0 a 10 conexiones en menos de 30 días desde tu registro.",
-                        BadgeCategory.EPIC, 100,
+                        MonaCategory.EPIC, 1000,
                         "https://cdn.example.com/monas/meteoro-social.png"),
 
-                badge("Coleccionista",
+                Mona("Coleccionista",
                         "Desbloqueaste las 12 monas anteriores. ¡Eres una Leyenda del Parche!",
-                        BadgeCategory.LEGENDARY, 200,
+                        MonaCategory.LEGENDARY, 2000,
                         "https://cdn.example.com/monas/coleccionista.png")
         );
 
-        badgeRepository.saveAll(monas);
+        MonaRepository.saveAll(monas);
         log.info("13 monas insertadas en el catálogo.");
     }
 
-    private BadgeDocument badge(String name, String description,
-                                BadgeCategory category, int xpReward, String iconUrl) {
-        return BadgeDocument.builder()
+    private MonaDocument Mona(String name, String description,
+                                MonaCategory category, int xpReward, String iconUrl) {
+        return MonaDocument.builder()
                 .name(name)
                 .description(description)
                 .category(category)

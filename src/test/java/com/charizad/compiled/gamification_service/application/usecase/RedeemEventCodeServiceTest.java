@@ -1,14 +1,14 @@
 package com.charizad.compiled.gamification_service.application.usecase;
 
-import com.charizad.compiled.gamification_service.application.dto.request.AwardBadgeRequest;
-import com.charizad.compiled.gamification_service.application.dto.response.EarnedBadgeResponse;
-import com.charizad.compiled.gamification_service.domain.exceptions.BadgeNotFoundException;
+import com.charizad.compiled.gamification_service.application.dto.request.AwardMonaRequest;
+import com.charizad.compiled.gamification_service.application.dto.response.EarnedMonaResponse;
+import com.charizad.compiled.gamification_service.domain.exceptions.MonaNotFoundException;
 import com.charizad.compiled.gamification_service.domain.exceptions.InvalidEventCodeException;
-import com.charizad.compiled.gamification_service.domain.model.Badge;
+import com.charizad.compiled.gamification_service.domain.model.Mona;
 import com.charizad.compiled.gamification_service.domain.model.EventCode;
-import com.charizad.compiled.gamification_service.domain.model.enums.BadgeCategory;
-import com.charizad.compiled.gamification_service.domain.ports.in.AwardBadgeUseCase;
-import com.charizad.compiled.gamification_service.domain.ports.out.BadgeRepositoryPort;
+import com.charizad.compiled.gamification_service.domain.model.enums.MonaCategory;
+import com.charizad.compiled.gamification_service.domain.ports.in.AwardMonaUseCase;
+import com.charizad.compiled.gamification_service.domain.ports.out.MonaRepositoryPort;
 import com.charizad.compiled.gamification_service.domain.ports.out.EventCodeRepositoryPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,8 +31,8 @@ import static org.mockito.Mockito.*;
 class RedeemEventCodeServiceTest {
 
     @Mock private EventCodeRepositoryPort eventCodeRepository;
-    @Mock private BadgeRepositoryPort badgeRepository;
-    @Mock private AwardBadgeUseCase awardBadgeUseCase;
+    @Mock private MonaRepositoryPort MonaRepository;
+    @Mock private AwardMonaUseCase awardMonaUseCase;
 
     @InjectMocks
     private RedeemEventCodeService service;
@@ -46,9 +46,9 @@ class RedeemEventCodeServiceTest {
                 .build();
     }
 
-    private Badge asistenteBadge() {
-        return Badge.builder().id("b-asistente").name("Asistente")
-                .category(BadgeCategory.RARE).active(true).build();
+    private Mona asistenteMona() {
+        return Mona.builder().id("b-asistente").name("Asistente")
+                .category(MonaCategory.RARE).active(true).build();
     }
 
     @Test
@@ -56,19 +56,19 @@ class RedeemEventCodeServiceTest {
     void execute_validCode_awardsAsistente() {
         EventCode code = validCode("ABC123");
         when(eventCodeRepository.findByCode("ABC123")).thenReturn(Optional.of(code));
-        when(badgeRepository.findByName("Asistente")).thenReturn(Optional.of(asistenteBadge()));
-        EarnedBadgeResponse response = mock(EarnedBadgeResponse.class);
-        when(awardBadgeUseCase.execute(any())).thenReturn(response);
+        when(MonaRepository.findByName("Asistente")).thenReturn(Optional.of(asistenteMona()));
+        EarnedMonaResponse response = mock(EarnedMonaResponse.class);
+        when(awardMonaUseCase.execute(any())).thenReturn(response);
 
-        EarnedBadgeResponse result = service.execute("u1", "ABC123");
+        EarnedMonaResponse result = service.execute("u1", "ABC123");
 
         assertThat(result).isSameAs(response);
         verify(eventCodeRepository).save(code);
 
-        ArgumentCaptor<AwardBadgeRequest> captor = ArgumentCaptor.forClass(AwardBadgeRequest.class);
-        verify(awardBadgeUseCase).execute(captor.capture());
+        ArgumentCaptor<AwardMonaRequest> captor = ArgumentCaptor.forClass(AwardMonaRequest.class);
+        verify(awardMonaUseCase).execute(captor.capture());
         assertThat(captor.getValue().getUserId()).isEqualTo("u1");
-        assertThat(captor.getValue().getBadgeId()).isEqualTo("b-asistente");
+        assertThat(captor.getValue().getMonaId()).isEqualTo("b-asistente");
     }
 
     @Test
@@ -128,14 +128,14 @@ class RedeemEventCodeServiceTest {
     }
 
     @Test
-    @DisplayName("Badge Asistente no existe en catálogo → BadgeNotFoundException")
-    void execute_badgeNotFound_throws() {
+    @DisplayName("Mona Asistente no existe en catálogo → MonaNotFoundException")
+    void execute_MonaNotFound_throws() {
         EventCode code = validCode("ABC");
         when(eventCodeRepository.findByCode("ABC")).thenReturn(Optional.of(code));
-        when(badgeRepository.findByName("Asistente")).thenReturn(Optional.empty());
+        when(MonaRepository.findByName("Asistente")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.execute("u1", "ABC"))
-                .isInstanceOf(BadgeNotFoundException.class);
+                .isInstanceOf(MonaNotFoundException.class);
     }
 
     @Test
@@ -150,8 +150,8 @@ class RedeemEventCodeServiceTest {
                 .usedByUserIds(usedBy)
                 .build();
         when(eventCodeRepository.findByCode("SHARED")).thenReturn(Optional.of(code));
-        when(badgeRepository.findByName("Asistente")).thenReturn(Optional.of(asistenteBadge()));
-        when(awardBadgeUseCase.execute(any())).thenReturn(mock(EarnedBadgeResponse.class));
+        when(MonaRepository.findByName("Asistente")).thenReturn(Optional.of(asistenteMona()));
+        when(awardMonaUseCase.execute(any())).thenReturn(mock(EarnedMonaResponse.class));
 
         service.execute("new-user", "SHARED");
 

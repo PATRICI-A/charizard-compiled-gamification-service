@@ -73,16 +73,16 @@ class UserGamificationRepositoryAdapterTest {
     }
 
     @Test
-    @DisplayName("findAllOptedInOrderByWeeklyXpDesc usa PageRequest y retorna lista")
-    void findAllOptedInOrderByWeeklyXpDesc_shouldReturnOptedInUsers() {
+    @DisplayName("findAllOptedInOrderByWeeklyMonasDesc usa PageRequest y retorna lista")
+    void findAllOptedInOrderByWeeklyMonasDesc_shouldReturnOptedInUsers() {
         UserGamificationDocument doc = UserGamificationDocument.builder().userId("user-001").rankingOptIn(true).build();
         UserGamification domain = UserGamification.builder().userId("user-001").rankingOptIn(true).build();
 
-        when(mongoRepository.findByRankingOptInTrueOrderByWeeklyXpDesc(PageRequest.of(0, 10)))
+        when(mongoRepository.findByRankingOptInTrueOrderByWeeklyMonasDesc(PageRequest.of(0, 10)))
                 .thenReturn(List.of(doc));
         when(mapper.toDomain(doc)).thenReturn(domain);
 
-        List<UserGamification> result = adapter.findAllOptedInOrderByWeeklyXpDesc(10);
+        List<UserGamification> result = adapter.findAllOptedInOrderByWeeklyMonasDesc(10);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getUserId()).isEqualTo("user-001");

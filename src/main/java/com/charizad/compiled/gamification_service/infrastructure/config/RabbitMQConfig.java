@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    // ── Outbound exchange (gamification publishes badge.earned) ──────────────
+    // ── Outbound exchange (gamification publishes Mona.earned) ──────────────
     @Value("${rabbitmq.exchange.gamification:gamification.events}")
     private String gamificationExchange;
 

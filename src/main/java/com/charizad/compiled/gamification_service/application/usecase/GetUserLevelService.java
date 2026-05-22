@@ -20,15 +20,17 @@ public class GetUserLevelService implements GetUserLevelUseCase {
         UserGamification user = userGamificationRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserGamificationNotFoundException(userId));
 
-        int totalMonas = user.getTotalMonas();
-        int nivel = NivelCalculator.getNivel(totalMonas);
+        int totalXp = user.getTotalXp();
+        int nivel = NivelCalculator.getNivel(totalXp);
 
         return UserLevelResponse.builder()
                 .userId(userId)
                 .nivel(nivel)
                 .levelName(NivelCalculator.getNivelName(nivel))
-                .totalMonas(totalMonas)
-                .monasParaSiguienteNivel(NivelCalculator.getMonasParaSiguienteNivel(totalMonas))
+                .totalMonas(user.getTotalMonas())
+                .totalXp(totalXp)
+                .xpParaSiguienteNivel(NivelCalculator.getXpParaSiguienteNivel(totalXp))
+                .xpRestante(NivelCalculator.getXpRestante(totalXp))
                 .build();
     }
 }

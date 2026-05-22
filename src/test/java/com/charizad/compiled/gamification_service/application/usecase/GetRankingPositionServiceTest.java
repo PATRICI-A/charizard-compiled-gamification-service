@@ -2,6 +2,7 @@ package com.charizad.compiled.gamification_service.application.usecase;
 
 import com.charizad.compiled.gamification_service.application.dto.response.RankingPositionResponse;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
+import com.charizad.compiled.gamification_service.domain.model.enums.RankingType;
 import com.charizad.compiled.gamification_service.domain.ports.out.UserGamificationRepositoryPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,18 +25,18 @@ class GetRankingPositionServiceTest {
     @InjectMocks
     private GetRankingPositionService service;
 
-    private UserGamification buildUser(String userId, boolean optIn, int weeklyMonas, int badgeCount) {
-        ArrayList<com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge> badges = new ArrayList<>();
-        for (int i = 0; i < badgeCount; i++) {
-            badges.add(com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge.builder()
-                    .badgeId("b" + i).badgeName("Badge" + i).xpAwarded(10).build());
+    private UserGamification buildUser(String userId, boolean optIn, int weeklyMonas, int MonaCount) {
+        ArrayList<com.charizad.compiled.gamification_service.domain.valueobjects.EarnedMona> Monas = new ArrayList<>();
+        for (int i = 0; i < MonaCount; i++) {
+            Monas.add(com.charizad.compiled.gamification_service.domain.valueobjects.EarnedMona.builder()
+                    .monaId("b" + i).monaName("Mona" + i).xpAwarded(10).build());
         }
         return UserGamification.builder()
                 .id("ug-1").userId(userId)
-                .totalXp(badgeCount * 10).weeklyXp(0)
+                .totalXp(MonaCount * 10).weeklyXp(0)
                 .weeklyMonas(weeklyMonas)
                 .rankingOptIn(optIn)
-                .earnedBadges(badges)
+                .earnedMonas(Monas)
                 .progress(new ArrayList<>())
                 .earnedRewards(new ArrayList<>())
                 .build();
@@ -47,11 +48,11 @@ class GetRankingPositionServiceTest {
         when(userGamificationRepository.findByUserId("u1")).thenReturn(Optional.empty());
         when(userGamificationRepository.countAllOptedIn()).thenReturn(50L);
 
-        RankingPositionResponse response = service.execute("u1");
+        RankingPositionResponse response = service.execute("u1", RankingType.WEEKLY);
 
         assertThat(response.getPosicion()).isEqualTo(0);
         assertThat(response.getTotalParticipantes()).isEqualTo(50L);
-        assertThat(response.getMonasThisWeek()).isEqualTo(0);
+        assertThat(response.getMonasThisPeriod()).isEqualTo(0);
         assertThat(response.getUserId()).isEqualTo("u1");
     }
 
@@ -62,11 +63,11 @@ class GetRankingPositionServiceTest {
         when(userGamificationRepository.findByUserId("u1")).thenReturn(Optional.of(user));
         when(userGamificationRepository.countAllOptedIn()).thenReturn(20L);
 
-        RankingPositionResponse response = service.execute("u1");
+        RankingPositionResponse response = service.execute("u1", RankingType.WEEKLY);
 
         assertThat(response.getPosicion()).isEqualTo(0);
         assertThat(response.getTotalParticipantes()).isEqualTo(20L);
-        verify(userGamificationRepository, never()).countOptedInWithMoreMonasThan(anyInt());
+        verify(userGamificationRepository, never()).countOptedInWithMoreWeeklyMonasThan(anyInt());
     }
 
     @Test
@@ -75,13 +76,13 @@ class GetRankingPositionServiceTest {
         UserGamification user = buildUser("u1", true, 8, 5);
         when(userGamificationRepository.findByUserId("u1")).thenReturn(Optional.of(user));
         when(userGamificationRepository.countAllOptedIn()).thenReturn(100L);
-        when(userGamificationRepository.countOptedInWithMoreMonasThan(8)).thenReturn(3L);
+        when(userGamificationRepository.countOptedInWithMoreWeeklyMonasThan(8)).thenReturn(3L);
 
-        RankingPositionResponse response = service.execute("u1");
+        RankingPositionResponse response = service.execute("u1", RankingType.WEEKLY);
 
         assertThat(response.getPosicion()).isEqualTo(4); // 3 ahead + 1
         assertThat(response.getTotalParticipantes()).isEqualTo(100L);
-        assertThat(response.getMonasThisWeek()).isEqualTo(8);
+        assertThat(response.getMonasThisPeriod()).isEqualTo(8);
         assertThat(response.getUserId()).isEqualTo("u1");
     }
 
@@ -91,9 +92,9 @@ class GetRankingPositionServiceTest {
         UserGamification user = buildUser("u1", true, 15, 6);
         when(userGamificationRepository.findByUserId("u1")).thenReturn(Optional.of(user));
         when(userGamificationRepository.countAllOptedIn()).thenReturn(10L);
-        when(userGamificationRepository.countOptedInWithMoreMonasThan(15)).thenReturn(0L);
+        when(userGamificationRepository.countOptedInWithMoreWeeklyMonasThan(15)).thenReturn(0L);
 
-        RankingPositionResponse response = service.execute("u1");
+        RankingPositionResponse response = service.execute("u1", RankingType.WEEKLY);
 
         assertThat(response.getPosicion()).isEqualTo(1);
     }

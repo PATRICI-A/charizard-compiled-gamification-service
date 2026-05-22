@@ -1,25 +1,23 @@
 package com.charizad.compiled.gamification_service.application.dto.response;
 
-import com.charizad.compiled.gamification_service.domain.model.enums.BadgeCategory;
+import com.charizad.compiled.gamification_service.domain.model.enums.MonaCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class MonaResponse {
-    private String monaId;
+    private String id;
     private String name;
     private String description;
-    private BadgeCategory rarity;
-    private boolean unlocked;
-    private LocalDate earnedAt;
-    private int currentCount;
-    private int targetCount;
-    private float progressPercentage;
+    private MonaCategory category;
+    private int xpReward;
+    private String iconUrl;
+    private LocalDateTime createdAt;
 }

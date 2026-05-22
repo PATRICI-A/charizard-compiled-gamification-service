@@ -46,7 +46,7 @@ class CheckXpRewardsServiceTest {
                 .totalXp(1000)
                 .weeklyXp(0)
                 .rankingOptIn(false)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .earnedRewards(new ArrayList<>())
                 .build();
@@ -98,7 +98,7 @@ class CheckXpRewardsServiceTest {
                 .totalXp(1000)
                 .weeklyXp(0)
                 .rankingOptIn(false)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .earnedRewards(new ArrayList<>())
                 .build();
@@ -122,7 +122,7 @@ class CheckXpRewardsServiceTest {
                 .totalXp(9999)
                 .weeklyXp(0)
                 .rankingOptIn(false)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .earnedRewards(new ArrayList<>())
                 .build();

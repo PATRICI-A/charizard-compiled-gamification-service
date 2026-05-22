@@ -1,9 +1,9 @@
 package com.charizad.compiled.gamification_service.entrypoints.rest.controller;
 
-import com.charizad.compiled.gamification_service.application.dto.request.BadgeUnlockEventRequest;
+import com.charizad.compiled.gamification_service.application.dto.request.MonaUnlockEventRequest;
 import com.charizad.compiled.gamification_service.application.dto.request.ZoneVisitedRequest;
-import com.charizad.compiled.gamification_service.domain.model.BadgeUnlockEventType;
-import com.charizad.compiled.gamification_service.domain.ports.in.CheckBadgeUnlockUseCase;
+import com.charizad.compiled.gamification_service.domain.model.MonaUnlockEventType;
+import com.charizad.compiled.gamification_service.domain.ports.in.CheckMonaUnlockUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,7 +31,7 @@ import java.util.Map;
 @SecurityRequirement(name = "bearerAuth")
 public class GamificationEventController {
 
-    private final CheckBadgeUnlockUseCase checkBadgeUnlockUseCase;
+    private final CheckMonaUnlockUseCase checkMonaUnlockUseCase;
 
     /**
      * Llamado por el geo service vía Feign cuando el usuario actualiza su ubicación
@@ -52,19 +52,19 @@ public class GamificationEventController {
             @Parameter(hidden = true) @AuthenticationPrincipal String userId,
             @Valid @RequestBody ZoneVisitedRequest request) {
 
-        BadgeUnlockEventRequest event = BadgeUnlockEventRequest.builder()
+        MonaUnlockEventRequest event = MonaUnlockEventRequest.builder()
                 .userId(userId)
-                .eventType(BadgeUnlockEventType.ZONE_VISITED)
+                .eventType(MonaUnlockEventType.ZONE_VISITED)
                 .campusZone(request.getCampusZone())
                 .geoLocationEnabled(true)
                 .build();
 
-        List<String> awarded = checkBadgeUnlockUseCase.execute(event);
+        List<String> awarded = checkMonaUnlockUseCase.execute(event);
 
         return ResponseEntity.ok(Map.of(
                 "userId", userId,
                 "campusZone", request.getCampusZone(),
-                "awardedBadgeIds", awarded
+                "awardedMonaIds", awarded
         ));
     }
 }

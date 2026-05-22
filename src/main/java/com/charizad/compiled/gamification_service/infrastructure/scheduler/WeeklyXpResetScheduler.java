@@ -26,10 +26,7 @@ public class WeeklyXpResetScheduler {
         log.info("Iniciando reinicio semanal de XP y monas...");
 
         List<UserGamification> allUsers = userGamificationRepository.findAllOptedIn();
-        allUsers.forEach(user -> {
-            user.resetWeeklyXp();
-            user.resetWeeklyMonas();
-        });
+        allUsers.forEach(UserGamification::resetWeeklyStats);
         userGamificationRepository.saveAll(allUsers);
 
         log.info("Reinicio semanal completado para {} usuarios.", allUsers.size());

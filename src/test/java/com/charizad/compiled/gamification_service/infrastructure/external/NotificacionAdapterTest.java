@@ -1,7 +1,7 @@
 package com.charizad.compiled.gamification_service.infrastructure.external;
 
-import com.charizad.compiled.gamification_service.domain.model.Badge;
-import com.charizad.compiled.gamification_service.domain.model.enums.BadgeCategory;
+import com.charizad.compiled.gamification_service.domain.model.Mona;
+import com.charizad.compiled.gamification_service.domain.model.enums.MonaCategory;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.out.messaging.RabbitNotificationPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,18 +24,18 @@ class NotificacionAdapterTest {
 
     private RabbitNotificationPublisher publisher;
 
-    private Badge badge;
+    private Mona Mona;
 
     @BeforeEach
     void setUp() {
         publisher = new RabbitNotificationPublisher(rabbitTemplate);
         ReflectionTestUtils.setField(publisher, "gamificationExchange", "gamification.events");
-        ReflectionTestUtils.setField(publisher, "badgeEarnedKey", "badge.earned");
+        ReflectionTestUtils.setField(publisher, "MonaEarnedKey", "Mona.earned");
 
-        badge = Badge.builder()
-                .id("badge-001")
+        Mona = Mona.builder()
+                .id("Mona-001")
                 .name("Primer Parche")
-                .category(BadgeCategory.COMMON)
+                .category(MonaCategory.COMMON)
                 .xpReward(100)
                 .createdAt(LocalDateTime.now())
                 .active(true)
@@ -43,23 +43,23 @@ class NotificacionAdapterTest {
     }
 
     @Test
-    @DisplayName("notifyBadgeEarned publica mensaje al exchange de RabbitMQ")
-    void notifyBadgeEarned_shouldPublishToRabbitMQ() {
-        publisher.notifyBadgeEarned("user-001", badge);
+    @DisplayName("notifyMonaEarned publica mensaje al exchange de RabbitMQ")
+    void notifyMonaEarned_shouldPublishToRabbitMQ() {
+        publisher.notifyMonaEarned("user-001", Mona);
 
         verify(rabbitTemplate).convertAndSend(
                 eq("gamification.events"),
-                eq("badge.earned"),
+                eq("Mona.earned"),
                 any(java.util.Map.class));
     }
 
     @Test
-    @DisplayName("notifyBadgeEarned no propaga excepción cuando RabbitMQ falla")
-    void notifyBadgeEarned_shouldSwallowException_whenRabbitFails() {
+    @DisplayName("notifyMonaEarned no propaga excepción cuando RabbitMQ falla")
+    void notifyMonaEarned_shouldSwallowException_whenRabbitFails() {
         doThrow(new RuntimeException("Broker unavailable"))
                 .when(rabbitTemplate).convertAndSend(anyString(), anyString(), any(Object.class));
 
         // Should not throw
-        publisher.notifyBadgeEarned("user-001", badge);
+        publisher.notifyMonaEarned("user-001", Mona);
     }
 }

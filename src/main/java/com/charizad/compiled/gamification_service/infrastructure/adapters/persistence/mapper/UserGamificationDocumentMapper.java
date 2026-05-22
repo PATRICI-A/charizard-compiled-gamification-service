@@ -1,11 +1,11 @@
 package com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.mapper;
 
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
-import com.charizad.compiled.gamification_service.domain.valueobjects.BadgeProgress;
-import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge;
+import com.charizad.compiled.gamification_service.domain.valueobjects.MonaProgress;
+import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedMona;
 import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedReward;
-import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.BadgeProgressSubdocument;
-import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.EarnedBadgeSubdocument;
+import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.MonaProgressSubdocument;
+import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.EarnedMonaSubdocument;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.EarnedRewardSubdocument;
 import com.charizad.compiled.gamification_service.infrastructure.adapters.persistence.entity.UserGamificationDocument;
 import org.springframework.stereotype.Component;
@@ -17,20 +17,20 @@ import java.util.List;
 public class UserGamificationDocumentMapper {
 
     public UserGamification toDomain(UserGamificationDocument doc) {
-        List<EarnedBadge> earned = doc.getEarnedBadges() == null ? new ArrayList<>() :
-                doc.getEarnedBadges().stream()
-                        .map(e -> EarnedBadge.builder()
-                                .badgeId(e.getBadgeId())
-                                .badgeName(e.getBadgeName())
+        List<EarnedMona> earned = doc.getEarnedMonas() == null ? new ArrayList<>() :
+                doc.getEarnedMonas().stream()
+                        .map(e -> EarnedMona.builder()
+                                .monaId(e.getMonaId())
+                                .monaName(e.getMonaName())
                                 .earnedAt(e.getEarnedAt())
                                 .xpAwarded(e.getXpAwarded())
                                 .build())
                         .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
 
-        List<BadgeProgress> progress = doc.getProgress() == null ? new ArrayList<>() :
+        List<MonaProgress> progress = doc.getProgress() == null ? new ArrayList<>() :
                 doc.getProgress().stream()
-                        .map(p -> BadgeProgress.builder()
-                                .badgeId(p.getBadgeId())
+                        .map(p -> MonaProgress.builder()
+                                .monaId(p.getMonaId())
                                 .currentValue(p.getCurrentValue())
                                 .requiredValue(p.getRequiredValue())
                                 .completed(p.isCompleted())
@@ -59,7 +59,7 @@ public class UserGamificationDocumentMapper {
                 .weeklyXp(doc.getWeeklyXp())
                 .weeklyMonas(doc.getWeeklyMonas())
                 .rankingOptIn(doc.isRankingOptIn())
-                .earnedBadges(earned)
+                .earnedMonas(earned)
                 .progress(progress)
                 .earnedRewards(rewards)
                 .visitedCampusZones(zones)
@@ -67,18 +67,18 @@ public class UserGamificationDocumentMapper {
     }
 
     public UserGamificationDocument toDocument(UserGamification user) {
-        List<EarnedBadgeSubdocument> earned = user.getEarnedBadges().stream()
-                .map(e -> EarnedBadgeSubdocument.builder()
-                        .badgeId(e.getBadgeId())
-                        .badgeName(e.getBadgeName())
+        List<EarnedMonaSubdocument> earned = user.getEarnedMonas().stream()
+                .map(e -> EarnedMonaSubdocument.builder()
+                        .monaId(e.getMonaId())
+                        .monaName(e.getMonaName())
                         .earnedAt(e.getEarnedAt())
                         .xpAwarded(e.getXpAwarded())
                         .build())
-                .toList();
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
 
-        List<BadgeProgressSubdocument> progress = user.getProgress().stream()
-                .map(p -> BadgeProgressSubdocument.builder()
-                        .badgeId(p.getBadgeId())
+        List<MonaProgressSubdocument> progress = user.getProgress().stream()
+                .map(p -> MonaProgressSubdocument.builder()
+                        .monaId(p.getMonaId())
                         .currentValue(p.getCurrentValue())
                         .requiredValue(p.getRequiredValue())
                         .completed(p.isCompleted())
@@ -102,7 +102,7 @@ public class UserGamificationDocumentMapper {
                 .weeklyXp(user.getWeeklyXp())
                 .weeklyMonas(user.getWeeklyMonas())
                 .rankingOptIn(user.isRankingOptIn())
-                .earnedBadges(earned)
+                .earnedMonas(earned)
                 .progress(progress)
                 .earnedRewards(rewards)
                 .visitedCampusZones(new ArrayList<>(user.getVisitedCampusZones()))

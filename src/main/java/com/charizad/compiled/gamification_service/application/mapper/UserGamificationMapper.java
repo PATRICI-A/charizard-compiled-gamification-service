@@ -1,12 +1,12 @@
 package com.charizad.compiled.gamification_service.application.mapper;
 
-import com.charizad.compiled.gamification_service.application.dto.response.BadgeProgressResponse;
-import com.charizad.compiled.gamification_service.application.dto.response.EarnedBadgeResponse;
+import com.charizad.compiled.gamification_service.application.dto.response.MonaProgressResponse;
+import com.charizad.compiled.gamification_service.application.dto.response.EarnedMonaResponse;
 import com.charizad.compiled.gamification_service.application.dto.response.UserStatsResponse;
 import com.charizad.compiled.gamification_service.domain.model.NivelCalculator;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
-import com.charizad.compiled.gamification_service.domain.valueobjects.BadgeProgress;
-import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedBadge;
+import com.charizad.compiled.gamification_service.domain.valueobjects.MonaProgress;
+import com.charizad.compiled.gamification_service.domain.valueobjects.EarnedMona;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,26 +24,26 @@ public class UserGamificationMapper {
                 .nivel(nivel)
                 .levelName(NivelCalculator.getNivelName(nivel))
                 .rankingOptIn(user.isRankingOptIn())
-                .totalBadgesEarned(user.getEarnedBadges().size())
+                .totalMonasEarned(user.getEarnedMonas().size())
                 .totalRewardsUnlocked(user.getEarnedRewards().size())
                 .build();
     }
 
-    public EarnedBadgeResponse toEarnedBadgeResponse(EarnedBadge earned) {
-        return EarnedBadgeResponse.builder()
-                .badgeId(earned.getBadgeId())
-                .badgeName(earned.getBadgeName())
+    public EarnedMonaResponse toEarnedMonaResponse(EarnedMona earned) {
+        return EarnedMonaResponse.builder()
+                .monaId(earned.getMonaId())
+                .monaName(earned.getMonaName())
                 .earnedAt(earned.getEarnedAt())
                 .xpAwarded(earned.getXpAwarded())
                 .build();
     }
 
-    public BadgeProgressResponse toProgressResponse(BadgeProgress progress) {
+    public MonaProgressResponse toProgressResponse(MonaProgress progress) {
         int percentage = progress.getRequiredValue() > 0
                 ? (int) ((progress.getCurrentValue() * 100.0) / progress.getRequiredValue())
                 : 0;
-        return BadgeProgressResponse.builder()
-                .badgeId(progress.getBadgeId())
+        return MonaProgressResponse.builder()
+                .monaId(progress.getMonaId())
                 .currentValue(progress.getCurrentValue())
                 .requiredValue(progress.getRequiredValue())
                 .completed(progress.isCompleted())

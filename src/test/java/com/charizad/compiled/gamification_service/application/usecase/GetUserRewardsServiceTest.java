@@ -49,7 +49,7 @@ class GetUserRewardsServiceTest {
                 .totalXp(1000)
                 .weeklyXp(200)
                 .rankingOptIn(true)
-                .earnedBadges(new ArrayList<>())
+                .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())
                 .earnedRewards(rewards)
                 .build();

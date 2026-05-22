@@ -13,6 +13,6 @@ public class RankingPositionResponse {
     private String userId;
     private int posicion;
     private long totalParticipantes;
-    private int monasThisWeek;
+    private int monasThisPeriod;
     private String levelName;
 }

@@ -1,6 +1,6 @@
 package com.charizad.compiled.gamification_service.application.usecase;
 
-import com.charizad.compiled.gamification_service.application.dto.response.BadgeProgressResponse;
+import com.charizad.compiled.gamification_service.application.dto.response.MonaProgressResponse;
 import com.charizad.compiled.gamification_service.application.mapper.UserGamificationMapper;
 import com.charizad.compiled.gamification_service.domain.exceptions.UserGamificationNotFoundException;
 import com.charizad.compiled.gamification_service.domain.model.UserGamification;
@@ -19,7 +19,7 @@ public class GetUserProgressService implements GetUserProgressUseCase {
     private final UserGamificationMapper userGamificationMapper;
 
     @Override
-    public List<BadgeProgressResponse> execute(String userId) {
+    public List<MonaProgressResponse> execute(String userId) {
         UserGamification user = userGamificationRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserGamificationNotFoundException(userId));
 

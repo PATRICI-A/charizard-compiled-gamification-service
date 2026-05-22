@@ -22,13 +22,13 @@ public class OpenApiConfig {
                         .description("""
                                 **Module M04 — Gamification**
 
-                                Badge management, XP and weekly ranking.
+                                Mona management, XP and weekly ranking.
 
                                 **Authentication:** Bearer JWT issued by M01 (snorlax-energy-auth-service).
 
                                 **Roles:**
-                                - `ADMIN` — can create and award badges
-                                - `USER` — can query their badges, progress, stats and ranking
+                                - `ADMIN` — can create and award Monas
+                                - `USER` — can query their Monas, progress, stats and ranking
                                 """)
                         .version("1.0.0")
                         .contact(new Contact()
