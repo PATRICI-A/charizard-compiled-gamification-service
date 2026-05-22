@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Builder
 public class AchievementUnlockedEventDto {
 
-    private String userId;
+    private UUID userId;
     private String monaId;
     private String monaName;
     private String monaDescription;
