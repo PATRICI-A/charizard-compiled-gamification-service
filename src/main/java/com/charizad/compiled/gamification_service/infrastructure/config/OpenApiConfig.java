@@ -19,18 +19,18 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Gamification Service API")
-                        .description("""
-                                **Module M04 — Gamification**
-
-                                Badge management, XP and weekly ranking.
-
-                                **Authentication:** Bearer JWT issued by M01 (snorlax-energy-auth-service).
-
-                                **Roles:**
-                                - `ADMIN` — can create and award badges
-                                - `USER` — can query their badges, progress, stats and ranking
-                                """)
-                        .version("1.0.0")
+                        .description(
+                                "This microservice is responsible for managing the university platform's gamification system. " +
+                                "It handles badge (mona) creation and assignment, XP accumulation, level progression, " +
+                                "reward unlocking, and competitive ranking among students. " +
+                                "Badge unlocks are triggered automatically when another microservice reports a qualifying user action " +
+                                "(such as a campus zone visit or profile completion), when a student manually redeems an attendance code " +
+                                "distributed at a university event, or when a student browses their badge collection and progress. " +
+                                "Rewards are granted automatically when a student's total XP crosses a defined threshold. " +
+                                "Rankings are maintained on weekly, monthly, and semester periods for opted-in students. " +
+                                "All endpoints require a valid Bearer JWT token issued by the Auth Service (M01 — snorlax-energy-auth-service). " +
+                                "Admin-restricted operations require the ADMIN role; internal service-to-service calls require the SERVICE role.")
+                        .version("v1.0.0")
                         .contact(new Contact()
                                 .name("Charizard Compiled")
                                 .email("charizard.compiled@universidad.edu.co")))
