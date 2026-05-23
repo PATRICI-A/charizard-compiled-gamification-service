@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RankingEntryResponse {
     private int position;
-    private String userId;
+    private String studentId;
     private String displayName;
     private int monasThisPeriod;
     private int totalMonas;

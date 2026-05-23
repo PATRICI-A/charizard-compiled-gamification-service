@@ -27,6 +27,7 @@ public class UserGamification {
     private int weeklyMonas;
     private int monthlyMonas;
     private int semesterMonas;
+    private int totalMonas;
     private boolean rankingOptIn;
     private final List<EarnedMona> earnedMonas;
     private final List<MonaProgress> progress;
@@ -53,6 +54,7 @@ public class UserGamification {
         weeklyMonas++;
         monthlyMonas++;
         semesterMonas++;
+        totalMonas++;
     }
 
     public void unlockReward(EarnedReward earned) {
@@ -115,10 +117,6 @@ public class UserGamification {
                 .build());
     }
 
-    public int getTotalMonas() {
-        return earnedMonas.size();
-    }
-
     public static UserGamification newUser(String userId) {
         return UserGamification.builder()
                 .userId(userId)
@@ -129,6 +127,7 @@ public class UserGamification {
                 .weeklyMonas(0)
                 .monthlyMonas(0)
                 .semesterMonas(0)
+                .totalMonas(0)
                 .rankingOptIn(false)
                 .earnedMonas(new ArrayList<>())
                 .progress(new ArrayList<>())

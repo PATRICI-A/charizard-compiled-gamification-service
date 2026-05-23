@@ -23,6 +23,14 @@ public final class NivelCalculator {
             "Leyenda"
     };
 
+    private static final String[] REWARDS = {
+            null, // Nivel 1 no tiene recompensa según PTR13.2
+            "Insignia de Plata en Perfil",
+            "Marco Dorado para Avatar",
+            "Acceso Prioritario a Eventos",
+            "Título de 'Leyenda del Campus'"
+    };
+
     public static int getNivel(int totalXp) {
         for (int i = XP_THRESHOLDS.length - 1; i >= 0; i--) {
             if (totalXp >= XP_THRESHOLDS[i]) {
@@ -38,17 +46,39 @@ public final class NivelCalculator {
         return LEVEL_NAMES[nivel - 1];
     }
 
-    public static int getXpParaSiguienteNivel(int totalXp) {
+    public static String getReward(int nivel) {
+        if (nivel < 1) return null;
+        if (nivel > REWARDS.length) return REWARDS[REWARDS.length - 1];
+        return REWARDS[nivel - 1];
+    }
+
+    public static Integer getXpParaSiguienteNivel(int totalXp) {
         int nivel = getNivel(totalXp);
         if (nivel >= XP_THRESHOLDS.length) {
-            return 0;
+            return null;
         }
         return XP_THRESHOLDS[nivel];
     }
 
-    public static int getXpRestante(int totalXp) {
-        int nextLevelXp = getXpParaSiguienteNivel(totalXp);
-        if (nextLevelXp == 0) return 0;
+    public static Integer getXpRestante(int totalXp) {
+        Integer nextLevelXp = getXpParaSiguienteNivel(totalXp);
+        if (nextLevelXp == null) return null;
         return nextLevelXp - totalXp;
+    }
+
+    public static float getProgressPercentage(int totalXp) {
+        int nivel = getNivel(totalXp);
+        if (nivel >= XP_THRESHOLDS.length) {
+            return 100.0f;
+        }
+        int currentLevelXp = XP_THRESHOLDS[nivel - 1];
+        int nextLevelXp = XP_THRESHOLDS[nivel];
+        
+        float progress = (float) (totalXp - currentLevelXp) / (nextLevelXp - currentLevelXp) * 100;
+        return Math.max(0.0f, Math.min(100.0f, progress));
+    }
+
+    public static boolean isMaxLevel(int totalXp) {
+        return getNivel(totalXp) >= XP_THRESHOLDS.length;
     }
 }

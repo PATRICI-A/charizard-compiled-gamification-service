@@ -20,9 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/gamificacion/Monas")
+@RequestMapping("/api/v1/gamificacion/monas")
 @RequiredArgsConstructor
-@Tag(name = "Monas (Monas)", description = "Management of the collectible Mona (mona) catalog — RF13.1")
+@Tag(name = "Monas", description = "Management of the collectible Mona (mona) catalog — RF13.1")
 @SecurityRequirement(name = "bearerAuth")
 public class MonaController {
 

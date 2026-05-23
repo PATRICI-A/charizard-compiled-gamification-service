@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 public class RedeemEventCodeRequest {
 
     @NotBlank(message = "El código del evento es obligatorio.")
+    @jakarta.validation.constraints.Pattern(regexp = "^[a-zA-Z0-9]+$", message = "El código del evento debe ser alfanumérico.")
     private String eventCode;
 }

@@ -44,7 +44,7 @@ public class GetRankingService implements GetRankingUseCase {
 
             ranking.add(RankingEntryResponse.builder()
                     .position(i + 1)
-                    .userId(user.getUserId())
+                    .studentId(user.getUserId())
                     .displayName(displayName)
                     .monasThisPeriod(monasThisPeriod)
                     .totalMonas(user.getTotalMonas())

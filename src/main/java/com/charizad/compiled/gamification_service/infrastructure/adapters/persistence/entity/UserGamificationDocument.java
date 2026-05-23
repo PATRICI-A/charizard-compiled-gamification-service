@@ -30,6 +30,7 @@ public class UserGamificationDocument {
     private int weeklyMonas;
     private int monthlyMonas;
     private int semesterMonas;
+    private int totalMonas;
     private boolean rankingOptIn;
 
     private List<EarnedMonaSubdocument> earnedMonas;

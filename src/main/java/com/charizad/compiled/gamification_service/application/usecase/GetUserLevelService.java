@@ -25,12 +25,15 @@ public class GetUserLevelService implements GetUserLevelUseCase {
 
         return UserLevelResponse.builder()
                 .userId(userId)
-                .nivel(nivel)
+                .currentLevel(nivel)
                 .levelName(NivelCalculator.getNivelName(nivel))
-                .totalMonas(user.getTotalMonas())
-                .totalXp(totalXp)
-                .xpParaSiguienteNivel(NivelCalculator.getXpParaSiguienteNivel(totalXp))
-                .xpRestante(NivelCalculator.getXpRestante(totalXp))
+                .totalMonasEarned(user.getTotalMonas())
+                .totalXP(totalXp)
+                .xpForNextLevel(NivelCalculator.getXpParaSiguienteNivel(totalXp))
+                .xpRemaining(NivelCalculator.getXpRestante(totalXp))
+                .progressPercentage(NivelCalculator.getProgressPercentage(totalXp))
+                .isMaxLevel(NivelCalculator.isMaxLevel(totalXp))
+                .currentReward(NivelCalculator.getReward(nivel))
                 .build();
     }
 }

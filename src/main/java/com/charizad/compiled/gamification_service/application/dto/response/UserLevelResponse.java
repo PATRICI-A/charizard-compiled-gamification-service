@@ -11,10 +11,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserLevelResponse {
     private String userId;
-    private int nivel;
+    private int currentLevel;
     private String levelName;
-    private int totalMonas;
-    private int totalXp;
-    private int xpParaSiguienteNivel;
-    private int xpRestante;
+    private int totalMonasEarned;
+    private int totalXP;
+    private Integer xpForNextLevel;
+    private Integer xpRemaining;
+    private float progressPercentage;
+    private boolean isMaxLevel;
+    private String currentReward;
 }

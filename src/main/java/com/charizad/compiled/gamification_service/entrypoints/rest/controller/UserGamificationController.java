@@ -101,48 +101,9 @@ public class UserGamificationController {
         return ResponseEntity.ok(getMonaByIdUseCase.execute(userId, monaId));
     }
 
-    @GetMapping("/me/Monas")
-    @Operation(summary = "My unlocked Monas", description = "Returns all Monas that the authenticated user has earned.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List of earned Monas",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = EarnedMonaResponse.class)))),
-            @ApiResponse(responseCode = "404", description = "Gamification profile not found", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
-    })
-    public ResponseEntity<List<EarnedMonaResponse>> getMyMonas(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getUserMonasUseCase.execute(userId));
-    }
-
-    @GetMapping("/me/progress")
-    @Operation(summary = "My progress towards Monas", description = "Returns the current user progress towards each not yet unlocked Mona.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Progress list per Mona",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = MonaProgressResponse.class)))),
-            @ApiResponse(responseCode = "404", description = "Gamification profile not found", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
-    })
-    public ResponseEntity<List<MonaProgressResponse>> getMyProgress(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getUserProgressUseCase.execute(userId));
-    }
-
-    @GetMapping("/me/stats")
-    @Operation(summary = "My gamification stats", description = "Returns total XP, weekly XP, number of earned Monas and ranking participation status.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "User statistics",
-                    content = @Content(schema = @Schema(implementation = UserStatsResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Gamification profile not found", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
-    })
-    public ResponseEntity<UserStatsResponse> getMyStats(
-            @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getUserStatsUseCase.execute(userId));
-    }
-
-    @PatchMapping("/me/ranking/optin")
-    @Operation(summary = "Set weekly ranking participation",
-            description = "Explicitly sets the user's participation in the weekly ranking (RF13.3). " +
+    @PatchMapping("/ranking/optin")
+    @Operation(summary = "Set ranking participation",
+            description = "Explicitly sets the user's participation in the ranking (RF13.3). " +
                           "Send {\"participar\": true} to join, {\"participar\": false} to leave.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Status updated successfully", content = @Content),
@@ -154,23 +115,10 @@ public class UserGamificationController {
             @Valid @RequestBody SetRankingOptInRequest request) {
         boolean optIn = toggleRankingOptInUseCase.execute(userId, request.getParticipar());
         return ResponseEntity.ok(Map.of(
-                "userId", userId,
+                "studentId", userId,
                 "rankingOptIn", optIn,
-                "message", optIn ? "Ahora participas en el ranking semanal." : "Has salido del ranking semanal."
+                "updatedAt", java.time.LocalDateTime.now().toString()
         ));
-    }
-
-    @GetMapping("/me/rewards")
-    @Operation(summary = "My unlocked rewards", description = "Returns all XP-threshold rewards that the authenticated user has unlocked.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List of unlocked rewards",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = EarnedRewardResponse.class)))),
-            @ApiResponse(responseCode = "404", description = "Gamification profile not found", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token", content = @Content)
-    })
-    public ResponseEntity<List<EarnedRewardResponse>> getMyRewards(
-            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
-        return ResponseEntity.ok(getUserRewardsUseCase.execute(userId));
     }
 
     @GetMapping("/ranking")
@@ -193,7 +141,7 @@ public class UserGamificationController {
     @GetMapping("/ranking/mi-posicion")
     @Operation(summary = "Mi posición en el ranking",
             description = "Retorna la posición actual del estudiante autenticado en el ranking del período seleccionado. " +
-                          "Retorna posicion=0 si el usuario no participa (opt-in = false).")
+                          "Retorna position=null si el usuario no participa (opt-in = false).")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Posición del usuario en el ranking",
                     content = @Content(schema = @Schema(implementation = RankingPositionResponse.class))),
@@ -207,9 +155,9 @@ public class UserGamificationController {
         return ResponseEntity.ok(getRankingPositionUseCase.execute(userId, tipo));
     }
 
-    @GetMapping("/me/nivel")
+    @GetMapping("/nivel")
     @Operation(summary = "My current level",
-            description = "Returns the authenticated user's level based on total monas collected ")
+            description = "Returns the authenticated user's level based on total XP (PTR13.2)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User level information",
                     content = @Content(schema = @Schema(implementation = UserLevelResponse.class))),
@@ -219,5 +167,31 @@ public class UserGamificationController {
     public ResponseEntity<UserLevelResponse> getMiNivel(
             @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
         return ResponseEntity.ok(getUserLevelUseCase.execute(userId));
+    }
+
+    // --- Legacy / Internal Stats endpoints ---
+
+    @GetMapping("/me/monas")
+    public ResponseEntity<List<EarnedMonaResponse>> getMyMonas(
+            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
+        return ResponseEntity.ok(getUserMonasUseCase.execute(userId));
+    }
+
+    @GetMapping("/me/progress")
+    public ResponseEntity<List<MonaProgressResponse>> getMyProgress(
+            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
+        return ResponseEntity.ok(getUserProgressUseCase.execute(userId));
+    }
+
+    @GetMapping("/me/stats")
+    public ResponseEntity<UserStatsResponse> getMyStats(
+            @AuthenticationPrincipal String userId) {
+        return ResponseEntity.ok(getUserStatsUseCase.execute(userId));
+    }
+
+    @GetMapping("/me/rewards")
+    public ResponseEntity<List<EarnedRewardResponse>> getMyRewards(
+            @Parameter(hidden = true) @AuthenticationPrincipal String userId) {
+        return ResponseEntity.ok(getUserRewardsUseCase.execute(userId));
     }
 }

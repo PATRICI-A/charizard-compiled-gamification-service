@@ -34,7 +34,7 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
     @Override
     public List<UserGamification> findAllOptedInOrderByWeeklyMonasDesc(int limit) {
         return mongoRepository
-                .findByRankingOptInTrueOrderByWeeklyMonasDesc(PageRequest.of(0, limit))
+                .findByRankingOptInTrueOrderByWeeklyMonasDescTotalMonasDesc(PageRequest.of(0, limit))
                 .stream()
                 .map(mapper::toDomain)
                 .toList();
@@ -43,7 +43,7 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
     @Override
     public List<UserGamification> findAllOptedInOrderByMonthlyMonasDesc(int limit) {
         return mongoRepository
-                .findByRankingOptInTrueOrderByMonthlyMonasDesc(PageRequest.of(0, limit))
+                .findByRankingOptInTrueOrderByMonthlyMonasDescTotalMonasDesc(PageRequest.of(0, limit))
                 .stream()
                 .map(mapper::toDomain)
                 .toList();
@@ -52,7 +52,7 @@ public class UserGamificationRepositoryAdapter implements UserGamificationReposi
     @Override
     public List<UserGamification> findAllOptedInOrderBySemesterMonasDesc(int limit) {
         return mongoRepository
-                .findByRankingOptInTrueOrderBySemesterMonasDesc(PageRequest.of(0, limit))
+                .findByRankingOptInTrueOrderBySemesterMonasDescTotalMonasDesc(PageRequest.of(0, limit))
                 .stream()
                 .map(mapper::toDomain)
                 .toList();
