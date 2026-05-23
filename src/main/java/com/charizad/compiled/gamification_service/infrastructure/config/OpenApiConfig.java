@@ -19,40 +19,17 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Gamification Service API")
-                        .description("""
-                                ## Gamification Service — Module M04
-
-                                This microservice is responsible for managing the university platform's gamification system.\s
-                                It handles badge (mona) creation and assignment, XP accumulation, level progression,\s
-                                reward unlocking, and competitive ranking among students.
-
-                                ### Core Capabilities
-                                - **Badge Management:** Define collectible badges (monas) tied to specific user actions\s
-                                  such as campus exploration, event attendance, and platform engagement.
-                                - **XP & Levels:** Track each student's experience points and compute their current level\s
-                                  based on total monas collected.
-                                - **Rewards:** Automatically unlock rewards when a student's XP crosses defined thresholds.
-                                - **Ranking:** Maintain WEEKLY, MONTHLY, and SEMESTER leaderboards for opted-in students.
-                                - **Event Codes:** Allow admins to generate alphanumeric codes that students redeem\s
-                                  at university events to earn the "Asistente" badge.
-
-                                ### Badge Unlock Flows
-                                - **Flow A — Automatic:** Triggered internally when another microservice (e.g. geo service)\s
-                                  reports a qualifying user action (campus zone visit, profile completion, etc.).
-                                - **Flow B — Event Code:** Student manually enters a code distributed at a university event.
-                                - **Flow C — Catalogue Query:** Students browse their badge collection and progress.
-
-                                ### Authentication
-                                All endpoints require a valid **Bearer JWT** token issued by the Auth Service (M01 — snorlax-energy-auth-service).\s
-                                Include it in the `Authorization` header as: `Bearer <token>`
-
-                                ### Role-Based Access
-                                | Role | Permissions |
-                                |------|-------------|
-                                | `ADMIN` | Create badges, award badges manually, create event codes, create rewards |
-                                | `USER` | Query own badges, progress, stats, level, rewards, ranking |
-                                | `SERVICE` | Internal endpoints called by other microservices (zone-visited, etc.) |
-                                """)
+                        .description(
+                                "This microservice is responsible for managing the university platform's gamification system. " +
+                                "It handles badge (mona) creation and assignment, XP accumulation, level progression, " +
+                                "reward unlocking, and competitive ranking among students. " +
+                                "Badge unlocks are triggered automatically when another microservice reports a qualifying user action " +
+                                "(such as a campus zone visit or profile completion), when a student manually redeems an attendance code " +
+                                "distributed at a university event, or when a student browses their badge collection and progress. " +
+                                "Rewards are granted automatically when a student's total XP crosses a defined threshold. " +
+                                "Rankings are maintained on weekly, monthly, and semester periods for opted-in students. " +
+                                "All endpoints require a valid Bearer JWT token issued by the Auth Service (M01 — snorlax-energy-auth-service). " +
+                                "Admin-restricted operations require the ADMIN role; internal service-to-service calls require the SERVICE role.")
                         .version("v1.0.0")
                         .contact(new Contact()
                                 .name("Charizard Compiled")

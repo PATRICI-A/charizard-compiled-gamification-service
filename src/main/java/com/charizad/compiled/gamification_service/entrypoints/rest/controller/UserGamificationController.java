@@ -193,7 +193,7 @@ public class UserGamificationController {
             description = "Allows the authenticated user to explicitly opt in or opt out of the public student ranking. " +
                           "When opted in, the user's name and XP appear on the leaderboard visible to other students. " +
                           "When opted out, the user is excluded from all leaderboard queries and their position is not disclosed. " +
-                          "Send `{\"participe\": true}` in the request body to join the ranking, or `{\"participe\": false}` to leave it. " +
+                          "Send {\"participe\": true} in the request body to join the ranking, or {\"participe\": false} to leave it. " +
                           "The preference takes effect immediately. Users can change this setting at any time without restriction."
     )
     @ApiResponses({
@@ -235,10 +235,10 @@ public class UserGamificationController {
             summary = "Get the student ranking leaderboard",
             description = "Returns the public leaderboard of all students who have opted into the ranking, sorted by XP earned in the specified period (descending). " +
                           "Only users with ranking opt-in enabled are included. " +
-                          "The `tipo` query parameter selects the time window: " +
-                          "`WEEKLY` (default) — current week starting Monday; " +
-                          "`mensual` — current calendar month; " +
-                          "`semestral` — current academic semester. " +
+                          "The 'tipo' query parameter selects the time window: " +
+                          "WEEKLY (default) for the current week starting Monday; " +
+                          "mensual for the current calendar month; " +
+                          "semestral for the current academic semester. " +
                           "Each entry includes the student's display name, their XP for the period, and their position in the leaderboard. " +
                           "This endpoint is used to render the competitive ranking screen visible to all authenticated users."
     )
@@ -259,9 +259,9 @@ public class UserGamificationController {
     @Operation(
             summary = "Get my position in the ranking",
             description = "Returns the authenticated user's current position in the leaderboard for the specified ranking period. " +
-                          "If the user has not opted into the ranking, the response will contain `position: null` and `rankingOptIn: false`. " +
+                          "If the user has not opted into the ranking, the response will contain position as null and rankingOptIn as false. " +
                           "If the user is opted in but has earned zero XP in the period, they will appear at the bottom of the ranking. " +
-                          "Use the same `tipo` values as the main ranking endpoint: WEEKLY (default), mensual, semestral. " +
+                          "Use the same tipo values as the main ranking endpoint: WEEKLY (default), mensual, semestral. " +
                           "This endpoint is used to show the student their standing without having to scroll through the full leaderboard."
     )
     @ApiResponses({
